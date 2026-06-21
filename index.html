@@ -26,14 +26,15 @@ body{background:var(--bg);color:var(--ink);font-family:'Sora',sans-serif;overflo
 
 /* ===== Intro overlay with spinning logo ===== */
 #intro{position:fixed;inset:0;z-index:99;display:grid;place-items:center;background:var(--bg);
-  transition:opacity .8s ease, visibility .8s ease;perspective:var(--persp)}
+  transition:opacity .8s ease, visibility .8s ease}
 #intro.done{opacity:0;visibility:hidden}
-#intro img{width:230px;height:230px;filter:drop-shadow(0 0 0 rgba(79,141,255,0));
-  animation:introSpin 2s cubic-bezier(.22,.61,.36,1) forwards;transform-style:preserve-3d}
+#intro img{width:230px;height:230px;
+  animation:introSpin 2s cubic-bezier(.22,.61,.36,1) forwards;
+  filter:drop-shadow(0 0 45px rgba(79,141,255,.6))}
 @keyframes introSpin{
-  0%{transform:rotateY(-220deg) rotateX(10deg) scale(.3) translateZ(-200px);opacity:0;filter:drop-shadow(0 0 0 rgba(79,141,255,0))}
+  0%{transform:rotateY(-220deg) scale(.3);opacity:0}
   60%{opacity:1}
-  100%{transform:rotateY(360deg) rotateX(0deg) scale(1) translateZ(0);opacity:1;filter:drop-shadow(0 0 45px rgba(79,141,255,.6))}
+  100%{transform:rotateY(360deg) scale(1);opacity:1}
 }
 .intro-text{position:absolute;bottom:34%;font-family:'Orbitron';letter-spacing:3px;
   font-size:.85rem;color:var(--muted);opacity:0;animation:fadeIn .8s ease 1.3s forwards}
@@ -717,7 +718,7 @@ document.getElementById('stripe').href     = 'https://buy.stripe.com/00w3cw1D0de
 document.getElementById('stripe-hero').href = 'https://buy.stripe.com/00w3cw1D0det0FL3JN5c401';
 
 // ==== Intro-Animation: Logo dreht sich rein, dann Seite einblenden ====
-window.addEventListener('load', function(){
+function startIntroSequence(){
   var intro = document.getElementById('intro');
   var page  = document.getElementById('page');
   setTimeout(function(){ page.classList.add('show'); }, 1600);
@@ -725,7 +726,12 @@ window.addEventListener('load', function(){
   // start the heavier Three.js particle field only after the intro
   // animation is done, so its setup doesn't compete with it on the main thread
   setTimeout(function(){ initParticles(); }, 2300);
-});
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startIntroSequence);
+} else {
+  startIntroSequence();
+}
 
 // =========================================================
 // 1) THREE.JS PARTICLE FIELD — drifting blue network in the background
