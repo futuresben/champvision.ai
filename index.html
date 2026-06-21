@@ -28,13 +28,12 @@ body{background:var(--bg);color:var(--ink);font-family:'Sora',sans-serif;overflo
 #intro{position:fixed;inset:0;z-index:99;display:grid;place-items:center;background:var(--bg);
   transition:opacity .8s ease, visibility .8s ease}
 #intro.done{opacity:0;visibility:hidden}
-#intro img{width:230px;height:230px;
-  animation:introSpin 2s cubic-bezier(.22,.61,.36,1) forwards;
-  filter:drop-shadow(0 0 45px rgba(79,141,255,.6))}
+#intro img{width:230px;height:230px;filter:drop-shadow(0 0 0 rgba(79,141,255,0));
+  animation:introSpin 2s cubic-bezier(.22,.61,.36,1) forwards}
 @keyframes introSpin{
-  0%{transform:rotateY(-220deg) scale(.3);opacity:0}
+  0%{transform:rotate(-220deg) scale(.3);opacity:0;filter:drop-shadow(0 0 0 rgba(79,141,255,0))}
   60%{opacity:1}
-  100%{transform:rotateY(360deg) scale(1);opacity:1}
+  100%{transform:rotate(360deg) scale(1);opacity:1;filter:drop-shadow(0 0 45px rgba(79,141,255,.6))}
 }
 .intro-text{position:absolute;bottom:34%;font-family:'Orbitron';letter-spacing:3px;
   font-size:.85rem;color:var(--muted);opacity:0;animation:fadeIn .8s ease 1.3s forwards}
