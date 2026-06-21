@@ -740,11 +740,16 @@ document.getElementById('stripe-hero').href = 'https://buy.stripe.com/00w3cw1D0d
 function startIntroSequence(){
   var intro = document.getElementById('intro');
   var page  = document.getElementById('page');
-  setTimeout(function(){ page.classList.add('show'); }, 1600);
-  setTimeout(function(){ intro.classList.add('done'); }, 2200);
+  // logo spin animation takes 2s (see #intro img animation duration) —
+  // start the crossfade to the main page right as it finishes, so there's
+  // no awkward pause where the finished logo just sits still
+  setTimeout(function(){
+    page.classList.add('show');
+    intro.classList.add('done');
+  }, 2000);
   // start the heavier Three.js particle field only after the intro
-  // animation is done, so its setup doesn't compete with it on the main thread
-  setTimeout(function(){ initParticles(); }, 2300);
+  // crossfade is underway, so its setup doesn't compete with it on the main thread
+  setTimeout(function(){ initParticles(); }, 2100);
 }
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', startIntroSequence);
