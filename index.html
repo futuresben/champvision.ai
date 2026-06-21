@@ -722,17 +722,20 @@ window.addEventListener('load', function(){
   var page  = document.getElementById('page');
   setTimeout(function(){ page.classList.add('show'); }, 1600);
   setTimeout(function(){ intro.classList.add('done'); }, 2200);
+  // start the heavier Three.js particle field only after the intro
+  // animation is done, so its setup doesn't compete with it on the main thread
+  setTimeout(function(){ initParticles(); }, 2300);
 });
 
 // =========================================================
 // 1) THREE.JS PARTICLE FIELD — drifting blue network in the background
 // =========================================================
-(function initParticles(){
+function initParticles(){
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var canvas = document.getElementById('particles');
   if (!window.THREE || reduceMotion) { return; }
 
-  var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: false });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -740,7 +743,7 @@ window.addEventListener('load', function(){
   var camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2000);
   camera.position.z = 600;
 
-  var COUNT = window.innerWidth < 700 ? 220 : 420;
+  var COUNT = window.innerWidth < 700 ? 160 : 320;
   var positions = new Float32Array(COUNT * 3);
   var speeds = new Float32Array(COUNT);
   for (var i = 0; i < COUNT; i++) {
@@ -845,7 +848,7 @@ window.addEventListener('load', function(){
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
-})();
+}
 
 // =========================================================
 // 2) 3D TILT ON HOVER — cards, buttons, stat tiles, product card, CTA box
