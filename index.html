@@ -81,7 +81,7 @@ nav{position:relative;z-index:5;display:flex;align-items:center;justify-content:
 .brand .ai{color:var(--blue-bright)}
 .nav-cta{font-family:'Sora';font-size:.9rem;color:var(--muted);text-decoration:none;border:1px solid var(--line);padding:9px 18px;border-radius:100px;transition:.3s}
 .nav-cta:hover{color:var(--ink);border-color:var(--blue);box-shadow:0 0 20px rgba(79,141,255,.25)}
-.hero{position:relative;z-index:3;text-align:center;padding:60px 24px 90px;max-width:900px;margin:0 auto;perspective:var(--persp)}
+.hero{position:relative;z-index:3;text-align:center;padding:60px 24px 40px;max-width:1400px;margin:0 auto;perspective:var(--persp)}
 .hero-logo-wrap{width:230px;height:230px;margin:0 auto 30px;perspective:1000px;position:relative}
 @media (max-width:640px){
   .hero-logo-wrap{margin-bottom:50px}
@@ -109,6 +109,8 @@ nav{position:relative;z-index:5;display:flex;align-items:center;justify-content:
   margin:16px auto 0;max-width:680px;color:var(--ink)}
 .sub-slogan .accent{background:linear-gradient(90deg,var(--blue-bright),var(--blue));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:40px}
+.hero-product-slot{margin-top:42px}
+.hero > section.product{padding:0;width:100%;max-width:none}
 /* staggered reveal once page shows */
 .page.show .reveal{animation:rise .9s ease both}
 .page.show .reveal.d1{animation-delay:.05s}
@@ -399,10 +401,7 @@ section.dashboard-preview{position:relative;z-index:2;padding:30px 24px 100px;ma
   <h1 class="reveal d2">CHAMPVISION<span class="ai">.ai</span></h1>
   <p class="tagline reveal d3">KI-gestützte Trading-Intelligenz und eine Community, die zusammen gewinnt.</p>
   <p class="sub-slogan reveal d3">Automatisiere dein Trading &ndash; <span class="accent">ohne Emotionen, ohne verpasste Einstiege.</span></p>
-  <div class="hero-btns reveal d4">
-    <a href="#" id="stripe-hero" class="btn btn-primary tilt" target="_blank" rel="noopener">Jetzt beitreten</a>
-    <a href="#product" class="btn btn-ghost tilt">Mehr erfahren</a>
-  </div>
+  <div class="hero-product-slot" id="hero-product-slot"></div>
 </header>
 
 <div class="hero-visual reveal">
@@ -566,7 +565,6 @@ section.dashboard-preview{position:relative;z-index:2;padding:30px 24px 100px;ma
 </section>
 
 <section class="product reveal" id="product">
-  <div class="eyebrow">Premium Zugang</div>
   <div class="products-grid">
 
     <div class="product-card tilt" id="futures-bot">
@@ -761,9 +759,13 @@ section.dashboard-preview{position:relative;z-index:2;padding:30px 24px 100px;ma
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
+// Die Angebote stehen direkt im sichtbaren Einstiegsbereich.
+var heroProductSlot = document.getElementById('hero-product-slot');
+var productSection  = document.getElementById('product');
+heroProductSlot.replaceWith(productSection);
+
 // ==== DEINE LINKS ====
 document.getElementById('stripe').href     = 'https://buy.stripe.com/9B6dRaftQeix88d6VZ5c402';
-document.getElementById('stripe-hero').href = 'https://buy.stripe.com/9B6dRaftQeix88d6VZ5c402';
 var mgcCheckout = document.getElementById('stripe-mgc');
 var mgcRelease  = new Date('2026-09-01T00:00:00+02:00');
 if (Date.now() >= mgcRelease.getTime()) {
