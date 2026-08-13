@@ -241,6 +241,7 @@ section.product{position:relative;z-index:2;padding:30px 24px 90px;max-width:100
   text-shadow:0 0 26px rgba(79,141,255,.55),0 0 50px rgba(79,141,255,.25)}
 .price-row .period{color:var(--muted);font-size:.9rem;font-weight:300}
 .product-card .btn{width:100%;justify-content:center}
+.product-card .btn.is-locked{opacity:.55;cursor:not-allowed;pointer-events:none;filter:saturate(.45)}
 
 /* coming-soon variant: clean, no overlapping text, just visually muted */
 .product-card.soon{border-color:rgba(120,140,180,.18)}
@@ -587,35 +588,34 @@ section.dashboard-preview{position:relative;z-index:2;padding:30px 24px 100px;ma
           <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Monatlich kündbar</li>
         </ul>
         <div class="product-footer">
-          <div class="discount-badge">&#9889; 37,5% Rabatt</div>
-          <div class="price-row"><span class="old-amount">400€</span><span class="amount">250€</span><span class="period">/ Monat</span></div>
+          <div class="price-row"><span class="amount">250€</span><span class="period">/ Monat</span></div>
           <a href="#" id="stripe" class="btn btn-primary tilt" target="_blank" rel="noopener">Jetzt abonnieren</a>
         </div>
       </div>
     </div>
 
-    <div class="product-card soon">
-      <div class="soon-flag">&#9201; Coming Soon</div>
+    <div class="product-card tilt" id="mgc-bot">
       <div class="product-banner">
         <div class="product-banner-grid"></div>
         <img src="assets/logo.png" alt="Champvision.ai Logo">
-        <div class="product-tag"><span class="dot"></span> MetaTrader 5 <span class="sep">&middot;</span> <span class="accent">CFD Traders</span></div>
+        <div class="product-tag"><span class="dot"></span> Tradovate <span class="sep">&middot;</span> <span class="accent">Futures Traders</span></div>
       </div>
       <div class="product-body">
         <div class="product-eyebrow">Gebaut für Konsistenz, nicht Hype</div>
-        <div class="product-name">CHAMPVISION<span class="ai">.ai</span> CFD MT5 Bot</div>
-        <div class="product-sub">Scalping-Strategie</div>
+        <div class="product-name">CHAMPVISION<span class="ai">.ai</span> Futures Bot</div>
+        <div class="product-sub">KI-Signalstrategie</div>
         <div class="product-mini-stats">
-          <div class="product-mini"><div class="lbl">Plattform</div><div class="val">MT5</div></div>
-          <div class="product-mini"><div class="lbl">Strategie</div><div class="val">Scalping</div></div>
+          <div class="product-mini"><div class="lbl">Market</div><div class="val">MGC</div></div>
+          <div class="product-mini"><div class="lbl">Strategie</div><div class="val">Momentum System</div></div>
         </div>
         <ul class="product-features">
-          <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Automatisierter CFD-Handel</li>
-          <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Abgestimmt auf aktive Marktphasen</li>
-          <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Release-Datum folgt</li>
+          <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Live-Performance-Tracking</li>
+          <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Vollständige Transparenz</li>
+          <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Monatlich kündbar</li>
         </ul>
         <div class="product-footer">
-          <a href="#" class="btn btn-ghost" aria-disabled="true">Bald verfügbar</a>
+          <div class="price-row"><span class="amount">250€</span><span class="period">/ Monat</span></div>
+          <a id="stripe-mgc" class="btn btn-primary tilt is-locked" target="_blank" rel="noopener" aria-disabled="true">Jetzt abonnieren · ab 1.9.</a>
         </div>
       </div>
     </div>
@@ -736,6 +736,14 @@ section.dashboard-preview{position:relative;z-index:2;padding:30px 24px 100px;ma
 // ==== DEINE LINKS ====
 document.getElementById('stripe').href     = 'https://buy.stripe.com/9B6dRaftQeix88d6VZ5c402';
 document.getElementById('stripe-hero').href = 'https://buy.stripe.com/9B6dRaftQeix88d6VZ5c402';
+var mgcCheckout = document.getElementById('stripe-mgc');
+var mgcRelease  = new Date('2026-09-01T00:00:00+02:00');
+if (Date.now() >= mgcRelease.getTime()) {
+  mgcCheckout.href = 'https://buy.stripe.com/9B6dRaftQeix88d6VZ5c402';
+  mgcCheckout.classList.remove('is-locked');
+  mgcCheckout.removeAttribute('aria-disabled');
+  mgcCheckout.textContent = 'Jetzt abonnieren';
+}
 
 // ==== Intro-Animation: Logo dreht sich rein, dann Seite einblenden ====
 function startIntroSequence(){
