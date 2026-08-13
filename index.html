@@ -186,9 +186,10 @@ footer .brand{justify-content:center;margin-bottom:14px;font-size:.95rem}
 .stats-foot{margin-top:16px;font-size:.72rem;color:var(--muted);opacity:.65;text-align:center;font-weight:300;max-width:560px;margin-inline:auto}
 
 /* ===== Product / subscription card (3D tilt) ===== */
-section.product{position:relative;z-index:2;padding:30px 24px 90px;max-width:1000px;margin:0 auto;text-align:center;perspective:var(--persp)}
-.products-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:stretch}
-@media (max-width:900px){.products-grid{grid-template-columns:1fr}}
+section.product{position:relative;z-index:2;padding:30px 24px 90px;max-width:1400px;margin:0 auto;text-align:center;perspective:var(--persp)}
+.products-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;align-items:stretch}
+@media (max-width:1100px){.products-grid{grid-template-columns:1fr 1fr}.product-card.bundle{grid-column:1/-1;max-width:560px;width:100%;justify-self:center}}
+@media (max-width:720px){.products-grid{grid-template-columns:1fr}.product-card.bundle{grid-column:auto;max-width:none}}
 
 .product-card{background:linear-gradient(160deg,rgba(20,30,58,.6),rgba(8,12,24,.65));border:1px solid rgba(79,141,255,.22);border-radius:22px;
   overflow:hidden;text-align:left;display:flex;flex-direction:column;height:100%;
@@ -616,6 +617,33 @@ section.dashboard-preview{position:relative;z-index:2;padding:30px 24px 100px;ma
         <div class="product-footer">
           <div class="price-row"><span class="amount">250€</span><span class="period">/ Monat</span></div>
           <a id="stripe-mgc" class="btn btn-primary tilt is-locked" target="_blank" rel="noopener" aria-disabled="true">Jetzt abonnieren · ab 1.9.</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card tilt bundle" id="bundle-bots">
+      <div class="product-banner">
+        <div class="product-banner-grid"></div>
+        <img src="assets/logo.png" alt="Champvision.ai Logo">
+        <div class="product-tag"><span class="dot"></span> MNQ + MGC <span class="sep">&middot;</span> <span class="accent">Bot Bundle</span></div>
+      </div>
+      <div class="product-body">
+        <div class="product-eyebrow">Beide Systeme in einem Paket</div>
+        <div class="product-name">CHAMPVISION<span class="ai">.ai</span> Bot Bundle</div>
+        <div class="product-sub">Breakout &amp; Momentum</div>
+        <div class="product-mini-stats">
+          <div class="product-mini"><div class="lbl">Markets</div><div class="val">MNQ + MGC</div></div>
+          <div class="product-mini"><div class="lbl">Systeme</div><div class="val">2 Bots</div></div>
+        </div>
+        <ul class="product-features">
+          <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> MNQ Breakout Bot inklusive</li>
+          <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> MGC Momentum System inklusive</li>
+          <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> 100€ monatlich sparen</li>
+        </ul>
+        <div class="product-footer">
+          <div class="discount-badge">&#9889; 100€ Rabatt</div>
+          <div class="price-row"><span class="old-amount">500€</span><span class="amount">400€</span><span class="period">/ Monat</span></div>
+          <a class="btn btn-primary is-locked" aria-disabled="true">Checkout folgt</a>
         </div>
       </div>
     </div>
