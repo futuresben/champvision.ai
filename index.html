@@ -354,6 +354,12 @@ section.dashboard-preview{position:relative;z-index:2;padding:30px 24px 100px;ma
   box-shadow:0 30px 80px rgba(5,10,25,.6);transition:transform .15s ease-out,box-shadow .4s ease;transform-style:preserve-3d;will-change:transform}
 .hero-visual-inner:hover{box-shadow:0 40px 110px rgba(10,25,70,.65)}
 .hero-visual-inner svg{display:block;width:100%;height:100%}
+.hero-visual-inner::before{content:'MNQ1!  ·  15M  ·  CME';position:absolute;top:22px;left:22px;z-index:3;
+  font-family:'Orbitron';font-size:.78rem;font-weight:700;letter-spacing:.7px;color:#dce8ff;
+  background:rgba(3,8,18,.78);border:1px solid rgba(125,158,220,.22);border-radius:8px;padding:9px 13px;backdrop-filter:blur(10px)}
+.hero-visual-inner svg .candle-up{fill:#21c997!important;stroke:#21c997!important;opacity:.96!important;filter:drop-shadow(0 0 3px rgba(33,201,151,.22))}
+.hero-visual-inner svg .candle-down{fill:#ef5b74!important;stroke:#ef5b74!important;opacity:.96!important;filter:drop-shadow(0 0 3px rgba(239,91,116,.2))}
+.hero-visual-inner svg rect.candle-up,.hero-visual-inner svg rect.candle-down{rx:1!important;shape-rendering:geometricPrecision}
 .hv-badge{position:absolute;top:22px;right:22px;background:linear-gradient(90deg,var(--blue-bright),var(--blue));color:#06101f;font-family:'Orbitron';font-weight:700;font-size:.82rem;letter-spacing:.3px;padding:11px 20px;border-radius:100px;box-shadow:0 6px 24px rgba(79,141,255,.5);z-index:3;transform:translateZ(50px)}
 .hv-tag{position:absolute;bottom:22px;left:22px;display:flex;align-items:center;gap:10px;background:rgba(8,14,28,.72);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:100px;padding:10px 18px;font-size:.85rem;color:var(--ink);font-weight:500;z-index:3;transform:translateZ(50px)}
 .hv-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--blue-bright);box-shadow:0 0 8px var(--blue-bright)}
@@ -523,7 +529,7 @@ section.dashboard-preview{position:relative;z-index:2;padding:30px 24px 100px;ma
 <circle cx="550" cy="420" r="6" fill="#eaf1ff"/><circle cx="550" cy="420" r="16" fill="none" stroke="#6ea8ff" stroke-width="1.5" opacity="0.6"/>
 <rect width="1100" height="687" fill="url(#fadeBottom)"/>
 </svg>
-    <div class="hv-badge">88,16% Win Rate</div>
+    <div class="hv-badge">72,12% Win Rate</div>
     <div class="hv-tag"><span class="dot"></span> Tradovate <span class="sep">&middot;</span> <span class="accent">Futures Traders</span></div>
   </div>
 </div>
@@ -531,19 +537,19 @@ section.dashboard-preview{position:relative;z-index:2;padding:30px 24px 100px;ma
 <section class="stats reveal d5">
   <div class="stats-grid">
     <div class="stat tilt">
-      <div class="num pos">47,27%</div>
-      <div class="lbl">Gewinn</div>
+      <div class="num pos">43.646 USD</div>
+      <div class="lbl">G&amp;V insgesamt &middot; +87,29%</div>
     </div>
     <div class="stat tilt">
-      <div class="num">4,41%</div>
-      <div class="lbl">Max. Drawdown</div>
+      <div class="num">3.743 USD</div>
+      <div class="lbl">Max. Drawdown &middot; 4,37%</div>
     </div>
     <div class="stat tilt">
-      <div class="num">88,16%</div>
-      <div class="lbl">Gewinnrate</div>
+      <div class="num">72,12%</div>
+      <div class="lbl">Gewinnbringende Trades &middot; 75/104</div>
     </div>
     <div class="stat tilt">
-      <div class="num">3,71</div>
+      <div class="num">2,59</div>
       <div class="lbl">Profitfaktor</div>
     </div>
   </div>
@@ -669,10 +675,10 @@ section.dashboard-preview{position:relative;z-index:2;padding:30px 24px 100px;ma
       </div>
 
       <div class="dash-grid">
-        <div class="dash-card"><div class="lbl">Winrate</div><div class="val pos">88,16%</div></div>
-        <div class="dash-card"><div class="lbl">&Oslash; Ergebnis / Trade</div><div class="val pos">+1,84%</div></div>
-        <div class="dash-card"><div class="lbl">Profit Factor</div><div class="val neutral">3,71</div></div>
-        <div class="dash-card"><div class="lbl">Max Drawdown</div><div class="val" style="color:#ff8a8a">-4,41%</div></div>
+        <div class="dash-card"><div class="lbl">Winrate</div><div class="val pos">72,12%</div></div>
+        <div class="dash-card"><div class="lbl">G&amp;V insgesamt</div><div class="val pos">+43.646 USD</div></div>
+        <div class="dash-card"><div class="lbl">Profit Factor</div><div class="val neutral">2,59</div></div>
+        <div class="dash-card"><div class="lbl">Max Drawdown</div><div class="val" style="color:#ff8a8a">3.743 USD</div></div>
       </div>
 
       <div class="dash-lower">
@@ -763,6 +769,14 @@ section.dashboard-preview{position:relative;z-index:2;padding:30px 24px 100px;ma
 var heroProductSlot = document.getElementById('hero-product-slot');
 var productSection  = document.getElementById('product');
 heroProductSlot.replaceWith(productSection);
+
+// Professionelle Trading-Farben für Candle-Körper und Dochte.
+document.querySelectorAll('.hero-visual-inner svg rect[width="11"]').forEach(function(body) {
+  var candleClass = body.getAttribute('fill') === '#2d5edb' ? 'candle-down' : 'candle-up';
+  body.classList.add(candleClass);
+  var wick = body.previousElementSibling;
+  if (wick && wick.tagName.toLowerCase() === 'line') wick.classList.add(candleClass);
+});
 
 // ==== DEINE LINKS ====
 document.getElementById('stripe').href     = 'https://buy.stripe.com/9B6dRaftQeix88d6VZ5c402';
