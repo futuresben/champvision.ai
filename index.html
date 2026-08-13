@@ -231,16 +231,18 @@ section.product{position:relative;z-index:2;padding:30px 24px 90px;max-width:140
 .product-features{list-style:none;margin:0 0 22px;padding:0;display:flex;flex-direction:column;gap:9px}
 .product-features li{display:flex;align-items:center;gap:9px;font-size:.9rem;color:var(--muted);font-weight:300}
 .product-features li::before{content:'';flex:0 0 auto;width:16px;height:16px;border-radius:50%;
-  background:rgba(79,141,255,.14);position:relative}
+  background:#18b978;position:relative;box-shadow:0 0 0 4px rgba(24,185,120,.1),0 0 13px rgba(24,185,120,.7)}
 .product-features li::after{content:'';position:absolute}
-.product-features li svg{flex:0 0 auto;width:16px;height:16px;color:var(--blue-bright)}
+.product-features li svg{display:none}
 
 .product-footer{margin-top:auto}
 .discount-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(90deg,#1f9d63,#2ec77f);color:#06160f;
   font-family:'Orbitron';font-weight:700;font-size:.74rem;letter-spacing:.3px;padding:6px 13px;border-radius:100px;
   box-shadow:0 0 22px rgba(46,199,127,.45);margin-bottom:12px}
+.product-card.bundle .discount-badge{background:linear-gradient(90deg,#0da86a,#28d48d);color:#042b1c;border:1px solid rgba(13,168,106,.3);box-shadow:0 8px 22px rgba(13,168,106,.24);font-size:.8rem;padding:8px 15px}
 .price-row{display:flex;align-items:baseline;gap:9px;margin-bottom:18px;flex-wrap:wrap}
 .price-row .old-amount{font-family:'Sora';font-weight:500;font-size:1.15rem;color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(138,155,196,.7);opacity:.75}
+.product-card.bundle .price-row .old-amount{font-weight:700;color:#b4233a;text-decoration-color:#b4233a;text-decoration-thickness:2px;opacity:1;background:#fff0f2;border:1px solid rgba(180,35,58,.15);border-radius:8px;padding:3px 8px}
 .price-row .amount{font-family:'Sora';font-weight:700;font-size:2.1rem;color:#fff;font-variant-numeric:lining-nums tabular-nums;
   text-shadow:0 0 26px rgba(79,141,255,.55),0 0 50px rgba(79,141,255,.25)}
 .price-row .period{color:var(--muted);font-size:.9rem;font-weight:300}
