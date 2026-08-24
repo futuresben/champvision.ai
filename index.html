@@ -201,14 +201,14 @@ section.product{position:relative;z-index:2;padding:30px 24px 90px;max-width:150
 @media (max-width:900px){.products-grid{grid-template-columns:1fr}.product-card.bundle{grid-column:auto;max-width:none}}
 @media (max-width:720px){.products-grid{grid-template-columns:1fr}.product-card.bundle{grid-column:auto;max-width:none}}
 
-.product-card{background:linear-gradient(160deg,rgba(20,30,58,.6),rgba(8,12,24,.65));border:1px solid rgba(79,141,255,.22);border-radius:22px;
+.product-card{background:rgba(9,14,27,.82);border:1px solid rgba(145,161,196,.2);border-radius:18px;
   overflow:hidden;text-align:left;display:flex;flex-direction:column;height:100%;
   transition:transform .18s ease-out,box-shadow .35s ease,border-color .35s ease;transform-style:preserve-3d;will-change:transform;
-  box-shadow:0 0 50px rgba(20,40,90,.18)}
-.product-card:hover{box-shadow:0 28px 80px rgba(20,50,120,.4);border-color:rgba(79,141,255,.4)}
+  box-shadow:0 14px 38px rgba(5,10,24,.22)}
+.product-card:hover{box-shadow:0 18px 48px rgba(5,10,24,.28);border-color:rgba(145,161,196,.32)}
 
 /* banner */
-.product-banner{position:relative;height:132px;overflow:hidden;background:radial-gradient(circle at 30% 30%,rgba(79,141,255,.35),transparent 60%),#070b18;
+.product-banner{position:relative;height:64px;overflow:hidden;background:rgba(255,255,255,.025);
   border-bottom:1px solid rgba(79,141,255,.18);transform:translateZ(20px)}
 .product-banner img{position:absolute;left:50%;top:39%;width:86px;height:86px;transform:translate(-50%,-50%);
   filter:drop-shadow(0 0 30px rgba(79,141,255,.5));opacity:.95}
@@ -217,17 +217,16 @@ section.product{position:relative;z-index:2;padding:30px 24px 90px;max-width:150
   background-size:26px 26px;
   mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,#000 30%,transparent 85%);
   -webkit-mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,#000 30%,transparent 85%)}
-.product-tag{position:absolute;left:16px;bottom:14px;display:inline-flex;align-items:center;gap:8px;
-  background:rgba(6,10,22,.78);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:100px;
-  padding:8px 14px;font-size:.78rem;color:var(--ink);font-weight:500}
+.product-tag{position:absolute;left:20px;top:50%;transform:translateY(-50%);display:inline-flex;align-items:center;gap:8px;
+  padding:0;font-family:'Orbitron';font-size:.74rem;letter-spacing:1.4px;color:var(--ink);font-weight:600}
 .product-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--blue-bright);box-shadow:0 0 8px var(--blue-bright)}
 .product-tag .sep{color:var(--muted);opacity:.5}
 .product-tag .accent{color:var(--blue-bright)}
 
 /* body */
-.product-body{padding:20px 22px 22px;display:flex;flex-direction:column;flex:1;transform:translateZ(10px)}
+.product-body{padding:20px 22px 22px;display:flex;flex-direction:column;flex:1}
 .product-eyebrow{font-family:'Orbitron';font-size:.7rem;letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;margin-bottom:10px}
-.product-name{font-family:'Orbitron';font-weight:700;font-size:1.25rem;letter-spacing:.3px;margin-bottom:6px}
+.product-name{font-family:'Orbitron';font-weight:700;font-size:1.18rem;letter-spacing:.3px;margin-bottom:14px}
 .product-name .ai{color:var(--blue-bright)}
 .product-sub{color:var(--blue-bright);font-size:.92rem;font-weight:500;margin-bottom:11px}
 .product-mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px}
@@ -290,7 +289,7 @@ section.product{position:relative;z-index:2;padding:30px 24px 90px;max-width:150
   box-shadow:0 0 24px rgba(79,141,255,.3)}
 
 @media (max-width:640px){
-  .product-banner{height:140px}
+  .product-banner{height:60px}
 }
 
 /* ===== Dashboard preview section ===== */
@@ -430,9 +429,9 @@ body::before{content:'';position:fixed;inset:0 0 auto;height:3px;z-index:20;poin
 .card,.stat,.product-card,.cta-box{background:rgba(255,255,255,.88);border-color:rgba(37,99,235,.16);box-shadow:0 14px 40px rgba(30,64,175,.08)}
 .card:hover,.stat:hover,.product-card:hover,.cta-box:hover{background:#fff;border-color:rgba(37,99,235,.34);box-shadow:0 24px 60px rgba(30,64,175,.14)}
 .card::before{background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(37,99,235,.1),transparent 60%)}
-.product-banner{background:radial-gradient(circle at 30% 30%,rgba(52,120,246,.2),transparent 62%),linear-gradient(145deg,#f8fbff,#eaf2ff);border-bottom-color:rgba(37,99,235,.14)}
+.product-banner{background:#f5f7fb;border-bottom-color:rgba(15,23,42,.1)}
 .product-banner-grid{background-image:linear-gradient(rgba(37,99,235,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(37,99,235,.08) 1px,transparent 1px)}
-.product-tag,.hv-tag{background:rgba(255,255,255,.86);color:var(--ink);border-color:rgba(37,99,235,.18);box-shadow:0 8px 24px rgba(30,64,175,.1)}
+.product-tag{background:transparent;color:var(--ink);border:0;box-shadow:none}.hv-tag{background:rgba(255,255,255,.86);color:var(--ink);border-color:rgba(37,99,235,.18);box-shadow:0 8px 24px rgba(30,64,175,.1)}
 .product-mini{background:#f6f9ff;border-color:rgba(37,99,235,.13)}
 .price-row .amount{color:#05070b;text-shadow:none}
 .price-row .old-amount{text-decoration-color:#64748b}
@@ -711,13 +710,10 @@ footer{background:rgba(255,255,255,.5)}
 
     <div class="product-card tilt" id="futures-bot">
       <div class="product-banner">
-        <div class="product-banner-grid"></div>
-        <img src="assets/champvision-logo-transparent.png" alt="Champvision.ai Logo">
-        <div class="product-tag"><span class="dot"></span> Tradovate <span class="sep">&middot;</span> <span class="accent">Futures Traders</span></div>
+        <div class="product-tag"><span class="dot"></span> MNQ <span class="sep">&middot;</span> <span class="accent">BREAKOUT</span></div>
       </div>
       <div class="product-body">
-        <div class="product-eyebrow">Gebaut für Konsistenz, nicht Hype</div>
-        <div class="product-name">CHAMPVISION<span class="ai">.ai</span> Futures Bot</div>
+        <div class="product-name">CV.AI MNQ BOT</div>
         <div class="product-mini-stats">
           <div class="product-mini"><div class="lbl">Market</div><div class="val">MNQ</div></div>
           <div class="product-mini"><div class="lbl">Strategie</div><div class="val">Breakout</div></div>
@@ -736,13 +732,10 @@ footer{background:rgba(255,255,255,.5)}
 
     <div class="product-card tilt" id="mgc-bot">
       <div class="product-banner">
-        <div class="product-banner-grid"></div>
-        <img src="assets/champvision-logo-transparent.png" alt="Champvision.ai Logo">
-        <div class="product-tag"><span class="dot"></span> Tradovate <span class="sep">&middot;</span> <span class="accent">Futures Traders</span></div>
+        <div class="product-tag"><span class="dot"></span> MGC <span class="sep">&middot;</span> <span class="accent">MOMENTUM</span></div>
       </div>
       <div class="product-body">
-        <div class="product-eyebrow">Gebaut für Konsistenz, nicht Hype</div>
-        <div class="product-name">CHAMPVISION<span class="ai">.ai</span> Futures Bot</div>
+        <div class="product-name">CV.AI MGC BOT</div>
         <div class="product-mini-stats">
           <div class="product-mini"><div class="lbl">Market</div><div class="val">MGC</div></div>
           <div class="product-mini"><div class="lbl">Strategie</div><div class="val">Momentum System</div></div>
@@ -761,14 +754,10 @@ footer{background:rgba(255,255,255,.5)}
 
     <div class="product-card tilt bundle" id="bundle-bots">
       <div class="product-banner">
-        <div class="product-banner-grid"></div>
-        <img src="assets/champvision-logo-transparent.png" alt="Champvision.ai Logo">
-        <div class="product-tag"><span class="dot"></span> MNQ + MGC <span class="sep">&middot;</span> <span class="accent">Bot Bundle</span></div>
+        <div class="product-tag"><span class="dot"></span> MNQ + MGC <span class="sep">&middot;</span> <span class="accent">BUNDLE</span></div>
       </div>
       <div class="product-body">
-        <div class="product-eyebrow">Beide Systeme in einem Paket</div>
-        <div class="product-name">CHAMPVISION<span class="ai">.ai</span> Bot Bundle</div>
-        <div class="product-sub">Breakout &amp; Momentum</div>
+        <div class="product-name">CV.AI BOT BUNDLE</div>
         <div class="product-mini-stats">
           <div class="product-mini"><div class="lbl">Markets</div><div class="val">MNQ + MGC</div></div>
           <div class="product-mini"><div class="lbl">Systeme</div><div class="val">2 Bots</div></div>
