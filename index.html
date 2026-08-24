@@ -216,9 +216,6 @@ section.product{position:relative;z-index:2;padding:30px 24px 90px;max-width:140
 .product-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--blue-bright);box-shadow:0 0 8px var(--blue-bright)}
 .product-tag .sep{color:var(--muted);opacity:.5}
 .product-tag .accent{color:var(--blue-bright)}
-.release-badge{position:absolute;right:16px;top:16px;z-index:2;background:linear-gradient(90deg,#8ee5a7,#c8f4d5);color:#0d2515;
-  border:1px solid rgba(87,187,117,.65);border-radius:100px;padding:8px 13px;font-family:'Orbitron';font-size:.7rem;font-weight:700;letter-spacing:1.4px;
-  box-shadow:0 0 22px rgba(77,197,110,.42),inset 0 1px 0 rgba(255,255,255,.6)}
 
 /* body */
 .product-body{padding:28px 26px 30px;display:flex;flex-direction:column;flex:1;transform:translateZ(10px)}
@@ -252,6 +249,9 @@ section.product{position:relative;z-index:2;padding:30px 24px 90px;max-width:140
 .price-row .amount{font-family:'Sora';font-weight:700;font-size:2.1rem;color:#fff;font-variant-numeric:lining-nums tabular-nums;
   text-shadow:0 0 26px rgba(79,141,255,.55),0 0 50px rgba(79,141,255,.25)}
 .price-row .period{color:var(--muted);font-size:.9rem;font-weight:300}
+.new-price-badge{display:inline-flex;align-items:center;background:linear-gradient(90deg,#8ee5a7,#c8f4d5);color:#0d2515;
+  border:1px solid rgba(87,187,117,.65);border-radius:100px;padding:6px 10px;font-family:'Orbitron';font-size:.64rem;font-weight:700;letter-spacing:1.2px;
+  box-shadow:0 0 18px rgba(77,197,110,.35)}
 .product-card .btn{width:100%;justify-content:center}
 .product-card .btn.is-locked{opacity:.55;cursor:not-allowed;pointer-events:none;filter:saturate(.45)}
 .bundle-actions{display:grid;gap:10px}
@@ -656,7 +656,6 @@ footer{background:rgba(255,255,255,.5)}
       <div class="product-body">
         <div class="product-eyebrow">Gebaut für Konsistenz, nicht Hype</div>
         <div class="product-name">CHAMPVISION<span class="ai">.ai</span> Futures Bot</div>
-        <div class="product-sub">KI-Signalstrategie</div>
         <div class="product-mini-stats">
           <div class="product-mini"><div class="lbl">Market</div><div class="val">MNQ</div></div>
           <div class="product-mini"><div class="lbl">Strategie</div><div class="val">Breakout</div></div>
@@ -678,12 +677,10 @@ footer{background:rgba(255,255,255,.5)}
         <div class="product-banner-grid"></div>
         <img src="assets/champvision-logo-transparent.png" alt="Champvision.ai Logo">
         <div class="product-tag"><span class="dot"></span> Tradovate <span class="sep">&middot;</span> <span class="accent">Futures Traders</span></div>
-        <div class="release-badge">NEU</div>
       </div>
       <div class="product-body">
         <div class="product-eyebrow">Gebaut für Konsistenz, nicht Hype</div>
         <div class="product-name">CHAMPVISION<span class="ai">.ai</span> Futures Bot</div>
-        <div class="product-sub">KI-Signalstrategie</div>
         <div class="product-mini-stats">
           <div class="product-mini"><div class="lbl">Market</div><div class="val">MGC</div></div>
           <div class="product-mini"><div class="lbl">Strategie</div><div class="val">Momentum System</div></div>
@@ -694,7 +691,7 @@ footer{background:rgba(255,255,255,.5)}
           <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Monatlich kündbar</li>
         </ul>
         <div class="product-footer">
-          <div class="price-row"><span class="amount">250€</span><span class="period">/ Monat</span></div>
+          <div class="price-row"><span class="amount">250€</span><span class="period">/ Monat</span><span class="new-price-badge">NEU</span></div>
           <a id="stripe-mgc" href="https://buy.stripe.com/8x2eVegxUdet6051BF5c403" class="btn btn-primary tilt" target="_blank" rel="noopener">Jetzt abonnieren</a>
         </div>
       </div>
