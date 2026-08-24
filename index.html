@@ -173,8 +173,8 @@ footer .brand{justify-content:center;margin-bottom:14px;font-size:.95rem}
 }
 
 /* ===== Performance stats bar (3D tilt) — separated cards with gaps ===== */
-.stats{position:relative;z-index:2;max-width:1400px;margin:0 auto;padding:0 24px 70px;perspective:var(--persp)}
-.stats-comparison{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.stats{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:0 24px 70px;perspective:var(--persp)}
+.stats-comparison{display:grid;grid-template-columns:1fr 1fr;gap:40px}
 .stats-group{padding:20px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(160deg,rgba(20,30,60,.4),rgba(8,12,24,.45))}
 .stats-group-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px;text-align:left}
 .stats-group-head h3{font-family:'Orbitron';font-size:1rem}.stats-group-head span{font-size:.74rem;color:var(--muted)}
@@ -658,12 +658,39 @@ footer{background:rgba(255,255,255,.5)}
       </g>
       <path d="M64 506C130 498 164 468 218 476S302 412 356 426 438 334 518 354" fill="none" stroke="#4f8dff" stroke-width="3" filter="url(#newGlow)"/>
       <path d="M582 520C642 502 682 514 724 464S808 438 850 394 932 360 1034 282" fill="none" stroke="#5dffae" stroke-width="3" filter="url(#newGlow)"/>
+      <rect x="510" y="170" width="80" height="410" fill="#040815"/>
+      <line x1="510" y1="180" x2="510" y2="570" stroke="#4f8dff" stroke-opacity=".18"/>
+      <line x1="590" y1="180" x2="590" y2="570" stroke="#5dffae" stroke-opacity=".18"/>
       <g font-family="Sora, sans-serif" font-size="12" fill="#7180a2"><text x="64" y="608">15m</text><text x="490" y="608">MNQ</text><text x="582" y="608">15m</text><text x="1002" y="608">MGC</text></g>
     </svg>
     <div class="hv-badge">DUAL BOT ANALYTICS</div>
     <div class="hv-tag"><span class="dot"></span> Tradovate <span class="sep">&middot;</span> <span class="accent">Futures Traders</span></div>
   </div>
 </div>
+
+<section class="stats reveal d5">
+  <div class="stats-comparison">
+    <div class="stats-group">
+      <div class="stats-group-head"><h3>CV.AI MNQ BOT</h3><span>15-Minuten-Backtest</span></div>
+      <div class="stats-grid">
+        <div class="stat tilt"><div class="num pos">43.646<span class="currency">USD</span></div><div class="lbl">G&amp;V insgesamt &middot; +87,29%</div></div>
+        <div class="stat tilt"><div class="num">3.743<span class="currency">USD</span></div><div class="lbl">Max. Drawdown &middot; 4,37%</div></div>
+        <div class="stat tilt"><div class="num">72,12%</div><div class="lbl">Gewinnbringende Trades &middot; 75/104</div></div>
+        <div class="stat tilt"><div class="num">2,59</div><div class="lbl">Profitfaktor</div></div>
+      </div>
+    </div>
+    <div class="stats-group">
+      <div class="stats-group-head"><h3>CV.AI MGC BOT</h3><span>15-Minuten-Backtest</span></div>
+      <div class="stats-grid">
+        <div class="stat tilt"><div class="num pos">54.685<span class="currency">USD</span></div><div class="lbl">G&amp;V insgesamt &middot; +109,37%</div></div>
+        <div class="stat tilt"><div class="num">2.056<span class="currency">USD</span></div><div class="lbl">Max. Drawdown &middot; 3,16%</div></div>
+        <div class="stat tilt"><div class="num">72,82%</div><div class="lbl">Gewinnbringende Trades &middot; 75/103</div></div>
+        <div class="stat tilt"><div class="num">4,195</div><div class="lbl">Profitfaktor</div></div>
+      </div>
+    </div>
+  </div>
+  <p class="stats-foot">Backtest-Ergebnisse. Keine Live-Performance, keine Garantie für zukünftige Ergebnisse.</p>
+</section>
 
 <div class="scan"></div>
 
@@ -769,30 +796,6 @@ footer{background:rgba(255,255,255,.5)}
     </div>
 
   </div>
-</section>
-
-<section class="stats reveal d5">
-  <div class="stats-comparison">
-    <div class="stats-group">
-      <div class="stats-group-head"><h3>CV.AI MNQ BOT</h3><span>15-Minuten-Backtest</span></div>
-      <div class="stats-grid">
-        <div class="stat tilt"><div class="num pos">43.646<span class="currency">USD</span></div><div class="lbl">G&amp;V insgesamt &middot; +87,29%</div></div>
-        <div class="stat tilt"><div class="num">3.743<span class="currency">USD</span></div><div class="lbl">Max. Drawdown &middot; 4,37%</div></div>
-        <div class="stat tilt"><div class="num">72,12%</div><div class="lbl">Gewinnbringende Trades &middot; 75/104</div></div>
-        <div class="stat tilt"><div class="num">2,59</div><div class="lbl">Profitfaktor</div></div>
-      </div>
-    </div>
-    <div class="stats-group">
-      <div class="stats-group-head"><h3>CV.AI MGC BOT</h3><span>15-Minuten-Backtest</span></div>
-      <div class="stats-grid">
-        <div class="stat tilt"><div class="num pos">54.685<span class="currency">USD</span></div><div class="lbl">G&amp;V insgesamt &middot; +109,37%</div></div>
-        <div class="stat tilt"><div class="num">2.056<span class="currency">USD</span></div><div class="lbl">Max. Drawdown &middot; 3,16%</div></div>
-        <div class="stat tilt"><div class="num">72,82%</div><div class="lbl">Gewinnbringende Trades &middot; 75/103</div></div>
-        <div class="stat tilt"><div class="num">4,195</div><div class="lbl">Profitfaktor</div></div>
-      </div>
-    </div>
-  </div>
-  <p class="stats-foot">Backtest-Ergebnisse. Keine Live-Performance, keine Garantie für zukünftige Ergebnisse.</p>
 </section>
 
 <section class="dashboard-preview reveal" id="dashboard">
