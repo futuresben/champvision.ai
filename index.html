@@ -249,6 +249,11 @@ section.product{position:relative;z-index:2;padding:30px 24px 90px;max-width:140
 .product-card .btn{width:100%;justify-content:center}
 .product-card .btn.is-locked{opacity:.55;cursor:not-allowed;pointer-events:none;filter:saturate(.45)}
 .bundle-actions{display:grid;gap:10px}
+.purchase-path{padding:14px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.025);display:grid;gap:9px}
+.purchase-path.existing-member{border-color:rgba(79,141,255,.58);background:linear-gradient(135deg,rgba(79,141,255,.16),rgba(79,141,255,.045));box-shadow:inset 0 0 28px rgba(79,141,255,.08)}
+.purchase-path-label{font-family:'Orbitron';font-size:.68rem;letter-spacing:1.7px;color:var(--muted);text-transform:uppercase;text-align:center}
+.purchase-path.existing-member .purchase-path-label{color:var(--blue-bright)}
+.purchase-path-hint{margin:0;color:var(--muted);font-size:.76rem;line-height:1.45;text-align:center}
 .bundle-actions .btn-secondary{border:1px solid rgba(79,141,255,.45);background:rgba(79,141,255,.08);color:var(--blue-bright);cursor:pointer}
 .bundle-actions .btn-secondary:hover{background:rgba(79,141,255,.16)}
 .upgrade-note{color:var(--muted);font-size:.76rem;line-height:1.45;margin:0;text-align:center}
@@ -711,9 +716,16 @@ footer{background:rgba(255,255,255,.5)}
           <div class="discount-badge">&#9889; 100€ Rabatt</div>
           <div class="price-row"><span class="old-amount">500€</span><span class="amount">400€</span><span class="period">/ Monat</span></div>
           <div class="bundle-actions">
-            <a id="stripe-bundle" class="btn btn-primary is-locked" aria-disabled="true">Bundle kaufen</a>
-            <button type="button" id="bundle-upgrade" class="btn btn-secondary">Upgrade aufs Bundle</button>
-            <p class="upgrade-note">Für bestehende MNQ-Mitglieder. Deine Restlaufzeit wird bei Stripe anteilig angerechnet.</p>
+            <div class="purchase-path">
+              <div class="purchase-path-label">Neu bei ChampVision?</div>
+              <a id="stripe-bundle" class="btn btn-primary is-locked" aria-disabled="true">Als Neukunde Bundle kaufen</a>
+              <p class="purchase-path-hint">Nur wenn du noch kein MNQ-Abo hast.</p>
+            </div>
+            <div class="purchase-path existing-member">
+              <div class="purchase-path-label">Bereits MNQ-Mitglied?</div>
+              <button type="button" id="bundle-upgrade" class="btn btn-secondary">Ich habe MNQ – aufs Bundle upgraden</button>
+              <p class="purchase-path-hint">Für bestehende MNQ-Mitglieder. Deine Restlaufzeit wird bei Stripe anteilig angerechnet.</p>
+            </div>
           </div>
         </div>
       </div>
