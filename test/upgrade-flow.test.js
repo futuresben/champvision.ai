@@ -1,7 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const crypto = require('crypto');
-const { Readable } = require('stream');
 
 function response(status = 200) {
   return {
@@ -66,15 +65,15 @@ test('paid upgrade stores remaining MNQ seconds and cancels the old subscription
     if (url.endsWith('/subscriptions/sub_mnq')) return stripeReply({ id: 'sub_mnq', status: 'active', items: { data: [{ current_period_end: created + 864000 }] } });
     return stripeReply({});
   };
-  const handler = require('../api/stripe-webhook');
-  const req = Readable.from([raw]);
-  req.method = 'POST';
-  req.headers = { 'stripe-signature': `t=${timestamp},v1=${signature}` };
-  const res = response();
-  await handler(req, res);
+  const handler = (await import('../api/stripe-webhook.mjs')).default;
+  const req = new Request('https://example.test/api/stripe-webhook', {
+    method: 'POST', body: raw,
+    headers: { 'content-type': 'application/json', 'stripe-signature': `t=${timestamp},v1=${signature}` }
+  });
+  const res = await handler.fetch(req);
   const customerUpdate = calls.find((call) => call.url.endsWith('/customers/cus_1'));
   const customerBody = new URLSearchParams(customerUpdate.options.body);
   assert.equal(customerBody.get('metadata[champvision_mnq_credit_seconds]'), '864000');
   assert.ok(calls.some((call) => call.url.endsWith('/subscriptions/sub_mnq') && call.options.method === 'DELETE'));
-  assert.equal(res.statusCode, 200);
+  assert.equal(res.status, 200);
 });
