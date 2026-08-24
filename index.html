@@ -383,7 +383,9 @@ section.dashboard-preview{position:relative;z-index:2;padding:30px 24px 100px;ma
 
 /* ===== Hero visual banner (radial chart) - 3D parallax tilt ===== */
 .hero-visual{position:relative;z-index:2;width:100%;max-width:var(--wide-content);margin:36px auto 0;padding:0 24px;perspective:var(--persp)}
-.hero-visual-inner{position:relative;border-radius:24px;overflow:hidden;border:1px solid var(--line);background:#03050a;aspect-ratio:16/9;
+.performance-heading{margin:0 auto 22px;text-align:center}.performance-heading h2{font-family:'Orbitron';font-size:clamp(1.45rem,3vw,2.35rem);margin:0;color:var(--ink)}
+.performance-heading h2 span{color:var(--blue)}.performance-heading p{margin:9px 0 0;color:var(--muted);font-size:.92rem}
+.hero-visual-inner{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:#03050a;aspect-ratio:2/1;
   box-shadow:0 30px 80px rgba(5,10,25,.6);transition:transform .15s ease-out,box-shadow .4s ease;transform-style:preserve-3d;will-change:transform}
 .hero-visual-inner:hover{box-shadow:0 40px 110px rgba(10,25,70,.65)}
 .hero-visual-inner svg{display:block;width:100%;height:100%}
@@ -395,7 +397,7 @@ section.dashboard-preview{position:relative;z-index:2;padding:30px 24px 100px;ma
 .hero-visual-inner svg rect.candle-up,.hero-visual-inner svg rect.candle-down{rx:1!important;shape-rendering:geometricPrecision}
 .hero-visual-inner>svg:not(.market-visual){display:none}
 .hero-visual-inner .market-visual{display:block;width:100%;height:100%;background:#050914}
-.hv-badge{position:absolute;top:22px;right:22px;background:linear-gradient(90deg,var(--blue-bright),var(--blue));color:#06101f;font-family:'Orbitron';font-weight:700;font-size:.82rem;letter-spacing:.3px;padding:11px 20px;border-radius:100px;box-shadow:0 6px 24px rgba(79,141,255,.5);z-index:3;transform:translateZ(50px)}
+.hv-badge{display:none}
 .hv-tag{position:absolute;bottom:22px;left:22px;display:flex;align-items:center;gap:10px;background:rgba(8,14,28,.72);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:100px;padding:10px 18px;font-size:.85rem;color:var(--ink);font-weight:500;z-index:3;transform:translateZ(50px)}
 .hv-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--blue-bright);box-shadow:0 0 8px var(--blue-bright)}
 .hv-tag .sep{color:var(--muted);opacity:.5}
@@ -405,6 +407,27 @@ section.dashboard-preview{position:relative;z-index:2;padding:30px 24px 100px;ma
   .hv-badge{font-size:.72rem;padding:9px 16px;top:16px;right:16px}
   .hv-tag{font-size:.75rem;padding:8px 14px;bottom:16px;left:16px}
 }
+
+/* Compact product and performance treatment inspired by the supplied references. */
+.product-card{border-radius:20px;background:#fff;border-color:rgba(15,23,42,.14);box-shadow:0 16px 42px rgba(15,23,42,.08)}
+.product-banner{height:72px;background:#f7f9fc;border-bottom:1px solid rgba(15,23,42,.09)}
+.product-tag{font-size:1rem;letter-spacing:1.1px}.product-tag .dot{width:9px;height:9px}
+.product-body{padding:23px 24px 24px}.product-eyebrow{margin:0 0 8px;font-size:.64rem;letter-spacing:1.8px}
+.product-name{font-family:'Sora';font-size:1.3rem;font-weight:700;margin-bottom:16px;color:#0b1220}
+.product-mini-stats{gap:10px;margin-bottom:18px}.product-mini{padding:13px 14px;border-radius:10px;background:#f5f7fb;border-color:rgba(15,23,42,.08)}
+.product-mini .lbl{font-size:.72rem}.product-mini .val{font-family:'Sora';font-size:.92rem}
+.product-features{gap:9px;margin-bottom:20px}.product-features li{font-size:.86rem;color:#58657a}
+.product-footer{border-top:1px solid rgba(15,23,42,.09);padding-top:18px}.price-row .amount{font-size:2rem}
+.product-card .btn{border-radius:10px;padding:13px 18px}
+.stats-comparison{gap:24px}.stats-group{padding:0;overflow:hidden;border-radius:18px;background:#fff;border-color:rgba(15,23,42,.14);box-shadow:0 14px 38px rgba(15,23,42,.07)}
+.stats-group-head{padding:18px 20px;margin:0;border-bottom:1px solid rgba(15,23,42,.09);background:#f7f9fc}
+.stats-group-head h3{font-family:'Sora';font-size:1rem}.stats-group-head span{font-size:.72rem}
+.stats-group .stats-grid{gap:0}.stats-group .stat{border:0;border-right:1px solid rgba(15,23,42,.07);border-bottom:1px solid rgba(15,23,42,.07);border-radius:0;background:#fff;padding:18px 14px}
+.stats-group .stat:hover{background:#f8fbff;box-shadow:none}.stats-group .stat .num{font-family:'Sora';font-size:clamp(1.15rem,1.7vw,1.55rem);text-shadow:none}
+.stats-group .stat .lbl{font-size:.7rem}
+.dual-candles>g:nth-child(n+14).candle-up{fill:#e5a62f!important;stroke:#e5a62f!important;filter:drop-shadow(0 0 3px rgba(229,166,47,.24))}
+.dual-candles>g:nth-child(n+14).candle-down{fill:#a36dcb!important;stroke:#a36dcb!important;filter:drop-shadow(0 0 3px rgba(163,109,203,.2))}
+@media(max-width:900px){.hero-visual-inner{aspect-ratio:4/3}.performance-heading p{font-size:.82rem}}
 @media (hover:none){
   .card:hover,.btn:hover,.cta-box:hover,.stat:hover,.product-card:hover,.hero-visual-inner:hover{transform:none}
 }
@@ -453,6 +476,8 @@ body::before{content:'';position:fixed;inset:0 0 auto;height:3px;z-index:20;poin
 .hero-visual-inner::before{color:#172033;background:rgba(255,255,255,.88);border-color:rgba(37,99,235,.18)}
 .hero-visual-inner svg>rect:first-of-type{fill:#f8faff!important}
 .hero-visual-inner svg>rect:last-of-type{opacity:0!important}
+.hero-visual-inner .market-visual text{fill:#334155!important}
+.hero-visual-inner .market-visual text:first-of-type,.hero-visual-inner .market-visual text:nth-of-type(2){fill:#0f172a!important}
 .hero-visual-inner svg circle:not(.candle-up):not(.candle-down){opacity:.18}
 .hv-badge{color:#fff;box-shadow:0 8px 24px rgba(37,99,235,.25)}
 .stats-foot,.disclaimer,.legal-note{color:#657187}
@@ -495,6 +520,10 @@ footer{background:rgba(255,255,255,.5)}
 </header>
 
 <div class="hero-visual reveal">
+  <div class="performance-heading">
+    <h2>Erst die <span>Performance</span>, dann die Entscheidung</h2>
+    <p>MNQ Breakout und MGC Momentum im direkten 15-Minuten-Vergleich</p>
+  </div>
   <div class="hero-visual-inner tilt-strong">
     <svg viewBox="0 0 1100 687" xmlns="http://www.w3.org/2000/svg">
 <defs>
@@ -629,7 +658,7 @@ footer{background:rgba(255,255,255,.5)}
       <text x="582" y="154" fill="#7180a2" font-family="Sora, sans-serif" font-size="13">Micro Gold · 15 Minuten</text>
       <path d="M64 506C130 498 164 468 218 476S302 412 356 426 438 334 518 354L518 580H64Z" fill="url(#newChartGlow)"/>
       <path d="M582 520C642 502 682 514 724 464S808 438 850 394 932 360 1034 282L1034 580H582Z" fill="url(#newChartGlow)"/>
-      <g stroke-width="2">
+      <g class="dual-candles" stroke-width="2">
         <g class="candle-up"><line x1="92" y1="478" x2="92" y2="548"/><rect x="84" y="492" width="16" height="38"/></g>
         <g class="candle-down"><line x1="126" y1="466" x2="126" y2="526"/><rect x="118" y="478" width="16" height="30"/></g>
         <g class="candle-up"><line x1="160" y1="440" x2="160" y2="510"/><rect x="152" y="454" width="16" height="40"/></g>
@@ -663,7 +692,6 @@ footer{background:rgba(255,255,255,.5)}
       <line x1="590" y1="180" x2="590" y2="570" stroke="#5dffae" stroke-opacity=".18"/>
       <g font-family="Sora, sans-serif" font-size="12" fill="#7180a2"><text x="64" y="608">15m</text><text x="490" y="608">MNQ</text><text x="582" y="608">15m</text><text x="1002" y="608">MGC</text></g>
     </svg>
-    <div class="hv-badge">DUAL BOT ANALYTICS</div>
     <div class="hv-tag"><span class="dot"></span> Tradovate <span class="sep">&middot;</span> <span class="accent">Futures Traders</span></div>
   </div>
 </div>
@@ -714,9 +742,10 @@ footer{background:rgba(255,255,255,.5)}
         <div class="product-tag"><span class="dot"></span> MNQ <span class="sep">&middot;</span> <span class="accent">BREAKOUT</span></div>
       </div>
       <div class="product-body">
+        <div class="product-eyebrow">Für konstante Performance entwickelt</div>
         <div class="product-name">CV.AI MNQ BOT</div>
         <div class="product-mini-stats">
-          <div class="product-mini"><div class="lbl">Market</div><div class="val">MNQ</div></div>
+          <div class="product-mini"><div class="lbl">Markt</div><div class="val">MNQ</div></div>
           <div class="product-mini"><div class="lbl">Strategie</div><div class="val">Breakout</div></div>
         </div>
         <ul class="product-features">
@@ -736,9 +765,10 @@ footer{background:rgba(255,255,255,.5)}
         <div class="product-tag"><span class="dot"></span> MGC <span class="sep">&middot;</span> <span class="accent">MOMENTUM</span></div>
       </div>
       <div class="product-body">
+        <div class="product-eyebrow">Für konstante Performance entwickelt</div>
         <div class="product-name">CV.AI MGC BOT</div>
         <div class="product-mini-stats">
-          <div class="product-mini"><div class="lbl">Market</div><div class="val">MGC</div></div>
+          <div class="product-mini"><div class="lbl">Markt</div><div class="val">MGC</div></div>
           <div class="product-mini"><div class="lbl">Strategie</div><div class="val">Momentum System</div></div>
         </div>
         <ul class="product-features">
@@ -758,9 +788,10 @@ footer{background:rgba(255,255,255,.5)}
         <div class="product-tag"><span class="dot"></span> MNQ + MGC <span class="sep">&middot;</span> <span class="accent">BUNDLE</span></div>
       </div>
       <div class="product-body">
+        <div class="product-eyebrow">Zwei Systeme in einem Bundle</div>
         <div class="product-name">CV.AI BOT BUNDLE</div>
         <div class="product-mini-stats">
-          <div class="product-mini"><div class="lbl">Markets</div><div class="val">MNQ + MGC</div></div>
+          <div class="product-mini"><div class="lbl">Märkte</div><div class="val">MNQ + MGC</div></div>
           <div class="product-mini"><div class="lbl">Systeme</div><div class="val">2 Bots</div></div>
         </div>
         <ul class="product-features">
