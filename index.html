@@ -1294,6 +1294,22 @@ function initParticles(){
     if (!ticking) { requestAnimationFrame(update); ticking = true; }
   });
 })();
+
+// Use the two supplied TradingView backtest screenshots as the visible curve shapes.
+(function applyReferenceEquityCurves(){
+  var mnqLine = 'M48 224 L60 218 L72 221 L84 213 L96 205 L108 198 L120 190 L132 181 L144 172 L156 177 L168 183 L180 177 L192 168 L204 158 L216 153 L228 145 L240 149 L252 139 L264 131 L276 123 L288 117 L300 111 L312 118 L324 126 L336 117 L348 111 L360 104 L372 96 L384 91 L396 97 L408 92 L420 101 L432 94 L444 88 L456 80 L468 72 L480 65 L492 56 L504 47';
+  var mgcLine = 'M48 226 L60 224 L72 220 L84 221 L96 216 L108 212 L120 209 L132 205 L144 201 L156 204 L168 200 L180 196 L192 191 L204 188 L216 184 L224 160 L236 158 L248 161 L260 165 L272 160 L284 156 L296 151 L308 145 L320 139 L332 133 L340 110 L352 108 L364 111 L376 115 L388 110 L400 105 L412 99 L424 93 L436 88 L444 70 L456 68 L468 72 L480 69 L488 66 L496 42 L504 45';
+  var mnq = document.querySelector('.mnq-panel');
+  var mgc = document.querySelector('.mgc-panel');
+  if (mnq) {
+    mnq.querySelector('.eq-line').setAttribute('d', mnqLine);
+    mnq.querySelector('.eq-area').setAttribute('d', mnqLine + ' L504 232 L48 232 Z');
+  }
+  if (mgc) {
+    mgc.querySelector('.eq-line').setAttribute('d', mgcLine);
+    mgc.querySelector('.eq-area').setAttribute('d', mgcLine + ' L504 232 L48 232 Z');
+  }
+})();
 </script>
 </body>
 </html>
