@@ -472,7 +472,7 @@ footer{background:rgba(255,255,255,.5)}
 
 <header class="hero">
   <div class="hero-logo-wrap reveal d1">
-    <div class="hero-logo tilt-logo" title="Bewege die Maus für 3D-Effekt">
+    <div class="hero-logo">
       <div class="logo-glow-2"></div>
       <div class="logo-glow-1"></div>
       <img src="assets/champvision-logo-transparent.png" alt="ChampVision Netzwerk">
@@ -1057,13 +1057,7 @@ function initParticles(){
   }
   rebuildLines();
 
-  var mouseX = 0, mouseY = 0, targetRotX = 0, targetRotY = 0;
-  window.addEventListener('mousemove', function(e){
-    mouseX = (e.clientX / window.innerWidth - 0.5);
-    mouseY = (e.clientY / window.innerHeight - 0.5);
-    targetRotY = mouseX * 0.25;
-    targetRotX = mouseY * 0.15;
-  });
+  var targetRotX = 0, targetRotY = 0;
 
   var clock = new THREE.Clock();
   var frame = 0;
@@ -1099,50 +1093,7 @@ function initParticles(){
 }
 
 // =========================================================
-// 2) 3D TILT ON HOVER — cards, buttons, stat tiles, product card, CTA box
-// =========================================================
-(function initTilt(){
-  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduceMotion || matchMedia('(hover:none)').matches) { return; }
-
-  var els = document.querySelectorAll('.tilt');
-  els.forEach(function(el){
-    var strength = el.classList.contains('tilt-strong') ? 14 : (el.classList.contains('card') ? 10 : 7);
-    el.addEventListener('mousemove', function(e){
-      var r = el.getBoundingClientRect();
-      var px = (e.clientX - r.left) / r.width;
-      var py = (e.clientY - r.top) / r.height;
-      var rx = (py - 0.5) * -strength;
-      var ry = (px - 0.5) * strength;
-      el.style.transform = 'perspective(1400px) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg) translateZ(6px)';
-      el.style.setProperty('--mx', (px*100).toFixed(1) + '%');
-      el.style.setProperty('--my', (py*100).toFixed(1) + '%');
-    });
-    el.addEventListener('mouseleave', function(){
-      el.style.transform = '';
-    });
-  });
-
-  // Logo: stronger tilt with depth layers (glow/ring move more than the image itself)
-  var logoWrap = document.querySelector('.hero-logo-wrap');
-  var logo = document.querySelector('.tilt-logo');
-  if (logoWrap && logo) {
-    logoWrap.addEventListener('mousemove', function(e){
-      var r = logoWrap.getBoundingClientRect();
-      var px = (e.clientX - r.left) / r.width;
-      var py = (e.clientY - r.top) / r.height;
-      var rx = (py - 0.5) * -26;
-      var ry = (px - 0.5) * 26;
-      logo.style.transform = 'perspective(1000px) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg)';
-    });
-    logoWrap.addEventListener('mouseleave', function(){
-      logo.style.transform = '';
-    });
-  }
-})();
-
-// =========================================================
-// 3) SCROLL PARALLAX — background grid + orbs drift at different depths
+// 2) SCROLL PARALLAX — background grid + orbs drift at different depths
 // =========================================================
 (function initParallax(){
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
