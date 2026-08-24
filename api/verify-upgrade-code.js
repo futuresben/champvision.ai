@@ -59,7 +59,7 @@ module.exports = async (req, res) => {
       'metadata[flow]': 'champvision_bundle_upgrade',
       'subscription_data[metadata][champvision_bundle]': 'true',
       'subscription_data[metadata][source_subscription_id]': verified.subscriptionId,
-      success_url: `${SITE_URL}?bundle_upgrade=success`,
+      success_url: `https://${req.headers.host}/api/finalize-upgrade?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${SITE_URL}?bundle_upgrade=cancelled`
     });
     const session = await stripe('checkout/sessions', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: form.toString() });

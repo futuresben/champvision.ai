@@ -11,7 +11,8 @@ function response(status = 200) {
     status(code) { this.statusCode = code; return this; },
     json(value) { this.body = value; return this; },
     send(value) { this.body = value; return this; },
-    end() { return this; }
+    end() { return this; },
+    redirect(value) { this.statusCode = 307; this.redirectedTo = value; return this; }
   };
 }
 
@@ -39,11 +40,12 @@ test('upgrade checkout charges the 400 euro bundle immediately', async () => {
   };
   const handler = require('../api/verify-upgrade-code');
   const res = response();
-  await handler({ method: 'POST', headers: {}, body: { challenge: challenge('upgrade'), code: '123456' } }, res);
+  await handler({ method: 'POST', headers: { host: 'preview.test' }, body: { challenge: challenge('upgrade'), code: '123456' } }, res);
   const checkoutBody = new URLSearchParams(calls[1].options.body);
   assert.equal(checkoutBody.get('mode'), 'subscription');
   assert.equal(checkoutBody.get('line_items[0][price]'), 'price_bundle');
   assert.equal(checkoutBody.get('metadata[source_subscription_id]'), 'sub_mnq');
+  assert.equal(checkoutBody.get('success_url'), 'https://preview.test/api/finalize-upgrade?session_id={CHECKOUT_SESSION_ID}');
   assert.equal(res.body.url, 'https://checkout.stripe.test/session');
 });
 
@@ -76,4 +78,28 @@ test('paid upgrade stores remaining MNQ seconds and cancels the old subscription
   assert.equal(customerBody.get('metadata[champvision_mnq_credit_seconds]'), '864000');
   assert.ok(calls.some((call) => call.url.endsWith('/subscriptions/sub_mnq') && call.options.method === 'DELETE'));
   assert.equal(res.status, 200);
+});
+
+test('paid checkout return finalizes the upgrade without a webhook', async () => {
+  process.env.STRIPE_SECRET_KEY = 'rk_test';
+  const now = Math.floor(Date.now() / 1000);
+  const calls = [];
+  global.fetch = async (url, options = {}) => {
+    calls.push({ url, options });
+    if (url.endsWith('/checkout/sessions/cs_paid')) return stripeReply({
+      id: 'cs_paid', status: 'complete', payment_status: 'paid', mode: 'subscription',
+      customer: 'cus_1', subscription: 'sub_bundle',
+      metadata: { flow: 'champvision_bundle_upgrade', source_subscription_id: 'sub_mnq' }
+    });
+    if (url.endsWith('/subscriptions/sub_bundle')) return stripeReply({ id: 'sub_bundle', metadata: {} });
+    if (url.endsWith('/subscriptions/sub_mnq')) return stripeReply({
+      id: 'sub_mnq', status: 'active', items: { data: [{ current_period_end: now + 864000 }] }
+    });
+    return stripeReply({});
+  };
+  const handler = require('../api/finalize-upgrade');
+  const res = response();
+  await handler({ method: 'GET', query: { session_id: 'cs_paid' } }, res);
+  assert.ok(calls.some((call) => call.url.endsWith('/subscriptions/sub_mnq') && call.options.method === 'DELETE'));
+  assert.match(res.redirectedTo, /bundle_upgrade=success/);
 });
