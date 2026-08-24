@@ -189,21 +189,21 @@ footer .brand{justify-content:center;margin-bottom:14px;font-size:.95rem}
 .stats-foot{margin-top:16px;font-size:.72rem;color:var(--muted);opacity:.65;text-align:center;font-weight:300;max-width:560px;margin-inline:auto}
 
 /* ===== Product / subscription card (3D tilt) ===== */
-section.product{position:relative;z-index:2;padding:30px 24px 90px;max-width:1400px;margin:0 auto;text-align:center;perspective:var(--persp)}
-.products-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;align-items:stretch}
-@media (max-width:1100px){.products-grid{grid-template-columns:1fr 1fr}.product-card.bundle{grid-column:1/-1;max-width:560px;width:100%;justify-self:center}}
+section.product{position:relative;z-index:2;padding:30px 24px 90px;max-width:1500px;margin:0 auto;text-align:center;perspective:var(--persp)}
+.products-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;align-items:start}
+@media (max-width:900px){.products-grid{grid-template-columns:1fr}.product-card.bundle{grid-column:auto;max-width:none}}
 @media (max-width:720px){.products-grid{grid-template-columns:1fr}.product-card.bundle{grid-column:auto;max-width:none}}
 
 .product-card{background:linear-gradient(160deg,rgba(20,30,58,.6),rgba(8,12,24,.65));border:1px solid rgba(79,141,255,.22);border-radius:22px;
-  overflow:hidden;text-align:left;display:flex;flex-direction:column;height:100%;
+  overflow:hidden;text-align:left;display:flex;flex-direction:column;height:auto;
   transition:transform .18s ease-out,box-shadow .35s ease,border-color .35s ease;transform-style:preserve-3d;will-change:transform;
   box-shadow:0 0 50px rgba(20,40,90,.18)}
 .product-card:hover{box-shadow:0 28px 80px rgba(20,50,120,.4);border-color:rgba(79,141,255,.4)}
 
 /* banner */
-.product-banner{position:relative;height:170px;overflow:hidden;background:radial-gradient(circle at 30% 30%,rgba(79,141,255,.35),transparent 60%),#070b18;
+.product-banner{position:relative;height:132px;overflow:hidden;background:radial-gradient(circle at 30% 30%,rgba(79,141,255,.35),transparent 60%),#070b18;
   border-bottom:1px solid rgba(79,141,255,.18);transform:translateZ(20px)}
-.product-banner img{position:absolute;left:50%;top:39%;width:104px;height:104px;transform:translate(-50%,-50%);
+.product-banner img{position:absolute;left:50%;top:39%;width:86px;height:86px;transform:translate(-50%,-50%);
   filter:drop-shadow(0 0 30px rgba(79,141,255,.5));opacity:.95}
 .product-banner-grid{position:absolute;inset:0;
   background-image:linear-gradient(rgba(79,141,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(79,141,255,.08) 1px,transparent 1px);
@@ -218,24 +218,24 @@ section.product{position:relative;z-index:2;padding:30px 24px 90px;max-width:140
 .product-tag .accent{color:var(--blue-bright)}
 
 /* body */
-.product-body{padding:28px 26px 30px;display:flex;flex-direction:column;flex:1;transform:translateZ(10px)}
+.product-body{padding:20px 22px 22px;display:flex;flex-direction:column;transform:translateZ(10px)}
 .product-eyebrow{font-family:'Orbitron';font-size:.7rem;letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;margin-bottom:10px}
 .product-name{font-family:'Orbitron';font-weight:700;font-size:1.25rem;letter-spacing:.3px;margin-bottom:6px}
 .product-name .ai{color:var(--blue-bright)}
-.product-sub{color:var(--blue-bright);font-size:.92rem;font-weight:500;margin-bottom:18px}
-.product-mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.product-sub{color:var(--blue-bright);font-size:.92rem;font-weight:500;margin-bottom:11px}
+.product-mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px}
 .product-mini{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:11px 14px}
 .product-mini .lbl{font-size:.7rem;color:var(--muted);margin-bottom:3px}
 .product-mini .val{font-family:'Orbitron';font-weight:700;font-size:.92rem;color:var(--ink)}
 
-.product-features{list-style:none;margin:0 0 22px;padding:0;display:flex;flex-direction:column;gap:9px}
+.product-features{list-style:none;margin:0 0 14px;padding:0;display:flex;flex-direction:column;gap:7px}
 .product-features li{display:flex;align-items:center;gap:9px;font-size:.9rem;color:var(--muted);font-weight:300}
 .product-features li::before{content:'';flex:0 0 auto;width:16px;height:16px;border-radius:50%;
   background:#18b978;position:relative;box-shadow:0 0 0 4px rgba(24,185,120,.1),0 0 13px rgba(24,185,120,.7)}
 .product-features li::after{content:'';position:absolute}
 .product-features li svg{display:none}
 
-.product-footer{margin-top:auto}
+.product-footer{margin-top:0}
 .discount-badge{display:inline-flex;align-items:center;background:rgba(79,141,255,.10);color:var(--blue-bright);
   font-family:'Orbitron';font-weight:600;font-size:.74rem;letter-spacing:.7px;padding:7px 12px;border-radius:8px;
   border:1px solid rgba(79,141,255,.34);margin-bottom:12px}
@@ -243,7 +243,7 @@ section.product{position:relative;z-index:2;padding:30px 24px 90px;max-width:140
   background:linear-gradient(90deg,#bdebcf,#d8f4e3);color:#102319;
   border:1px solid rgba(88,174,118,.55);box-shadow:0 0 22px rgba(58,150,91,.16),inset 0 1px 0 rgba(255,255,255,.55);
   font-size:.83rem;font-weight:700;letter-spacing:1px;padding:10px 14px}
-.price-row{display:flex;align-items:baseline;gap:9px;margin-bottom:18px;flex-wrap:wrap}
+.price-row{display:flex;align-items:baseline;gap:9px;margin-bottom:12px;flex-wrap:wrap}
 .price-row .old-amount{font-family:'Sora';font-weight:500;font-size:1.15rem;color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(138,155,196,.7);opacity:.75}
 .product-card.bundle .price-row .old-amount{font-weight:700;color:#b4233a;text-decoration-color:#b4233a;text-decoration-thickness:2px;opacity:1;background:#fff0f2;border:1px solid rgba(180,35,58,.15);border-radius:8px;padding:3px 8px}
 .price-row .amount{font-family:'Sora';font-weight:700;font-size:2.1rem;color:#fff;font-variant-numeric:lining-nums tabular-nums;
@@ -255,7 +255,7 @@ section.product{position:relative;z-index:2;padding:30px 24px 90px;max-width:140
 .product-card .btn{width:100%;justify-content:center}
 .product-card .btn.is-locked{opacity:.55;cursor:not-allowed;pointer-events:none;filter:saturate(.45)}
 .bundle-actions{display:grid;gap:10px}
-.purchase-path{padding:14px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.025);display:grid;gap:9px}
+.purchase-path{padding:10px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.025);display:grid;gap:6px}
 .purchase-path.existing-member{border-color:rgba(79,141,255,.58);background:linear-gradient(135deg,rgba(79,141,255,.16),rgba(79,141,255,.045));box-shadow:inset 0 0 28px rgba(79,141,255,.08)}
 .purchase-path-label{font-family:'Orbitron';font-size:.68rem;letter-spacing:1.7px;color:var(--muted);text-transform:uppercase;text-align:center}
 .purchase-path.existing-member .purchase-path-label{color:var(--blue-bright)}
@@ -287,6 +287,21 @@ section.product{position:relative;z-index:2;padding:30px 24px 90px;max-width:140
 
 /* ===== Dashboard preview section ===== */
 section.dashboard-preview{position:relative;z-index:2;padding:30px 24px 100px;max-width:1100px;margin:0 auto;text-align:center;perspective:var(--persp)}
+.performance-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:stretch;margin-top:42px}
+.performance-panel{min-width:0;border:1px solid rgba(79,141,255,.25);border-radius:20px;background:#070b16;overflow:hidden;box-shadow:0 20px 60px rgba(10,25,70,.28);text-align:left}
+.performance-panel-title{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px 18px;border-bottom:1px solid rgba(79,141,255,.18);font-family:'Orbitron';font-size:.82rem;font-weight:700}
+.performance-panel-title span{font-family:'Sora';font-size:.72rem;font-weight:400;color:var(--muted)}
+.performance-panel .dash-window{margin:0;border:0;border-radius:0;box-shadow:none;transform:none!important}
+.performance-panel .dash-body{padding:18px 16px 22px}
+.performance-panel .dash-head h3{font-size:.92rem}.performance-panel .dash-head{margin-bottom:14px}
+.performance-panel .dash-card{padding:11px}.performance-panel .dash-card .val{font-size:.9rem}
+.performance-panel .dash-propfirms{display:none}.performance-panel .dash-lower{grid-template-columns:1fr;margin-top:12px}.performance-panel .dash-feed{display:none}
+.performance-panel .dash-equity{min-height:210px}
+.mgc-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;padding:16px}
+.mgc-stat{border:1px solid var(--line);border-radius:12px;padding:11px;background:rgba(255,255,255,.025)}
+.mgc-stat strong{display:block;font-family:'Orbitron';font-size:.9rem;color:#5dffae}.mgc-stat span{font-size:.68rem;color:var(--muted)}
+.mgc-performance-image{width:100%;min-height:260px;display:block;object-fit:contain;background:#0b0b0b;border-top:1px solid var(--line)}
+@media (max-width:850px){.performance-grid{grid-template-columns:1fr}.mgc-performance-image{min-height:0}.performance-panel .dash-equity{min-height:180px}}
 .dash-window{position:relative;border-radius:20px;overflow:hidden;border:1px solid rgba(79,141,255,.25);background:#070b16;
   box-shadow:0 0 70px rgba(20,50,120,.25);margin-top:46px;text-align:left;
   transition:transform .15s ease-out,box-shadow .4s ease;transform-style:preserve-3d;will-change:transform}
@@ -379,12 +394,14 @@ section.dashboard-preview{position:relative;z-index:2;padding:30px 24px 100px;ma
   box-shadow:0 30px 80px rgba(5,10,25,.6);transition:transform .15s ease-out,box-shadow .4s ease;transform-style:preserve-3d;will-change:transform}
 .hero-visual-inner:hover{box-shadow:0 40px 110px rgba(10,25,70,.65)}
 .hero-visual-inner svg{display:block;width:100%;height:100%}
-.hero-visual-inner::before{content:'MNQ1!  ·  15M  ·  CME';position:absolute;top:22px;left:22px;z-index:3;
+.hero-visual-inner::before{content:'MNQ + MGC  ·  15M  ·  CME';position:absolute;top:22px;left:22px;z-index:3;
   font-family:'Orbitron';font-size:.78rem;font-weight:700;letter-spacing:.7px;color:#dce8ff;
   background:rgba(3,8,18,.78);border:1px solid rgba(125,158,220,.22);border-radius:8px;padding:9px 13px;backdrop-filter:blur(10px)}
 .hero-visual-inner svg .candle-up{fill:#21c997!important;stroke:#21c997!important;opacity:.96!important;filter:drop-shadow(0 0 3px rgba(33,201,151,.22))}
 .hero-visual-inner svg .candle-down{fill:#ef5b74!important;stroke:#ef5b74!important;opacity:.96!important;filter:drop-shadow(0 0 3px rgba(239,91,116,.2))}
 .hero-visual-inner svg rect.candle-up,.hero-visual-inner svg rect.candle-down{rx:1!important;shape-rendering:geometricPrecision}
+.hero-visual-inner>svg:not(.market-visual){display:none}
+.hero-visual-inner .market-visual{display:block;width:100%;height:100%;background:#050914}
 .hv-badge{position:absolute;top:22px;right:22px;background:linear-gradient(90deg,var(--blue-bright),var(--blue));color:#06101f;font-family:'Orbitron';font-weight:700;font-size:.82rem;letter-spacing:.3px;padding:11px 20px;border-radius:100px;box-shadow:0 6px 24px rgba(79,141,255,.5);z-index:3;transform:translateZ(50px)}
 .hv-tag{position:absolute;bottom:22px;left:22px;display:flex;align-items:center;gap:10px;background:rgba(8,14,28,.72);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:100px;padding:10px 18px;font-size:.85rem;color:var(--ink);font-weight:500;z-index:3;transform:translateZ(50px)}
 .hv-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--blue-bright);box-shadow:0 0 8px var(--blue-bright)}
@@ -603,7 +620,54 @@ footer{background:rgba(255,255,255,.5)}
 <circle cx="550" cy="420" r="6" fill="#eaf1ff"/><circle cx="550" cy="420" r="16" fill="none" stroke="#6ea8ff" stroke-width="1.5" opacity="0.6"/>
 <rect width="1100" height="687" fill="url(#fadeBottom)"/>
 </svg>
-    <div class="hv-badge">72,12% Win Rate</div>
+    <svg class="market-visual" viewBox="0 0 1100 687" xmlns="http://www.w3.org/2000/svg" aria-label="Neu gestaltete 15-Minuten-Chartvisualisierung für MNQ und MGC">
+      <defs>
+        <linearGradient id="newChartBg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#08142b"/><stop offset="1" stop-color="#030713"/></linearGradient>
+        <linearGradient id="newChartGlow" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#4f8dff" stop-opacity=".3"/><stop offset="1" stop-color="#4f8dff" stop-opacity="0"/></linearGradient>
+        <pattern id="newGrid" width="55" height="55" patternUnits="userSpaceOnUse"><path d="M55 0H0V55" fill="none" stroke="#9bb8ff" stroke-opacity=".08"/></pattern>
+        <filter id="newGlow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <rect width="1100" height="687" fill="url(#newChartBg)"/>
+      <rect x="32" y="82" width="1036" height="548" rx="20" fill="url(#newGrid)" stroke="#4f8dff" stroke-opacity=".2"/>
+      <line x1="550" y1="108" x2="550" y2="604" stroke="#4f8dff" stroke-opacity=".24"/>
+      <text x="64" y="128" fill="#eaf1ff" font-family="Orbitron, sans-serif" font-size="18" font-weight="700">MNQ BREAKOUT</text>
+      <text x="582" y="128" fill="#eaf1ff" font-family="Orbitron, sans-serif" font-size="18" font-weight="700">MGC MOMENTUM</text>
+      <text x="64" y="154" fill="#7180a2" font-family="Sora, sans-serif" font-size="13">Micro Nasdaq-100 · 15 Minuten</text>
+      <text x="582" y="154" fill="#7180a2" font-family="Sora, sans-serif" font-size="13">Micro Gold · 15 Minuten</text>
+      <path d="M64 506C130 498 164 468 218 476S302 412 356 426 438 334 518 354L518 580H64Z" fill="url(#newChartGlow)"/>
+      <path d="M582 520C642 502 682 514 724 464S808 438 850 394 932 360 1034 282L1034 580H582Z" fill="url(#newChartGlow)"/>
+      <g stroke-width="2">
+        <g class="candle-up"><line x1="92" y1="478" x2="92" y2="548"/><rect x="84" y="492" width="16" height="38"/></g>
+        <g class="candle-down"><line x1="126" y1="466" x2="126" y2="526"/><rect x="118" y="478" width="16" height="30"/></g>
+        <g class="candle-up"><line x1="160" y1="440" x2="160" y2="510"/><rect x="152" y="454" width="16" height="40"/></g>
+        <g class="candle-up"><line x1="194" y1="414" x2="194" y2="482"/><rect x="186" y="426" width="16" height="40"/></g>
+        <g class="candle-down"><line x1="228" y1="398" x2="228" y2="464"/><rect x="220" y="414" width="16" height="31"/></g>
+        <g class="candle-up"><line x1="262" y1="374" x2="262" y2="444"/><rect x="254" y="390" width="16" height="38"/></g>
+        <g class="candle-down"><line x1="296" y1="354" x2="296" y2="422"/><rect x="288" y="368" width="16" height="37"/></g>
+        <g class="candle-up"><line x1="330" y1="326" x2="330" y2="396"/><rect x="322" y="340" width="16" height="39"/></g>
+        <g class="candle-up"><line x1="364" y1="292" x2="364" y2="366"/><rect x="356" y="308" width="16" height="42"/></g>
+        <g class="candle-down"><line x1="398" y1="278" x2="398" y2="346"/><rect x="390" y="294" width="16" height="34"/></g>
+        <g class="candle-up"><line x1="432" y1="244" x2="432" y2="318"/><rect x="424" y="260" width="16" height="41"/></g>
+        <g class="candle-up"><line x1="466" y1="214" x2="466" y2="286"/><rect x="458" y="230" width="16" height="39"/></g>
+        <g class="candle-down"><line x1="500" y1="206" x2="500" y2="270"/><rect x="492" y="222" width="16" height="31"/></g>
+        <g class="candle-up"><line x1="610" y1="492" x2="610" y2="550"/><rect x="602" y="506" width="16" height="29"/></g>
+        <g class="candle-up"><line x1="644" y1="462" x2="644" y2="526"/><rect x="636" y="476" width="16" height="34"/></g>
+        <g class="candle-down"><line x1="678" y1="442" x2="678" y2="506"/><rect x="670" y="456" width="16" height="33"/></g>
+        <g class="candle-up"><line x1="712" y1="408" x2="712" y2="480"/><rect x="704" y="424" width="16" height="39"/></g>
+        <g class="candle-up"><line x1="746" y1="374" x2="746" y2="448"/><rect x="738" y="390" width="16" height="41"/></g>
+        <g class="candle-down"><line x1="780" y1="356" x2="780" y2="422"/><rect x="772" y="370" width="16" height="35"/></g>
+        <g class="candle-up"><line x1="814" y1="322" x2="814" y2="396"/><rect x="806" y="338" width="16" height="41"/></g>
+        <g class="candle-up"><line x1="848" y1="286" x2="848" y2="360"/><rect x="840" y="302" width="16" height="41"/></g>
+        <g class="candle-down"><line x1="882" y1="272" x2="882" y2="338"/><rect x="874" y="286" width="16" height="35"/></g>
+        <g class="candle-up"><line x1="916" y1="238" x2="916" y2="310"/><rect x="908" y="254" width="16" height="39"/></g>
+        <g class="candle-up"><line x1="950" y1="204" x2="950" y2="278"/><rect x="942" y="220" width="16" height="41"/></g>
+        <g class="candle-up"><line x1="984" y1="176" x2="984" y2="248"/><rect x="976" y="192" width="16" height="39"/></g>
+      </g>
+      <path d="M64 506C130 498 164 468 218 476S302 412 356 426 438 334 518 354" fill="none" stroke="#4f8dff" stroke-width="3" filter="url(#newGlow)"/>
+      <path d="M582 520C642 502 682 514 724 464S808 438 850 394 932 360 1034 282" fill="none" stroke="#5dffae" stroke-width="3" filter="url(#newGlow)"/>
+      <g font-family="Sora, sans-serif" font-size="12" fill="#7180a2"><text x="64" y="608">15m</text><text x="490" y="608">MNQ</text><text x="582" y="608">15m</text><text x="1002" y="608">MGC</text></g>
+    </svg>
+    <div class="hv-badge">DUAL BOT ANALYTICS</div>
     <div class="hv-tag"><span class="dot"></span> Tradovate <span class="sep">&middot;</span> <span class="accent">Futures Traders</span></div>
   </div>
 </div>
@@ -737,10 +801,13 @@ footer{background:rgba(255,255,255,.5)}
 </section>
 
 <section class="dashboard-preview reveal" id="dashboard">
-  <div class="eyebrow">Dein Live-Cockpit</div>
-  <h2 style="font-family:'Orbitron';font-weight:700;font-size:clamp(1.6rem,4vw,2.4rem);letter-spacing:.5px;max-width:680px;margin:0 auto">Das Champ Dashboard &ndash; alles im Blick</h2>
-  <p style="color:var(--muted);font-weight:300;font-size:1.05rem;max-width:560px;margin:16px auto 0">Winrate, P&amp;L, Signal-Feed und Equity-Kurve in Echtzeit &ndash; dein persönliches Trading-Cockpit, sobald du beitrittst.</p>
+  <div class="eyebrow">Bot Performance</div>
+  <h2 style="font-family:'Orbitron';font-weight:700;font-size:clamp(1.6rem,4vw,2.4rem);letter-spacing:.5px;max-width:680px;margin:0 auto">MNQ &amp; MGC im Vergleich</h2>
+  <p style="color:var(--muted);font-weight:300;font-size:1.05rem;max-width:560px;margin:16px auto 0">Die aktuellen 15-Minuten-Backtests beider Bots auf einen Blick.</p>
 
+  <div class="performance-grid">
+    <article class="performance-panel">
+      <div class="performance-panel-title">CV.AI MNQ BOT <span>15-Minuten-Chart</span></div>
   <div class="dash-window tilt-strong">
     <div class="dash-chrome">
       <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
@@ -825,6 +892,18 @@ footer{background:rgba(255,255,255,.5)}
         </div>
       </div>
     </div>
+  </div>
+    </article>
+    <article class="performance-panel">
+      <div class="performance-panel-title">CV.AI MGC BOT <span>15-Minuten-Chart</span></div>
+      <div class="mgc-stats">
+        <div class="mgc-stat"><strong>+54.685 USD</strong><span>G&amp;V insgesamt · +109,37%</span></div>
+        <div class="mgc-stat"><strong>72,82%</strong><span>Gewinnbringende Trades · 75/103</span></div>
+        <div class="mgc-stat"><strong>4,195</strong><span>Profitfaktor</span></div>
+        <div class="mgc-stat"><strong>3,16%</strong><span>Max. Drawdown · 2.056 USD</span></div>
+      </div>
+      <img class="mgc-performance-image" src="assets/mgc-performance-15m.png" alt="Backtest-Performance des CV.AI MGC Bots im 15-Minuten-Chart">
+    </article>
   </div>
 </section>
 
