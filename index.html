@@ -173,7 +173,14 @@ footer .brand{justify-content:center;margin-bottom:14px;font-size:.95rem}
 }
 
 /* ===== Performance stats bar (3D tilt) — separated cards with gaps ===== */
-.stats{position:relative;z-index:2;max-width:980px;margin:0 auto;padding:0 24px 70px;perspective:var(--persp)}
+.stats{position:relative;z-index:2;max-width:1400px;margin:0 auto;padding:0 24px 70px;perspective:var(--persp)}
+.stats-comparison{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.stats-group{padding:20px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(160deg,rgba(20,30,60,.4),rgba(8,12,24,.45))}
+.stats-group-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px;text-align:left}
+.stats-group-head h3{font-family:'Orbitron';font-size:1rem}.stats-group-head span{font-size:.74rem;color:var(--muted)}
+.stats-group .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:900px){.stats-comparison{grid-template-columns:1fr}}
+@media(max-width:520px){.stats-group .stats-grid{grid-template-columns:1fr}}
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}
 .stat{background:linear-gradient(160deg,rgba(20,30,60,.55),rgba(8,12,24,.6));border:1px solid var(--line);border-radius:16px;
   padding:30px 20px;text-align:center;backdrop-filter:blur(6px);
@@ -190,12 +197,12 @@ footer .brand{justify-content:center;margin-bottom:14px;font-size:.95rem}
 
 /* ===== Product / subscription card (3D tilt) ===== */
 section.product{position:relative;z-index:2;padding:30px 24px 90px;max-width:1500px;margin:0 auto;text-align:center;perspective:var(--persp)}
-.products-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;align-items:start}
+.products-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;align-items:stretch}
 @media (max-width:900px){.products-grid{grid-template-columns:1fr}.product-card.bundle{grid-column:auto;max-width:none}}
 @media (max-width:720px){.products-grid{grid-template-columns:1fr}.product-card.bundle{grid-column:auto;max-width:none}}
 
 .product-card{background:linear-gradient(160deg,rgba(20,30,58,.6),rgba(8,12,24,.65));border:1px solid rgba(79,141,255,.22);border-radius:22px;
-  overflow:hidden;text-align:left;display:flex;flex-direction:column;height:auto;
+  overflow:hidden;text-align:left;display:flex;flex-direction:column;height:100%;
   transition:transform .18s ease-out,box-shadow .35s ease,border-color .35s ease;transform-style:preserve-3d;will-change:transform;
   box-shadow:0 0 50px rgba(20,40,90,.18)}
 .product-card:hover{box-shadow:0 28px 80px rgba(20,50,120,.4);border-color:rgba(79,141,255,.4)}
@@ -218,7 +225,7 @@ section.product{position:relative;z-index:2;padding:30px 24px 90px;max-width:150
 .product-tag .accent{color:var(--blue-bright)}
 
 /* body */
-.product-body{padding:20px 22px 22px;display:flex;flex-direction:column;transform:translateZ(10px)}
+.product-body{padding:20px 22px 22px;display:flex;flex-direction:column;flex:1;transform:translateZ(10px)}
 .product-eyebrow{font-family:'Orbitron';font-size:.7rem;letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;margin-bottom:10px}
 .product-name{font-family:'Orbitron';font-weight:700;font-size:1.25rem;letter-spacing:.3px;margin-bottom:6px}
 .product-name .ai{color:var(--blue-bright)}
@@ -235,7 +242,7 @@ section.product{position:relative;z-index:2;padding:30px 24px 90px;max-width:150
 .product-features li::after{content:'';position:absolute}
 .product-features li svg{display:none}
 
-.product-footer{margin-top:0}
+.product-footer{margin-top:auto}
 .discount-badge{display:inline-flex;align-items:center;background:rgba(79,141,255,.10);color:var(--blue-bright);
   font-family:'Orbitron';font-weight:600;font-size:.74rem;letter-spacing:.7px;padding:7px 12px;border-radius:8px;
   border:1px solid rgba(79,141,255,.34);margin-bottom:12px}
@@ -254,7 +261,8 @@ section.product{position:relative;z-index:2;padding:30px 24px 90px;max-width:150
   box-shadow:0 0 18px rgba(77,197,110,.35)}
 .product-card .btn{width:100%;justify-content:center}
 .product-card .btn.is-locked{opacity:.55;cursor:not-allowed;pointer-events:none;filter:saturate(.45)}
-.bundle-actions{display:grid;gap:10px}
+.bundle-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.bundle-actions .purchase-path-hint{font-size:.7rem}
 .purchase-path{padding:10px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.025);display:grid;gap:6px}
 .purchase-path.existing-member{border-color:rgba(79,141,255,.58);background:linear-gradient(135deg,rgba(79,141,255,.16),rgba(79,141,255,.045));box-shadow:inset 0 0 28px rgba(79,141,255,.08)}
 .purchase-path-label{font-family:'Orbitron';font-size:.68rem;letter-spacing:1.7px;color:var(--muted);text-transform:uppercase;text-align:center}
@@ -287,21 +295,6 @@ section.product{position:relative;z-index:2;padding:30px 24px 90px;max-width:150
 
 /* ===== Dashboard preview section ===== */
 section.dashboard-preview{position:relative;z-index:2;padding:30px 24px 100px;max-width:1100px;margin:0 auto;text-align:center;perspective:var(--persp)}
-.performance-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:stretch;margin-top:42px}
-.performance-panel{min-width:0;border:1px solid rgba(79,141,255,.25);border-radius:20px;background:#070b16;overflow:hidden;box-shadow:0 20px 60px rgba(10,25,70,.28);text-align:left}
-.performance-panel-title{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px 18px;border-bottom:1px solid rgba(79,141,255,.18);font-family:'Orbitron';font-size:.82rem;font-weight:700}
-.performance-panel-title span{font-family:'Sora';font-size:.72rem;font-weight:400;color:var(--muted)}
-.performance-panel .dash-window{margin:0;border:0;border-radius:0;box-shadow:none;transform:none!important}
-.performance-panel .dash-body{padding:18px 16px 22px}
-.performance-panel .dash-head h3{font-size:.92rem}.performance-panel .dash-head{margin-bottom:14px}
-.performance-panel .dash-card{padding:11px}.performance-panel .dash-card .val{font-size:.9rem}
-.performance-panel .dash-propfirms{display:none}.performance-panel .dash-lower{grid-template-columns:1fr;margin-top:12px}.performance-panel .dash-feed{display:none}
-.performance-panel .dash-equity{min-height:210px}
-.mgc-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;padding:16px}
-.mgc-stat{border:1px solid var(--line);border-radius:12px;padding:11px;background:rgba(255,255,255,.025)}
-.mgc-stat strong{display:block;font-family:'Orbitron';font-size:.9rem;color:#5dffae}.mgc-stat span{font-size:.68rem;color:var(--muted)}
-.mgc-performance-image{width:100%;min-height:260px;display:block;object-fit:contain;background:#0b0b0b;border-top:1px solid var(--line)}
-@media (max-width:850px){.performance-grid{grid-template-columns:1fr}.mgc-performance-image{min-height:0}.performance-panel .dash-equity{min-height:180px}}
 .dash-window{position:relative;border-radius:20px;overflow:hidden;border:1px solid rgba(79,141,255,.25);background:#070b16;
   box-shadow:0 0 70px rgba(20,50,120,.25);margin-top:46px;text-align:left;
   transition:transform .15s ease-out,box-shadow .4s ease;transform-style:preserve-3d;will-change:transform}
@@ -672,28 +665,6 @@ footer{background:rgba(255,255,255,.5)}
   </div>
 </div>
 
-<section class="stats reveal d5">
-  <div class="stats-grid">
-    <div class="stat tilt">
-      <div class="num pos">43.646<span class="currency">USD</span></div>
-      <div class="lbl">G&amp;V insgesamt &middot; +87,29%</div>
-    </div>
-    <div class="stat tilt">
-      <div class="num">3.743<span class="currency">USD</span></div>
-      <div class="lbl">Max. Drawdown &middot; 4,37%</div>
-    </div>
-    <div class="stat tilt">
-      <div class="num">72,12%</div>
-      <div class="lbl">Gewinnbringende Trades &middot; 75/104</div>
-    </div>
-    <div class="stat tilt">
-      <div class="num">2,59</div>
-      <div class="lbl">Profitfaktor</div>
-    </div>
-  </div>
-  <p class="stats-foot">Backtest-Ergebnisse. Keine Live-Performance, keine Garantie für zukünftige Ergebnisse.</p>
-</section>
-
 <div class="scan"></div>
 
 <section class="about" id="about">
@@ -800,14 +771,35 @@ footer{background:rgba(255,255,255,.5)}
   </div>
 </section>
 
-<section class="dashboard-preview reveal" id="dashboard">
-  <div class="eyebrow">Bot Performance</div>
-  <h2 style="font-family:'Orbitron';font-weight:700;font-size:clamp(1.6rem,4vw,2.4rem);letter-spacing:.5px;max-width:680px;margin:0 auto">MNQ &amp; MGC im Vergleich</h2>
-  <p style="color:var(--muted);font-weight:300;font-size:1.05rem;max-width:560px;margin:16px auto 0">Die aktuellen 15-Minuten-Backtests beider Bots auf einen Blick.</p>
+<section class="stats reveal d5">
+  <div class="stats-comparison">
+    <div class="stats-group">
+      <div class="stats-group-head"><h3>CV.AI MNQ BOT</h3><span>15-Minuten-Backtest</span></div>
+      <div class="stats-grid">
+        <div class="stat tilt"><div class="num pos">43.646<span class="currency">USD</span></div><div class="lbl">G&amp;V insgesamt &middot; +87,29%</div></div>
+        <div class="stat tilt"><div class="num">3.743<span class="currency">USD</span></div><div class="lbl">Max. Drawdown &middot; 4,37%</div></div>
+        <div class="stat tilt"><div class="num">72,12%</div><div class="lbl">Gewinnbringende Trades &middot; 75/104</div></div>
+        <div class="stat tilt"><div class="num">2,59</div><div class="lbl">Profitfaktor</div></div>
+      </div>
+    </div>
+    <div class="stats-group">
+      <div class="stats-group-head"><h3>CV.AI MGC BOT</h3><span>15-Minuten-Backtest</span></div>
+      <div class="stats-grid">
+        <div class="stat tilt"><div class="num pos">54.685<span class="currency">USD</span></div><div class="lbl">G&amp;V insgesamt &middot; +109,37%</div></div>
+        <div class="stat tilt"><div class="num">2.056<span class="currency">USD</span></div><div class="lbl">Max. Drawdown &middot; 3,16%</div></div>
+        <div class="stat tilt"><div class="num">72,82%</div><div class="lbl">Gewinnbringende Trades &middot; 75/103</div></div>
+        <div class="stat tilt"><div class="num">4,195</div><div class="lbl">Profitfaktor</div></div>
+      </div>
+    </div>
+  </div>
+  <p class="stats-foot">Backtest-Ergebnisse. Keine Live-Performance, keine Garantie für zukünftige Ergebnisse.</p>
+</section>
 
-  <div class="performance-grid">
-    <article class="performance-panel">
-      <div class="performance-panel-title">CV.AI MNQ BOT <span>15-Minuten-Chart</span></div>
+<section class="dashboard-preview reveal" id="dashboard">
+  <div class="eyebrow">Dein Live-Cockpit</div>
+  <h2 style="font-family:'Orbitron';font-weight:700;font-size:clamp(1.6rem,4vw,2.4rem);letter-spacing:.5px;max-width:680px;margin:0 auto">Das Champ Dashboard &ndash; alles im Blick</h2>
+  <p style="color:var(--muted);font-weight:300;font-size:1.05rem;max-width:560px;margin:16px auto 0">Winrate, P&amp;L, Signal-Feed und Equity-Kurve in Echtzeit &ndash; dein persönliches Trading-Cockpit, sobald du beitrittst.</p>
+
   <div class="dash-window tilt-strong">
     <div class="dash-chrome">
       <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
@@ -892,18 +884,6 @@ footer{background:rgba(255,255,255,.5)}
         </div>
       </div>
     </div>
-  </div>
-    </article>
-    <article class="performance-panel">
-      <div class="performance-panel-title">CV.AI MGC BOT <span>15-Minuten-Chart</span></div>
-      <div class="mgc-stats">
-        <div class="mgc-stat"><strong>+54.685 USD</strong><span>G&amp;V insgesamt · +109,37%</span></div>
-        <div class="mgc-stat"><strong>72,82%</strong><span>Gewinnbringende Trades · 75/103</span></div>
-        <div class="mgc-stat"><strong>4,195</strong><span>Profitfaktor</span></div>
-        <div class="mgc-stat"><strong>3,16%</strong><span>Max. Drawdown · 2.056 USD</span></div>
-      </div>
-      <img class="mgc-performance-image" src="assets/mgc-performance-15m.png" alt="Backtest-Performance des CV.AI MGC Bots im 15-Minuten-Chart">
-    </article>
   </div>
 </section>
 
