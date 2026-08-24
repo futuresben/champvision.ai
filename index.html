@@ -248,6 +248,17 @@ section.product{position:relative;z-index:2;padding:30px 24px 90px;max-width:140
 .price-row .period{color:var(--muted);font-size:.9rem;font-weight:300}
 .product-card .btn{width:100%;justify-content:center}
 .product-card .btn.is-locked{opacity:.55;cursor:not-allowed;pointer-events:none;filter:saturate(.45)}
+.bundle-actions{display:grid;gap:10px}
+.bundle-actions .btn-secondary{border:1px solid rgba(79,141,255,.45);background:rgba(79,141,255,.08);color:var(--blue-bright);cursor:pointer}
+.bundle-actions .btn-secondary:hover{background:rgba(79,141,255,.16)}
+.upgrade-note{color:var(--muted);font-size:.76rem;line-height:1.45;margin:0;text-align:center}
+.upgrade-modal{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(3,6,16,.78);backdrop-filter:blur(8px)}
+.upgrade-modal.open{display:flex}
+.upgrade-dialog{width:min(100%,460px);background:linear-gradient(160deg,#101b38,#070b18);border:1px solid rgba(79,141,255,.35);border-radius:22px;padding:28px;box-shadow:0 25px 80px rgba(0,0,0,.48)}
+.upgrade-dialog h3{font-family:'Orbitron';font-size:1.1rem;margin:0 0 10px}.upgrade-dialog p{color:var(--muted);line-height:1.55;margin:0 0 18px}
+.upgrade-dialog label{display:block;color:var(--ink);font-size:.85rem;margin-bottom:7px}.upgrade-dialog input{box-sizing:border-box;width:100%;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.05);color:#fff;padding:13px 14px;font:inherit;margin-bottom:12px}
+.upgrade-dialog .dialog-actions{display:flex;gap:10px}.upgrade-dialog .dialog-actions .btn{flex:1;justify-content:center;border:0;cursor:pointer}.upgrade-dialog .dialog-actions .btn-secondary{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.upgrade-status{min-height:20px;font-size:.82rem;color:var(--muted);margin-top:14px}.upgrade-status.error{color:#ff9ca8}
 
 /* coming-soon variant: clean, no overlapping text, just visually muted */
 .product-card.soon{border-color:rgba(120,140,180,.18)}
@@ -699,7 +710,11 @@ footer{background:rgba(255,255,255,.5)}
         <div class="product-footer">
           <div class="discount-badge">&#9889; 100€ Rabatt</div>
           <div class="price-row"><span class="old-amount">500€</span><span class="amount">400€</span><span class="period">/ Monat</span></div>
-          <a class="btn btn-primary is-locked" aria-disabled="true">Checkout folgt</a>
+          <div class="bundle-actions">
+            <a id="stripe-bundle" class="btn btn-primary is-locked" aria-disabled="true">Bundle kaufen</a>
+            <button type="button" id="bundle-upgrade" class="btn btn-secondary">Upgrade aufs Bundle</button>
+            <p class="upgrade-note">Für bestehende MNQ-Mitglieder. Deine Restlaufzeit wird bei Stripe anteilig angerechnet.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -815,6 +830,24 @@ footer{background:rgba(255,255,255,.5)}
 </footer>
 </div>
 
+<div class="upgrade-modal" id="upgrade-modal" aria-hidden="true">
+  <div class="upgrade-dialog" role="dialog" aria-modal="true" aria-labelledby="upgrade-title">
+    <h3 id="upgrade-title">Upgrade aufs Bundle</h3>
+    <p id="upgrade-description">Gib die E-Mail-Adresse ein, die du für dein MNQ-Abo bei Stripe verwendest. Wir schicken dir einen Bestätigungscode.</p>
+    <form id="upgrade-email-form">
+      <label for="upgrade-email">E-Mail-Adresse</label>
+      <input id="upgrade-email" type="email" autocomplete="email" required>
+      <div class="dialog-actions"><button class="btn btn-primary" type="submit">Code senden</button><button class="btn btn-secondary" type="button" data-upgrade-close>Abbrechen</button></div>
+    </form>
+    <form id="upgrade-code-form" hidden>
+      <label for="upgrade-code">Bestätigungscode</label>
+      <input id="upgrade-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required>
+      <div class="dialog-actions"><button class="btn btn-primary" type="submit">Weiter zu Stripe</button><button class="btn btn-secondary" type="button" data-upgrade-close>Abbrechen</button></div>
+    </form>
+    <div id="upgrade-status" class="upgrade-status" aria-live="polite"></div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // Die Angebote stehen direkt im sichtbaren Einstiegsbereich.
@@ -832,14 +865,81 @@ document.querySelectorAll('.hero-visual-inner svg rect[width="11"]').forEach(fun
 
 // ==== DEINE LINKS ====
 document.getElementById('stripe').href     = 'https://buy.stripe.com/9B6dRaftQeix88d6VZ5c402';
+var bundleCheckout = document.getElementById('stripe-bundle');
+var bundleCheckoutUrl = 'https://buy.stripe.com/28EdRa95s5M1gEJ3JN5c404';
+if (bundleCheckoutUrl) {
+  bundleCheckout.href = bundleCheckoutUrl;
+  bundleCheckout.classList.remove('is-locked');
+  bundleCheckout.removeAttribute('aria-disabled');
+}
 var mgcCheckout = document.getElementById('stripe-mgc');
 var mgcRelease  = new Date('2026-09-01T00:00:00+02:00');
 if (Date.now() >= mgcRelease.getTime()) {
-  mgcCheckout.href = 'https://buy.stripe.com/9B6dRaftQeix88d6VZ5c402';
+  mgcCheckout.href = 'https://buy.stripe.com/8x2eVegxUdet6051BF5c403';
   mgcCheckout.classList.remove('is-locked');
   mgcCheckout.removeAttribute('aria-disabled');
   mgcCheckout.textContent = 'Jetzt abonnieren';
 }
+
+// ==== BUNDLE-UPGRADE FÜR BESTANDSMITGLIEDER ====
+(function initBundleUpgrade(){
+  var apiBase = 'https://champvision-upgrades.vercel.app/api';
+  var modal = document.getElementById('upgrade-modal');
+  var emailForm = document.getElementById('upgrade-email-form');
+  var codeForm = document.getElementById('upgrade-code-form');
+  var status = document.getElementById('upgrade-status');
+  var emailInput = document.getElementById('upgrade-email');
+  var codeInput = document.getElementById('upgrade-code');
+  var challenge = '';
+
+  function setStatus(message, isError){
+    status.textContent = message;
+    status.classList.toggle('error', !!isError);
+  }
+  function closeModal(){
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    emailForm.hidden = false;
+    codeForm.hidden = true;
+    emailForm.reset();
+    codeForm.reset();
+    challenge = '';
+    setStatus('');
+  }
+  document.getElementById('bundle-upgrade').addEventListener('click', function(){
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    emailInput.focus();
+  });
+  modal.querySelectorAll('[data-upgrade-close]').forEach(function(button){ button.addEventListener('click', closeModal); });
+  modal.addEventListener('click', function(event){ if (event.target === modal) closeModal(); });
+
+  emailForm.addEventListener('submit', async function(event){
+    event.preventDefault();
+    setStatus('Code wird gesendet …');
+    try {
+      var response = await fetch(apiBase + '/request-upgrade-code', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:emailInput.value})});
+      var data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Bitte versuche es später erneut.');
+      challenge = data.challenge || '';
+      emailForm.hidden = true;
+      codeForm.hidden = false;
+      setStatus('Wenn für diese Adresse ein berechtigtes MNQ-Abo besteht, wurde ein Code gesendet.');
+      codeInput.focus();
+    } catch (error) { setStatus(error.message, true); }
+  });
+
+  codeForm.addEventListener('submit', async function(event){
+    event.preventDefault();
+    setStatus('Stripe-Upgrade wird vorbereitet …');
+    try {
+      var response = await fetch(apiBase + '/verify-upgrade-code', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({challenge:challenge, code:codeInput.value})});
+      var data = await response.json();
+      if (!response.ok || !data.url) throw new Error(data.error || 'Der Code ist ungültig oder abgelaufen.');
+      window.location.assign(data.url);
+    } catch (error) { setStatus(error.message, true); }
+  });
+})();
 
 // ==== Intro-Animation: Logo dreht sich rein, dann Seite einblenden ====
 function startIntroSequence(){
