@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 
 const SITE_ORIGIN = 'https://futuresben.github.io';
-const RETURN_URL = 'https://futuresben.github.io/champvision.ai/';
+const SITE_URL = 'https://futuresben.github.io/champvision.ai/';
 
 function setCors(req, res) {
   if (req.headers.origin === SITE_ORIGIN) res.setHeader('Access-Control-Allow-Origin', SITE_ORIGIN);
@@ -40,19 +40,29 @@ module.exports = async (req, res) => {
 
   const verified = validChallenge(req.body && req.body.challenge, req.body && req.body.code);
   if (!verified) return res.status(400).json({ error: 'Der Code ist ungültig oder abgelaufen.' });
+  if (verified.intent === 'manage') return res.status(200).json({ ok: true, mode: 'manage' });
+  if (!process.env.STRIPE_BUNDLE_PRICE_ID) return res.status(500).json({ error: 'Das Bundle-Upgrade ist noch nicht eingerichtet.' });
 
   try {
     const subscription = await stripe(`subscriptions/${verified.subscriptionId}`);
-    const priceIds = subscription.items.data.map((item) => item.price.id);
-    const configuration = priceIds.includes(process.env.STRIPE_LEGACY_MNQ_PRICE_ID)
-      ? process.env.STRIPE_LEGACY_PORTAL_CONFIGURATION
-      : priceIds.includes(process.env.STRIPE_CURRENT_MNQ_PRICE_ID)
-        ? process.env.STRIPE_CURRENT_PORTAL_CONFIGURATION
-        : null;
-    if (!configuration) return res.status(400).json({ error: 'Für dieses Abo ist kein Bundle-Upgrade verfügbar.' });
+    const validPrice = subscription.status === 'active' && subscription.items.data.some((item) => (
+      item.price.id === process.env.STRIPE_LEGACY_MNQ_PRICE_ID || item.price.id === process.env.STRIPE_CURRENT_MNQ_PRICE_ID
+    ));
+    if (!validPrice || subscription.cancel_at_period_end) return res.status(400).json({ error: 'Dieses MNQ-Abo kann nicht mehr auf das Bundle umgestellt werden.' });
 
-    const form = new URLSearchParams({ customer: verified.customerId, configuration, return_url: RETURN_URL });
-    const session = await stripe('billing_portal/sessions', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: form.toString() });
+    const form = new URLSearchParams({
+      mode: 'subscription',
+      customer: verified.customerId,
+      'line_items[0][price]': process.env.STRIPE_BUNDLE_PRICE_ID,
+      'line_items[0][quantity]': '1',
+      'metadata[source_subscription_id]': verified.subscriptionId,
+      'metadata[flow]': 'champvision_bundle_upgrade',
+      'subscription_data[metadata][champvision_bundle]': 'true',
+      'subscription_data[metadata][source_subscription_id]': verified.subscriptionId,
+      success_url: `${SITE_URL}?bundle_upgrade=success`,
+      cancel_url: `${SITE_URL}?bundle_upgrade=cancelled`
+    });
+    const session = await stripe('checkout/sessions', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: form.toString() });
     return res.status(200).json({ url: session.url });
   } catch (error) {
     console.error('verify-upgrade-code', error.message);

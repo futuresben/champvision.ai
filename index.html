@@ -728,7 +728,7 @@ footer{background:rgba(255,255,255,.5)}
             <div class="purchase-path existing-member">
               <div class="purchase-path-label">Bereits MNQ-Mitglied?</div>
               <button type="button" id="bundle-upgrade" class="btn btn-secondary">Ich habe MNQ – aufs Bundle upgraden</button>
-              <p class="purchase-path-hint">Für bestehende MNQ-Mitglieder. Deine Restlaufzeit wird bei Stripe anteilig angerechnet.</p>
+              <p class="purchase-path-hint">400€ heute. Deine bereits bezahlte MNQ-Restlaufzeit bleibt als persönliches MNQ-Zeitguthaben erhalten.</p>
             </div>
           </div>
         </div>
@@ -840,7 +840,7 @@ footer{background:rgba(255,255,255,.5)}
 <footer>
   <div class="brand"><img src="assets/champvision-logo-transparent.png" alt="" style="width:26px;height:26px"><span class="brand-text">CHAMPVISION<span class="ai">.ai</span></span></div>
   <div>&copy; 2026 ChampVision.ai &ndash; Alle Rechte vorbehalten.</div>
-  <a href="https://billing.stripe.com/p/login/4gM8wQbdAa2h0FLgwz5c400" style="font-size: 12px; color: rgba(255,255,255,0.35); text-decoration: none;">Abonnement verwalten</a>
+  <a href="#" id="manage-subscription" style="font-size: 12px; color: rgba(255,255,255,0.35); text-decoration: none;">Abonnement verwalten</a>
   <p class="disclaimer">Hinweis: ChampVision.ai stellt keine Anlageberatung dar. Trading ist mit erheblichen Risiken verbunden. Triff alle Entscheidungen eigenverantwortlich.</p>
   <p class="legal-note">Gemäß §19 UStG wird keine Umsatzsteuer berechnet und ausgewiesen. Das Abonnement ist monatlich kündbar. Informationen zu Widerrufsrecht und Vertragsbedingungen erhältst du vor Abschluss des Kaufs im Stripe-Checkout.</p>
 </footer>
@@ -849,7 +849,7 @@ footer{background:rgba(255,255,255,.5)}
 <div class="upgrade-modal" id="upgrade-modal" aria-hidden="true">
   <div class="upgrade-dialog" role="dialog" aria-modal="true" aria-labelledby="upgrade-title">
     <h3 id="upgrade-title">Upgrade aufs Bundle</h3>
-    <p id="upgrade-description">Gib die E-Mail-Adresse ein, die du für dein MNQ-Abo bei Stripe verwendest. Wir schicken dir einen Bestätigungscode.</p>
+    <p id="upgrade-description">Das Bundle startet heute für 400€ monatlich. Deine verbleibenden MNQ-Tage werden als Zeitguthaben gespeichert. Gib zur Bestätigung deine Stripe-E-Mail-Adresse ein.</p>
     <form id="upgrade-email-form">
       <label for="upgrade-email">E-Mail-Adresse</label>
       <input id="upgrade-email" type="email" autocomplete="email" required>
@@ -858,8 +858,13 @@ footer{background:rgba(255,255,255,.5)}
     <form id="upgrade-code-form" hidden>
       <label for="upgrade-code">Bestätigungscode</label>
       <input id="upgrade-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required>
-      <div class="dialog-actions"><button class="btn btn-primary" type="submit">Weiter zu Stripe</button><button class="btn btn-secondary" type="button" data-upgrade-close>Abbrechen</button></div>
+      <div class="dialog-actions"><button class="btn btn-primary" type="submit" id="upgrade-code-submit">Weiter zu Stripe</button><button class="btn btn-secondary" type="button" data-upgrade-close>Abbrechen</button></div>
     </form>
+    <div id="manage-choices" hidden>
+      <p>Was soll zum Ende deines bereits bezahlten Zeitraums gelten?</p>
+      <div class="dialog-actions"><button class="btn btn-primary" type="button" data-manage-choice="mnq">Nur MNQ</button><button class="btn btn-primary" type="button" data-manage-choice="mgc">Nur MGC</button></div>
+      <div class="dialog-actions" style="margin-top:10px"><button class="btn btn-secondary" type="button" data-manage-choice="cancel">Alles kündigen</button><button class="btn btn-secondary" type="button" data-upgrade-close>Abbrechen</button></div>
+    </div>
     <div id="upgrade-status" class="upgrade-status" aria-live="polite"></div>
   </div>
 </div>
@@ -903,7 +908,10 @@ mgcCheckout.textContent = 'Jetzt abonnieren';
   var status = document.getElementById('upgrade-status');
   var emailInput = document.getElementById('upgrade-email');
   var codeInput = document.getElementById('upgrade-code');
+  var codeSubmit = document.getElementById('upgrade-code-submit');
+  var manageChoices = document.getElementById('manage-choices');
   var challenge = '';
+  var intent = 'upgrade';
 
   function setStatus(message, isError){
     status.textContent = message;
@@ -914,12 +922,28 @@ mgcCheckout.textContent = 'Jetzt abonnieren';
     modal.setAttribute('aria-hidden', 'true');
     emailForm.hidden = false;
     codeForm.hidden = true;
+    manageChoices.hidden = true;
     emailForm.reset();
     codeForm.reset();
     challenge = '';
+    intent = 'upgrade';
     setStatus('');
   }
   document.getElementById('bundle-upgrade').addEventListener('click', function(){
+    intent = 'upgrade';
+    document.getElementById('upgrade-title').textContent = 'Upgrade aufs Bundle';
+    document.getElementById('upgrade-description').textContent = 'Das Bundle startet heute für 400€ monatlich. Deine verbleibenden MNQ-Tage werden als Zeitguthaben gespeichert. Gib zur Bestätigung deine Stripe-E-Mail-Adresse ein.';
+    codeSubmit.textContent = 'Weiter zu Stripe';
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    emailInput.focus();
+  });
+  document.getElementById('manage-subscription').addEventListener('click', function(event){
+    event.preventDefault();
+    intent = 'manage';
+    document.getElementById('upgrade-title').textContent = 'Abo verwalten';
+    document.getElementById('upgrade-description').textContent = 'Gib die E-Mail-Adresse deines Bundle-Abos ein. Wir schicken dir einen Bestätigungscode.';
+    codeSubmit.textContent = 'Abo öffnen';
     modal.classList.add('open');
     modal.setAttribute('aria-hidden', 'false');
     emailInput.focus();
@@ -931,26 +955,46 @@ mgcCheckout.textContent = 'Jetzt abonnieren';
     event.preventDefault();
     setStatus('Code wird gesendet …');
     try {
-      var response = await fetch(apiBase + '/request-upgrade-code', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:emailInput.value})});
+      var response = await fetch(apiBase + '/request-upgrade-code', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:emailInput.value,intent:intent})});
       var data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Bitte versuche es später erneut.');
       challenge = data.challenge || '';
       emailForm.hidden = true;
       codeForm.hidden = false;
-      setStatus('Wenn für diese Adresse ein berechtigtes MNQ-Abo besteht, wurde ein Code gesendet.');
+      setStatus('Wenn für diese Adresse ein passendes Abo besteht, wurde ein Code gesendet.');
       codeInput.focus();
     } catch (error) { setStatus(error.message, true); }
   });
 
   codeForm.addEventListener('submit', async function(event){
     event.preventDefault();
-    setStatus('Stripe-Upgrade wird vorbereitet …');
+      setStatus(intent === 'manage' ? 'Abo wird geöffnet …' : 'Stripe-Upgrade wird vorbereitet …');
     try {
       var response = await fetch(apiBase + '/verify-upgrade-code', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({challenge:challenge, code:codeInput.value})});
       var data = await response.json();
-      if (!response.ok || !data.url) throw new Error(data.error || 'Der Code ist ungültig oder abgelaufen.');
-      window.location.assign(data.url);
+      if (!response.ok) throw new Error(data.error || 'Der Code ist ungültig oder abgelaufen.');
+      if (data.mode === 'manage') {
+        codeForm.hidden = true;
+        manageChoices.hidden = false;
+        setStatus('Wenn du nichts auswählst, läuft dein aktuelles Abo unverändert weiter.');
+      } else if (data.url) {
+        window.location.assign(data.url);
+      } else {
+        throw new Error('Das Upgrade konnte nicht vorbereitet werden.');
+      }
     } catch (error) { setStatus(error.message, true); }
+  });
+
+  manageChoices.querySelectorAll('[data-manage-choice]').forEach(function(button){
+    button.addEventListener('click', async function(){
+      setStatus('Änderung wird gespeichert …');
+      try {
+        var response = await fetch(apiBase + '/manage-subscription', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({challenge:challenge,code:codeInput.value,choice:button.dataset.manageChoice})});
+        var data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Die Änderung konnte nicht gespeichert werden.');
+        setStatus(data.message || 'Gespeichert.');
+      } catch (error) { setStatus(error.message, true); }
+    });
   });
 })();
 
