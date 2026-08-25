@@ -2,6 +2,16 @@ const crypto = require('crypto');
 
 const SITE_ORIGIN = 'https://futuresben.github.io';
 const SITE_URL = 'https://futuresben.github.io/champvision.ai/';
+const MIGRATED_MNQ_PRICE_IDS = ['price_1U5kacLh2L59TOeGwOkBeUVn'];
+
+function eligibleMnqPriceIds() {
+  return new Set([
+    process.env.STRIPE_LEGACY_MNQ_PRICE_ID,
+    process.env.STRIPE_CURRENT_MNQ_PRICE_ID,
+    ...MIGRATED_MNQ_PRICE_IDS,
+    ...String(process.env.STRIPE_ADDITIONAL_MNQ_PRICE_IDS || '').split(',').map((id) => id.trim())
+  ].filter(Boolean));
+}
 
 function setCors(req, res) {
   if (req.headers.origin === SITE_ORIGIN) res.setHeader('Access-Control-Allow-Origin', SITE_ORIGIN);
@@ -45,9 +55,8 @@ module.exports = async (req, res) => {
 
   try {
     const subscription = await stripe(`subscriptions/${verified.subscriptionId}`);
-    const validPrice = subscription.status === 'active' && subscription.items.data.some((item) => (
-      item.price.id === process.env.STRIPE_LEGACY_MNQ_PRICE_ID || item.price.id === process.env.STRIPE_CURRENT_MNQ_PRICE_ID
-    ));
+    const eligiblePrices = eligibleMnqPriceIds();
+    const validPrice = subscription.status === 'active' && subscription.items.data.some((item) => eligiblePrices.has(item.price.id));
     if (!validPrice || subscription.cancel_at_period_end) return res.status(400).json({ error: 'Dieses MNQ-Abo kann nicht mehr auf das Bundle umgestellt werden.' });
 
     const form = new URLSearchParams({

@@ -1,6 +1,16 @@
 const crypto = require('crypto');
 
 const SITE_ORIGIN = 'https://futuresben.github.io';
+const MIGRATED_MNQ_PRICE_IDS = ['price_1U5kacLh2L59TOeGwOkBeUVn'];
+
+function eligibleMnqPriceIds() {
+  return new Set([
+    process.env.STRIPE_LEGACY_MNQ_PRICE_ID,
+    process.env.STRIPE_CURRENT_MNQ_PRICE_ID,
+    ...MIGRATED_MNQ_PRICE_IDS,
+    ...String(process.env.STRIPE_ADDITIONAL_MNQ_PRICE_IDS || '').split(',').map((id) => id.trim())
+  ].filter(Boolean));
+}
 
 function setCors(req, res) {
   if (req.headers.origin === SITE_ORIGIN) res.setHeader('Access-Control-Allow-Origin', SITE_ORIGIN);
@@ -21,12 +31,13 @@ async function stripe(path) {
 }
 
 async function findEligibleSubscription(email) {
+  const eligiblePrices = eligibleMnqPriceIds();
   const customers = await stripe(`customers?email=${encodeURIComponent(email)}&limit=10`);
   for (const customer of customers.data) {
     const subscriptions = await stripe(`subscriptions?customer=${customer.id}&status=active&limit=100`);
     for (const subscription of subscriptions.data) {
       const priceIds = subscription.items.data.map((item) => item.price.id);
-      if (priceIds.includes(process.env.STRIPE_LEGACY_MNQ_PRICE_ID) || priceIds.includes(process.env.STRIPE_CURRENT_MNQ_PRICE_ID)) {
+      if (priceIds.some((priceId) => eligiblePrices.has(priceId))) {
         return { customerId: customer.id, subscriptionId: subscription.id };
       }
     }

@@ -49,6 +49,27 @@ test('upgrade checkout charges the 400 euro bundle immediately', async () => {
   assert.equal(res.body.url, 'https://checkout.stripe.test/session');
 });
 
+test('migrated 250 euro MNQ subscription can start the bundle upgrade', async () => {
+  process.env.UPGRADE_TOKEN_SECRET = 'test-secret';
+  process.env.STRIPE_SECRET_KEY = 'rk_test';
+  process.env.STRIPE_CURRENT_MNQ_PRICE_ID = 'price_mnq';
+  process.env.STRIPE_LEGACY_MNQ_PRICE_ID = 'price_legacy';
+  process.env.STRIPE_BUNDLE_PRICE_ID = 'price_bundle';
+  const migratedPrice = 'price_1U5kacLh2L59TOeGwOkBeUVn';
+  const calls = [];
+  global.fetch = async (url, options = {}) => {
+    calls.push({ url, options });
+    if (url.includes('/subscriptions/sub_migrated')) return stripeReply({ status: 'active', cancel_at_period_end: false, items: { data: [{ price: { id: migratedPrice } }] } });
+    return stripeReply({ url: 'https://checkout.stripe.test/session' });
+  };
+  const handler = require('../api/verify-upgrade-code');
+  const res = response();
+  await handler({ method: 'POST', headers: { host: 'preview.test' }, body: { challenge: challenge('upgrade', 'sub_migrated'), code: '123456' } }, res);
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.body.url, 'https://checkout.stripe.test/session');
+  assert.ok(calls.some((call) => call.url.endsWith('/checkout/sessions')));
+});
+
 test('paid upgrade stores remaining MNQ seconds and cancels the old subscription', async () => {
   process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test';
   process.env.STRIPE_SECRET_KEY = 'rk_test';
