@@ -43,6 +43,19 @@ async function stripe(path, options = {}) {
   return data;
 }
 
+async function isEligibleMnqItem(item, eligiblePrices) {
+  const price = item.price || {};
+  if (eligiblePrices.has(price.id)) return true;
+  if (price.id === process.env.STRIPE_BUNDLE_PRICE_ID || price.id === process.env.STRIPE_MGC_PRICE_ID) return false;
+
+  const productId = typeof price.product === 'string' ? price.product : price.product && price.product.id;
+  if (!productId) return false;
+  if (productId === process.env.STRIPE_MNQ_PRODUCT_ID) return true;
+  const product = typeof price.product === 'object' ? price.product : await stripe(`products/${encodeURIComponent(productId)}`);
+  const label = `${product.name || ''} ${product.description || ''}`;
+  return /\bMNQ\b/i.test(label) && !/\bbundle\b/i.test(label);
+}
+
 module.exports = async (req, res) => {
   setCors(req, res);
   if (req.method === 'OPTIONS') return res.status(204).end();
@@ -56,7 +69,9 @@ module.exports = async (req, res) => {
   try {
     const subscription = await stripe(`subscriptions/${verified.subscriptionId}`);
     const eligiblePrices = eligibleMnqPriceIds();
-    const validPrice = subscription.status === 'active' && subscription.items.data.some((item) => eligiblePrices.has(item.price.id));
+    const validStatus = ['active', 'trialing'].includes(subscription.status);
+    const matches = await Promise.all(subscription.items.data.map((item) => isEligibleMnqItem(item, eligiblePrices)));
+    const validPrice = validStatus && matches.some(Boolean);
     if (!validPrice || subscription.cancel_at_period_end) return res.status(400).json({ error: 'Dieses MNQ-Abo kann nicht mehr auf das Bundle umgestellt werden.' });
 
     const form = new URLSearchParams({

@@ -94,6 +94,27 @@ test('upgrade checkout charges the 400 euro bundle immediately', async () => {
   assert.equal(res.body.url, 'https://checkout.stripe.test/session');
 });
 
+test('upgrade checkout accepts a trialing subscription with a new MNQ price', async () => {
+  process.env.UPGRADE_TOKEN_SECRET = 'test-secret';
+  process.env.STRIPE_SECRET_KEY = 'rk_test';
+  process.env.STRIPE_BUNDLE_PRICE_ID = 'price_bundle';
+  process.env.STRIPE_CURRENT_MNQ_PRICE_ID = 'price_current';
+  process.env.STRIPE_MGC_PRICE_ID = 'price_mgc';
+  const calls = [];
+  global.fetch = async (url) => {
+    calls.push(url);
+    if (url.endsWith('/subscriptions/sub_new')) return stripeReply({ status: 'trialing', cancel_at_period_end: false, items: { data: [{ price: { id: 'price_new', product: 'prod_mnq' } }] } });
+    if (url.endsWith('/products/prod_mnq')) return stripeReply({ id: 'prod_mnq', name: 'ChampVision MNQ Member' });
+    return stripeReply({ url: 'https://checkout.stripe.test/session' });
+  };
+  const handler = require('../api/verify-upgrade-code');
+  const res = response();
+  await handler({ method: 'POST', headers: { host: 'preview.test' }, body: { challenge: challenge('upgrade', 'sub_new'), code: '123456' } }, res);
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.body.url, 'https://checkout.stripe.test/session');
+  assert.ok(calls.some((url) => url.endsWith('/products/prod_mnq')));
+});
+
 test('migrated 250 euro MNQ subscription can start the bundle upgrade', async () => {
   process.env.UPGRADE_TOKEN_SECRET = 'test-secret';
   process.env.STRIPE_SECRET_KEY = 'rk_test';
