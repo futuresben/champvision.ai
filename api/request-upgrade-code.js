@@ -30,14 +30,43 @@ async function stripe(path) {
   return data;
 }
 
+async function findCustomersByEmail(email) {
+  const exact = await stripe(`customers?email=${encodeURIComponent(email)}&limit=100`);
+  if (exact.data.length) return exact.data;
+
+  let startingAfter = '';
+  for (let page = 0; page < 10; page += 1) {
+    const suffix = startingAfter ? `&starting_after=${encodeURIComponent(startingAfter)}` : '';
+    const customers = await stripe(`customers?limit=100${suffix}`);
+    const matches = customers.data.filter((customer) => String(customer.email || '').trim().toLowerCase() === email);
+    if (matches.length || !customers.has_more || !customers.data.length) return matches;
+    startingAfter = customers.data[customers.data.length - 1].id;
+  }
+  return [];
+}
+
+async function isEligibleMnqItem(item, eligiblePrices) {
+  const price = item.price || {};
+  if (eligiblePrices.has(price.id)) return true;
+  if (price.id === process.env.STRIPE_BUNDLE_PRICE_ID || price.id === process.env.STRIPE_MGC_PRICE_ID) return false;
+
+  const productId = typeof price.product === 'string' ? price.product : price.product && price.product.id;
+  if (!productId) return false;
+  if (productId === process.env.STRIPE_MNQ_PRODUCT_ID) return true;
+  const product = typeof price.product === 'object' ? price.product : await stripe(`products/${encodeURIComponent(productId)}`);
+  const label = `${product.name || ''} ${product.description || ''}`;
+  return /\bMNQ\b/i.test(label) && !/\bbundle\b/i.test(label);
+}
+
 async function findEligibleSubscription(email) {
   const eligiblePrices = eligibleMnqPriceIds();
-  const customers = await stripe(`customers?email=${encodeURIComponent(email)}&limit=10`);
-  for (const customer of customers.data) {
-    const subscriptions = await stripe(`subscriptions?customer=${customer.id}&status=active&limit=100`);
+  const customers = await findCustomersByEmail(email);
+  for (const customer of customers) {
+    const subscriptions = await stripe(`subscriptions?customer=${customer.id}&status=all&limit=100`);
     for (const subscription of subscriptions.data) {
-      const priceIds = subscription.items.data.map((item) => item.price.id);
-      if (priceIds.some((priceId) => eligiblePrices.has(priceId))) {
+      if (!['active', 'trialing'].includes(subscription.status)) continue;
+      const matches = await Promise.all(subscription.items.data.map((item) => isEligibleMnqItem(item, eligiblePrices)));
+      if (matches.some(Boolean)) {
         return { customerId: customer.id, subscriptionId: subscription.id };
       }
     }

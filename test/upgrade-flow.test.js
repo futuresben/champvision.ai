@@ -26,6 +26,51 @@ function stripeReply(data) {
   return { ok: true, json: async () => data };
 }
 
+test('upgrade lookup recognizes an active MNQ subscription with a new price', async () => {
+  process.env.UPGRADE_TOKEN_SECRET = 'test-secret';
+  process.env.STRIPE_SECRET_KEY = 'rk_test';
+  process.env.STRIPE_CURRENT_MNQ_PRICE_ID = 'price_current';
+  process.env.STRIPE_BUNDLE_PRICE_ID = 'price_bundle';
+  process.env.STRIPE_MGC_PRICE_ID = 'price_mgc';
+  process.env.BREVO_API_KEY = 'brevo_test';
+  process.env.BREVO_SENDER_EMAIL = 'support@example.test';
+  const calls = [];
+  global.fetch = async (url) => {
+    calls.push(url);
+    if (url.includes('/customers?email=')) return stripeReply({ data: [{ id: 'cus_new', email: 'member@example.test' }] });
+    if (url.includes('/subscriptions?customer=cus_new')) return stripeReply({ data: [{ id: 'sub_new', status: 'active', items: { data: [{ price: { id: 'price_new', product: 'prod_mnq' } }] } }] });
+    if (url.endsWith('/products/prod_mnq')) return stripeReply({ id: 'prod_mnq', name: 'ChampVision MNQ Member' });
+    if (url === 'https://api.brevo.com/v3/smtp/email') return stripeReply({ messageId: 'mail_1' });
+    throw new Error(`Unexpected request: ${url}`);
+  };
+  const handler = require('../api/request-upgrade-code');
+  const res = response();
+  await handler({ method: 'POST', headers: { origin: 'https://futuresben.github.io' }, body: { email: 'member@example.test', intent: 'upgrade' } }, res);
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.body.ok, true);
+  assert.ok(calls.some((url) => url.endsWith('/products/prod_mnq')));
+});
+
+test('upgrade lookup matches Stripe customer email case-insensitively and accepts trialing', async () => {
+  process.env.UPGRADE_TOKEN_SECRET = 'test-secret';
+  process.env.STRIPE_SECRET_KEY = 'rk_test';
+  process.env.STRIPE_CURRENT_MNQ_PRICE_ID = 'price_current';
+  process.env.BREVO_API_KEY = 'brevo_test';
+  process.env.BREVO_SENDER_EMAIL = 'support@example.test';
+  global.fetch = async (url) => {
+    if (url.includes('/customers?email=')) return stripeReply({ data: [] });
+    if (url.endsWith('/customers?limit=100')) return stripeReply({ data: [{ id: 'cus_case', email: 'Member@Example.Test' }], has_more: false });
+    if (url.includes('/subscriptions?customer=cus_case')) return stripeReply({ data: [{ id: 'sub_case', status: 'trialing', items: { data: [{ price: { id: 'price_current' } }] } }] });
+    if (url === 'https://api.brevo.com/v3/smtp/email') return stripeReply({ messageId: 'mail_2' });
+    throw new Error(`Unexpected request: ${url}`);
+  };
+  const handler = require('../api/request-upgrade-code');
+  const res = response();
+  await handler({ method: 'POST', headers: { origin: 'https://futuresben.github.io' }, body: { email: 'member@example.test', intent: 'upgrade' } }, res);
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.body.ok, true);
+});
+
 test('upgrade checkout charges the 400 euro bundle immediately', async () => {
   process.env.UPGRADE_TOKEN_SECRET = 'test-secret';
   process.env.STRIPE_SECRET_KEY = 'rk_test';
