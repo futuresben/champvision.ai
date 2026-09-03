@@ -16,11 +16,61 @@ function response(status = 200) {
   };
 }
 
-function challenge(intent, subscriptionId = 'sub_mnq', customerId = 'cus_1') {
-  const payload = Buffer.from(JSON.stringify({ intent, subscriptionId, customerId, code: '123456', exp: Date.now() + 60000 })).toString('base64url');
+function challenge(intent, subscriptionId = 'sub_mnq', customerId = 'cus_1', extra = {}) {
+  const payload = Buffer.from(JSON.stringify({ intent, subscriptionId, customerId, code: '123456', exp: Date.now() + 60000, ...extra })).toString('base64url');
   const signature = crypto.createHmac('sha256', process.env.UPGRADE_TOKEN_SECRET).update(payload).digest('base64url');
   return `${payload}.${signature}`;
 }
+
+test('management lookup finds a case-insensitive MNQ email and returns the MNQ plan', async () => {
+  process.env.UPGRADE_TOKEN_SECRET = 'test-secret';
+  process.env.STRIPE_SECRET_KEY = 'rk_test';
+  process.env.STRIPE_CURRENT_MNQ_PRICE_ID = 'price_current';
+  process.env.BREVO_API_KEY = 'brevo_test';
+  process.env.BREVO_SENDER_EMAIL = 'support@example.test';
+  global.fetch = async (url) => {
+    if (url.includes('/customers?email=')) return stripeReply({ data: [] });
+    if (url.endsWith('/customers?limit=100')) return stripeReply({ data: [{ id: 'cus_mike', email: 'Mike2015@Hotmail.de' }], has_more: false });
+    if (url.includes('/subscriptions?customer=cus_mike')) return stripeReply({ data: [{ id: 'sub_mnq', status: 'active', items: { data: [{ price: { id: 'price_current' } }] } }] });
+    if (url === 'https://api.brevo.com/v3/smtp/email') return stripeReply({ messageId: 'mail_manage' });
+    throw new Error(`Unexpected request: ${url}`);
+  };
+  const handler = require('../api/request-upgrade-code');
+  const res = response();
+  await handler({ method: 'POST', headers: { origin: 'https://futuresben.github.io' }, body: { email: 'mike2015@hotmail.de', intent: 'manage' } }, res);
+  assert.equal(res.statusCode, 200);
+  const payload = JSON.parse(Buffer.from(res.body.challenge.split('.')[0], 'base64url').toString('utf8'));
+  assert.equal(payload.plan, 'mnq');
+});
+
+test('management verification returns the subscription plan for the interface', async () => {
+  process.env.UPGRADE_TOKEN_SECRET = 'test-secret';
+  const handler = require('../api/verify-upgrade-code');
+  const res = response();
+  await handler({ method: 'POST', headers: {}, body: { challenge: challenge('manage', 'sub_mnq', 'cus_1', { plan: 'mnq' }), code: '123456' } }, res);
+  assert.equal(res.statusCode, 200);
+  assert.deepEqual(res.body, { ok: true, mode: 'manage', plan: 'mnq' });
+});
+
+test('an active MNQ subscription can be cancelled through management', async () => {
+  process.env.UPGRADE_TOKEN_SECRET = 'test-secret';
+  process.env.STRIPE_SECRET_KEY = 'rk_test';
+  process.env.STRIPE_BUNDLE_PRICE_ID = 'price_bundle';
+  const calls = [];
+  global.fetch = async (url, options = {}) => {
+    calls.push({ url, options });
+    if (url.endsWith('/subscriptions/sub_mnq')) return stripeReply({ id: 'sub_mnq', status: 'active', items: { data: [{ price: { id: 'price_mnq' } }] } });
+    if (url.endsWith('/customers/cus_1')) return stripeReply({ id: 'cus_1', metadata: {} });
+    return stripeReply({});
+  };
+  const handler = require('../api/manage-subscription');
+  const res = response();
+  await handler({ method: 'POST', headers: { origin: 'https://futuresben.github.io' }, body: { challenge: challenge('manage', 'sub_mnq', 'cus_1', { plan: 'mnq' }), code: '123456', choice: 'cancel' } }, res);
+  assert.equal(res.statusCode, 200);
+  assert.match(res.body.message, /endet zum Ende/);
+  const cancellation = calls.find((call) => call.url.endsWith('/subscriptions/sub_mnq') && call.options.method === 'POST');
+  assert.equal(new URLSearchParams(cancellation.options.body).get('cancel_at_period_end'), 'true');
+});
 
 function stripeReply(data) {
   return { ok: true, json: async () => data };

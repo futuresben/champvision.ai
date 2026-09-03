@@ -86,10 +86,10 @@ module.exports = async (req, res) => {
   try {
     const subscription = await stripe(`subscriptions/${verified.subscriptionId}`);
     const customer = await stripe(`customers/${verified.customerId}`);
-    const isBundle = subscription.status === 'active' && subscription.items.data.some((item) => item.price.id === process.env.STRIPE_BUNDLE_PRICE_ID);
+    const isBundle = ['active', 'trialing'].includes(subscription.status) && subscription.items.data.some((item) => item.price.id === process.env.STRIPE_BUNDLE_PRICE_ID);
 
     if (choice === 'cancel') {
-      if (subscription.status !== 'active') return res.status(400).json({ error: 'Dieses Abo ist nicht mehr aktiv.' });
+      if (!['active', 'trialing'].includes(subscription.status)) return res.status(400).json({ error: 'Dieses Abo ist nicht mehr aktiv.' });
       await stripe(`subscriptions/${subscription.id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },

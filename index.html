@@ -998,9 +998,9 @@ footer{background:rgba(255,255,255,.5)}
       <div class="dialog-actions"><button class="btn btn-primary" type="submit" id="upgrade-code-submit">Weiter zu Stripe</button><button class="btn btn-secondary" type="button" data-upgrade-close>Abbrechen</button></div>
     </form>
     <div id="manage-choices" hidden>
-      <p>Was soll zum Ende deines bereits bezahlten Zeitraums gelten?</p>
-      <div class="dialog-actions"><button class="btn btn-primary" type="button" data-manage-choice="mnq">Nur MNQ</button><button class="btn btn-primary" type="button" data-manage-choice="mgc">Nur MGC</button></div>
-      <div class="dialog-actions" style="margin-top:10px"><button class="btn btn-secondary" type="button" data-manage-choice="cancel">Alles kündigen</button><button class="btn btn-secondary" type="button" data-upgrade-close>Abbrechen</button></div>
+      <p id="manage-question">Was soll zum Ende deines bereits bezahlten Zeitraums gelten?</p>
+      <div id="bundle-manage-options" class="dialog-actions"><button class="btn btn-primary" type="button" data-manage-choice="mnq">Nur MNQ</button><button class="btn btn-primary" type="button" data-manage-choice="mgc">Nur MGC</button></div>
+      <div class="dialog-actions" style="margin-top:10px"><button id="cancel-subscription" class="btn btn-secondary" type="button" data-manage-choice="cancel">Alles kündigen</button><button class="btn btn-secondary" type="button" data-upgrade-close>Abbrechen</button></div>
     </div>
     <div id="upgrade-status" class="upgrade-status" aria-live="polite"></div>
   </div>
@@ -1047,6 +1047,9 @@ mgcCheckout.textContent = 'Jetzt abonnieren';
   var codeInput = document.getElementById('upgrade-code');
   var codeSubmit = document.getElementById('upgrade-code-submit');
   var manageChoices = document.getElementById('manage-choices');
+  var manageQuestion = document.getElementById('manage-question');
+  var bundleManageOptions = document.getElementById('bundle-manage-options');
+  var cancelSubscription = document.getElementById('cancel-subscription');
   var challenge = '';
   var intent = 'upgrade';
 
@@ -1079,7 +1082,7 @@ mgcCheckout.textContent = 'Jetzt abonnieren';
     event.preventDefault();
     intent = 'manage';
     document.getElementById('upgrade-title').textContent = 'Abo verwalten';
-    document.getElementById('upgrade-description').textContent = 'Gib die E-Mail-Adresse deines Bundle-Abos ein. Wir schicken dir einen Bestätigungscode.';
+    document.getElementById('upgrade-description').textContent = 'Gib die E-Mail-Adresse deines MNQ-, MGC- oder Bundle-Abos ein. Wir schicken dir einen Bestätigungscode.';
     codeSubmit.textContent = 'Abo öffnen';
     modal.classList.add('open');
     modal.setAttribute('aria-hidden', 'false');
@@ -1113,6 +1116,13 @@ mgcCheckout.textContent = 'Jetzt abonnieren';
       if (data.mode === 'manage') {
         codeForm.hidden = true;
         manageChoices.hidden = false;
+        var planName = data.plan === 'mnq' ? 'MNQ' : data.plan === 'mgc' ? 'MGC' : 'Bundle';
+        var isBundle = data.plan === 'bundle';
+        manageQuestion.textContent = isBundle
+          ? 'Was soll zum Ende deines bereits bezahlten Zeitraums gelten?'
+          : 'Dein ' + planName + '-Abo ist aktiv. Es endet zum Ende des bereits bezahlten Zeitraums.';
+        bundleManageOptions.hidden = !isBundle;
+        cancelSubscription.textContent = isBundle ? 'Alles kündigen' : planName + '-Abo kündigen';
         setStatus('Wenn du nichts auswählst, läuft dein aktuelles Abo unverändert weiter.');
       } else if (data.url) {
         window.location.assign(data.url);

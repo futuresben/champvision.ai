@@ -58,6 +58,34 @@ async function isEligibleMnqItem(item, eligiblePrices) {
   return /\bMNQ\b/i.test(label) && !/\bbundle\b/i.test(label);
 }
 
+async function isBundleItem(item) {
+  const price = item.price || {};
+  if (price.id === process.env.STRIPE_BUNDLE_PRICE_ID) return true;
+  const productId = typeof price.product === 'string' ? price.product : price.product && price.product.id;
+  if (!productId) return false;
+  const product = typeof price.product === 'object' ? price.product : await stripe(`products/${encodeURIComponent(productId)}`);
+  return /\bbundle\b/i.test(`${product.name || ''} ${product.description || ''}`);
+}
+
+async function isMgcItem(item) {
+  const price = item.price || {};
+  if (price.id === process.env.STRIPE_MGC_PRICE_ID) return true;
+  const productId = typeof price.product === 'string' ? price.product : price.product && price.product.id;
+  if (!productId) return false;
+  if (productId === process.env.STRIPE_MGC_PRODUCT_ID) return true;
+  const product = typeof price.product === 'object' ? price.product : await stripe(`products/${encodeURIComponent(productId)}`);
+  const label = `${product.name || ''} ${product.description || ''}`;
+  return /\b(?:MGC|Gold)\b/i.test(label) && !/\bbundle\b/i.test(label);
+}
+
+async function subscriptionPlan(subscription, eligiblePrices) {
+  const items = subscription.items.data;
+  if ((await Promise.all(items.map(isBundleItem))).some(Boolean)) return 'bundle';
+  if ((await Promise.all(items.map((item) => isEligibleMnqItem(item, eligiblePrices)))).some(Boolean)) return 'mnq';
+  if ((await Promise.all(items.map(isMgcItem))).some(Boolean)) return 'mgc';
+  return null;
+}
+
 async function findEligibleSubscription(email) {
   const eligiblePrices = eligibleMnqPriceIds();
   const customers = await findCustomersByEmail(email);
@@ -75,17 +103,17 @@ async function findEligibleSubscription(email) {
 }
 
 async function findManageableSubscription(email) {
-  const customers = await stripe(`customers?email=${encodeURIComponent(email)}&limit=10`);
-  for (const customer of customers.data) {
+  const eligiblePrices = eligibleMnqPriceIds();
+  const customers = await findCustomersByEmail(email);
+  for (const customer of customers) {
     const subscriptions = await stripe(`subscriptions?customer=${customer.id}&status=all&limit=100`);
-    const active = subscriptions.data.filter((item) => item.status === 'active');
-    const hasMnqCredit = Number(customer.metadata.champvision_mnq_credit_seconds || 0) > 0;
-    const hasPrice = (item, price) => item.items.data.some((line) => line.price.id === price);
-    const subscription = active.find((item) => hasPrice(item, process.env.STRIPE_BUNDLE_PRICE_ID)) ||
-      (hasMnqCredit && active.find((item) => (
-        hasPrice(item, process.env.STRIPE_CURRENT_MNQ_PRICE_ID) || hasPrice(item, process.env.STRIPE_MGC_PRICE_ID)
-      )));
-    if (subscription) return { customerId: customer.id, subscriptionId: subscription.id };
+    const active = subscriptions.data.filter((item) => ['active', 'trialing'].includes(item.status));
+    const candidates = await Promise.all(active.map(async (subscription) => ({
+      subscription,
+      plan: await subscriptionPlan(subscription, eligiblePrices)
+    })));
+    const match = ['bundle', 'mnq', 'mgc'].map((plan) => candidates.find((item) => item.plan === plan)).find(Boolean);
+    if (match) return { customerId: customer.id, subscriptionId: match.subscription.id, plan: match.plan };
   }
   return null;
 }
@@ -106,7 +134,7 @@ module.exports = async (req, res) => {
     if (!membership) {
       return res.status(400).json({
         error: intent === 'manage'
-          ? 'Zu dieser E-Mail-Adresse wurde kein verwaltbares Bundle-Abo gefunden.'
+          ? 'Zu dieser E-Mail-Adresse wurde kein verwaltbares ChampVision-Abo gefunden.'
           : 'Zu dieser E-Mail-Adresse wurde kein aktives MNQ-Abo gefunden.'
       });
     }

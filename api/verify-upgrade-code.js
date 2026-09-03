@@ -63,7 +63,7 @@ module.exports = async (req, res) => {
 
   const verified = validChallenge(req.body && req.body.challenge, req.body && req.body.code);
   if (!verified) return res.status(400).json({ error: 'Der Code ist ungültig oder abgelaufen.' });
-  if (verified.intent === 'manage') return res.status(200).json({ ok: true, mode: 'manage' });
+  if (verified.intent === 'manage') return res.status(200).json({ ok: true, mode: 'manage', plan: verified.plan || 'bundle' });
   if (!process.env.STRIPE_BUNDLE_PRICE_ID) return res.status(500).json({ error: 'Das Bundle-Upgrade ist noch nicht eingerichtet.' });
 
   try {
