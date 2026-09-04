@@ -143,6 +143,6 @@ module.exports = async (req, res) => {
     return res.status(200).json({ message: `Gespeichert: Zum Ende des bezahlten Bundle-Monats läuft nur ${choice === 'mnq' ? 'MNQ' : 'MGC'} für 250 € monatlich weiter.` });
   } catch (error) {
     console.error('manage-subscription', error.message);
-    return res.status(500).json({ error: 'Die Änderung konnte gerade nicht gespeichert werden. Bitte versuche es erneut.' });
+    return res.status(500).json({ error: `Die Änderung wurde von Stripe nicht gespeichert: ${error.message}` });
   }
 };
