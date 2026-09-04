@@ -62,7 +62,7 @@ test('cancellation confirmation can be resent only for a pending cancellation', 
   global.fetch = async (url, options = {}) => {
     calls.push({ url, options });
     if (url.includes('/customers?email=')) return stripeReply({ data: [{ id: 'cus_massimo', email: 'massimovezzi@googlemail.com' }] });
-    if (url.includes('/subscriptions?customer=cus_massimo')) return stripeReply({ data: [{ id: 'sub_massimo', status: 'active', cancel_at_period_end: true, current_period_end: 1788540000, items: { data: [{ price: { id: 'price_current' } }] } }] });
+    if (url.includes('/subscriptions?customer=cus_massimo')) return stripeReply({ data: [{ id: 'sub_massimo', status: 'canceled', cancel_at_period_end: true, current_period_end: 1788540000, items: { data: [{ price: { id: 'price_current' } }] } }] });
     if (url === 'https://api.brevo.com/v3/smtp/email') return stripeReply({ messageId: 'mail_resend' });
     throw new Error(`Unexpected request: ${url}`);
   };

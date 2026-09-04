@@ -102,13 +102,15 @@ async function findEligibleSubscription(email) {
   return null;
 }
 
-async function findManageableSubscription(email) {
+async function findManageableSubscription(email, includeEnded = false) {
   const eligiblePrices = eligibleMnqPriceIds();
   const customers = await findCustomersByEmail(email);
   for (const customer of customers) {
     const subscriptions = await stripe(`subscriptions?customer=${customer.id}&status=all&limit=100`);
-    const active = subscriptions.data.filter((item) => ['active', 'trialing'].includes(item.status));
-    const candidates = await Promise.all(active.map(async (subscription) => ({
+    const manageable = subscriptions.data.filter((item) => (
+      ['active', 'trialing'].includes(item.status) || (includeEnded && item.status === 'canceled' && item.cancel_at_period_end)
+    ));
+    const candidates = await Promise.all(manageable.map(async (subscription) => ({
       subscription,
       plan: await subscriptionPlan(subscription, eligiblePrices)
     })));
@@ -160,7 +162,7 @@ module.exports = async (req, res) => {
 
   try {
     const membership = intent === 'manage' || intent === 'resend-cancellation-confirmation'
-      ? await findManageableSubscription(email)
+      ? await findManageableSubscription(email, intent === 'resend-cancellation-confirmation')
       : await findEligibleSubscription(email);
     if (!membership) {
       return res.status(400).json({
