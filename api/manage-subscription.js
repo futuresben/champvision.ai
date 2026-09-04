@@ -85,7 +85,6 @@ module.exports = async (req, res) => {
 
   try {
     const subscription = await stripe(`subscriptions/${verified.subscriptionId}`);
-    const customer = await stripe(`customers/${verified.customerId}`);
     const isBundle = ['active', 'trialing'].includes(subscription.status) && subscription.items.data.some((item) => item.price.id === process.env.STRIPE_BUNDLE_PRICE_ID);
 
     if (choice === 'cancel') {
@@ -95,8 +94,15 @@ module.exports = async (req, res) => {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: form({ cancel_at_period_end: 'true' })
       });
-      const credit = Number(customer.metadata.champvision_mnq_credit_seconds || 0);
-      const scheduled = await scheduleMnqCredit(verified.customerId, periodEnd(subscription), credit);
+      // A standalone MNQ subscription has no bundle credit to restore. Avoid
+      // a separate customer lookup so a normal cancellation only needs Stripe's
+      // subscription update.
+      let scheduled = 0;
+      if (verified.plan !== 'mnq') {
+        const customer = await stripe(`customers/${verified.customerId}`);
+        const credit = Number(customer.metadata.champvision_mnq_credit_seconds || 0);
+        scheduled = await scheduleMnqCredit(verified.customerId, periodEnd(subscription), credit);
+      }
       const days = Math.ceil(scheduled / 86400);
       return res.status(200).json({
         message: days > 0

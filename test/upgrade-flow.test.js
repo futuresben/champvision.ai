@@ -60,8 +60,7 @@ test('an active MNQ subscription can be cancelled through management', async () 
   global.fetch = async (url, options = {}) => {
     calls.push({ url, options });
     if (url.endsWith('/subscriptions/sub_mnq')) return stripeReply({ id: 'sub_mnq', status: 'active', items: { data: [{ price: { id: 'price_mnq' } }] } });
-    if (url.endsWith('/customers/cus_1')) return stripeReply({ id: 'cus_1', metadata: {} });
-    return stripeReply({});
+    throw new Error(`Unexpected request: ${url}`);
   };
   const handler = require('../api/manage-subscription');
   const res = response();
@@ -70,6 +69,7 @@ test('an active MNQ subscription can be cancelled through management', async () 
   assert.match(res.body.message, /endet zum Ende/);
   const cancellation = calls.find((call) => call.url.endsWith('/subscriptions/sub_mnq') && call.options.method === 'POST');
   assert.equal(new URLSearchParams(cancellation.options.body).get('cancel_at_period_end'), 'true');
+  assert.equal(calls.some((call) => call.url.endsWith('/customers/cus_1')), false);
 });
 
 function stripeReply(data) {
