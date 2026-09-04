@@ -43,6 +43,29 @@ function periodEnd(subscription) {
   return Number(subscription.current_period_end || (subscription.items.data[0] && subscription.items.data[0].current_period_end) || 0);
 }
 
+function planName(plan) {
+  return plan === 'mgc' ? 'MGC' : plan === 'bundle' ? 'Bot Bundle' : 'MNQ';
+}
+
+async function sendCancellationConfirmation(email, plan, endsAt) {
+  if (!email || !process.env.BREVO_API_KEY || !process.env.BREVO_SENDER_EMAIL || !endsAt) return;
+  const endDate = new Intl.DateTimeFormat('de-DE', {
+    timeZone: 'Europe/Berlin', day: '2-digit', month: '2-digit', year: 'numeric'
+  }).format(new Date(endsAt * 1000));
+  const product = planName(plan);
+  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'api-key': process.env.BREVO_API_KEY },
+    body: JSON.stringify({
+      sender: { name: process.env.BREVO_SENDER_NAME || 'Champvision Support', email: process.env.BREVO_SENDER_EMAIL },
+      to: [{ email }],
+      subject: `Bestätigung deiner ${product}-Kündigung`,
+      htmlContent: `<p>Deine Kündigung für <strong>${product}</strong> wurde bestätigt.</p><p>Dein Zugang bleibt bis einschließlich <strong>${endDate}</strong> aktiv. Danach erfolgen keine weiteren Abbuchungen.</p><p>Viele Grüße<br>Champvision Support</p>`
+    })
+  });
+  if (!response.ok) throw new Error('Cancellation email request failed');
+}
+
 async function cancelAtPeriodEnd(subscription) {
   const scheduleId = typeof subscription.schedule === 'string'
     ? subscription.schedule
@@ -104,6 +127,11 @@ module.exports = async (req, res) => {
     if (choice === 'cancel') {
       if (!['active', 'trialing'].includes(subscription.status)) return res.status(400).json({ error: 'Dieses Abo ist nicht mehr aktiv.' });
       await cancelAtPeriodEnd(subscription);
+      try {
+        await sendCancellationConfirmation(verified.email, verified.plan, periodEnd(subscription));
+      } catch (error) {
+        console.error('cancellation-confirmation', error.message);
+      }
       // A standalone MNQ subscription has no bundle credit to restore. Avoid
       // a separate customer lookup so a normal cancellation only needs Stripe's
       // subscription update.

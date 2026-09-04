@@ -56,20 +56,26 @@ test('an active MNQ subscription can be cancelled through management', async () 
   process.env.UPGRADE_TOKEN_SECRET = 'test-secret';
   process.env.STRIPE_SECRET_KEY = 'rk_test';
   process.env.STRIPE_BUNDLE_PRICE_ID = 'price_bundle';
+  process.env.BREVO_API_KEY = 'brevo_test';
+  process.env.BREVO_SENDER_EMAIL = 'support@example.test';
   const calls = [];
   global.fetch = async (url, options = {}) => {
     calls.push({ url, options });
-    if (url.endsWith('/subscriptions/sub_mnq')) return stripeReply({ id: 'sub_mnq', status: 'active', items: { data: [{ price: { id: 'price_mnq' } }] } });
+    if (url.endsWith('/subscriptions/sub_mnq')) return stripeReply({ id: 'sub_mnq', status: 'active', items: { data: [{ price: { id: 'price_mnq' }, current_period_end: 1790000000 }] } });
+    if (url === 'https://api.brevo.com/v3/smtp/email') return stripeReply({ messageId: 'cancellation_mail' });
     throw new Error(`Unexpected request: ${url}`);
   };
   const handler = require('../api/manage-subscription');
   const res = response();
-  await handler({ method: 'POST', headers: { origin: 'https://futuresben.github.io' }, body: { challenge: challenge('manage', 'sub_mnq', 'cus_1', { plan: 'mnq' }), code: '123456', choice: 'cancel' } }, res);
+  await handler({ method: 'POST', headers: { origin: 'https://futuresben.github.io' }, body: { challenge: challenge('manage', 'sub_mnq', 'cus_1', { plan: 'mnq', email: 'member@example.test' }), code: '123456', choice: 'cancel' } }, res);
   assert.equal(res.statusCode, 200);
   assert.match(res.body.message, /endet zum Ende/);
   const cancellation = calls.find((call) => call.url.endsWith('/subscriptions/sub_mnq') && call.options.method === 'POST');
   assert.equal(new URLSearchParams(cancellation.options.body).get('cancel_at_period_end'), 'true');
   assert.equal(calls.some((call) => call.url.endsWith('/customers/cus_1')), false);
+  const mail = calls.find((call) => call.url === 'https://api.brevo.com/v3/smtp/email');
+  assert.equal(JSON.parse(mail.options.body).to[0].email, 'member@example.test');
+  assert.match(JSON.parse(mail.options.body).subject, /MNQ-Kündigung/);
 });
 
 test('a schedule-managed MNQ subscription is released before cancellation', async () => {

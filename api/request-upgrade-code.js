@@ -113,7 +113,7 @@ async function findManageableSubscription(email) {
       plan: await subscriptionPlan(subscription, eligiblePrices)
     })));
     const match = ['bundle', 'mnq', 'mgc'].map((plan) => candidates.find((item) => item.plan === plan)).find(Boolean);
-    if (match) return { customerId: customer.id, subscriptionId: match.subscription.id, plan: match.plan };
+    if (match) return { customerId: customer.id, subscriptionId: match.subscription.id, plan: match.plan, email: customer.email };
   }
   return null;
 }
