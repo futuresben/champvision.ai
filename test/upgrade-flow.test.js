@@ -52,6 +52,29 @@ test('management verification returns the subscription plan for the interface', 
   assert.deepEqual(res.body, { ok: true, mode: 'manage', plan: 'mnq' });
 });
 
+test('cancellation confirmation can be resent only for a pending cancellation', async () => {
+  process.env.UPGRADE_TOKEN_SECRET = 'test-secret';
+  process.env.STRIPE_SECRET_KEY = 'rk_test';
+  process.env.STRIPE_CURRENT_MNQ_PRICE_ID = 'price_current';
+  process.env.BREVO_API_KEY = 'brevo_test';
+  process.env.BREVO_SENDER_EMAIL = 'support@example.test';
+  const calls = [];
+  global.fetch = async (url, options = {}) => {
+    calls.push({ url, options });
+    if (url.includes('/customers?email=')) return stripeReply({ data: [{ id: 'cus_massimo', email: 'massimovezzi@googlemail.com' }] });
+    if (url.includes('/subscriptions?customer=cus_massimo')) return stripeReply({ data: [{ id: 'sub_massimo', status: 'active', cancel_at_period_end: true, current_period_end: 1788540000, items: { data: [{ price: { id: 'price_current' } }] } }] });
+    if (url === 'https://api.brevo.com/v3/smtp/email') return stripeReply({ messageId: 'mail_resend' });
+    throw new Error(`Unexpected request: ${url}`);
+  };
+  const handler = require('../api/request-upgrade-code');
+  const res = response();
+  await handler({ method: 'POST', headers: {}, body: { email: 'massimovezzi@googlemail.com', intent: 'resend-cancellation-confirmation' } }, res);
+  assert.equal(res.statusCode, 200);
+  const mail = calls.find((call) => call.url === 'https://api.brevo.com/v3/smtp/email');
+  assert.equal(JSON.parse(mail.options.body).to[0].email, 'massimovezzi@googlemail.com');
+  assert.match(JSON.parse(mail.options.body).subject, /MNQ-Kündigung/);
+});
+
 test('an active MNQ subscription can be cancelled through management', async () => {
   process.env.UPGRADE_TOKEN_SECRET = 'test-secret';
   process.env.STRIPE_SECRET_KEY = 'rk_test';

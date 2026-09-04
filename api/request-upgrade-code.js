@@ -113,9 +113,38 @@ async function findManageableSubscription(email) {
       plan: await subscriptionPlan(subscription, eligiblePrices)
     })));
     const match = ['bundle', 'mnq', 'mgc'].map((plan) => candidates.find((item) => item.plan === plan)).find(Boolean);
-    if (match) return { customerId: customer.id, subscriptionId: match.subscription.id, plan: match.plan, email: customer.email };
+    if (match) return {
+      customerId: customer.id,
+      subscriptionId: match.subscription.id,
+      plan: match.plan,
+      email: customer.email,
+      cancelAtPeriodEnd: Boolean(match.subscription.cancel_at_period_end),
+      endsAt: Number(match.subscription.current_period_end || (match.subscription.items.data[0] && match.subscription.items.data[0].current_period_end) || 0)
+    };
   }
   return null;
+}
+
+function planName(plan) {
+  return plan === 'mgc' ? 'MGC' : plan === 'bundle' ? 'Bot Bundle' : 'MNQ';
+}
+
+async function sendCancellationConfirmation(email, plan, endsAt) {
+  const endDate = new Intl.DateTimeFormat('de-DE', {
+    timeZone: 'Europe/Berlin', day: '2-digit', month: '2-digit', year: 'numeric'
+  }).format(new Date(endsAt * 1000));
+  const product = planName(plan);
+  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'api-key': process.env.BREVO_API_KEY },
+    body: JSON.stringify({
+      sender: { name: process.env.BREVO_SENDER_NAME || 'Champvision Support', email: process.env.BREVO_SENDER_EMAIL },
+      to: [{ email }],
+      subject: `Bestätigung deiner ${product}-Kündigung`,
+      htmlContent: `<p>Deine Kündigung für <strong>${product}</strong> wurde bestätigt.</p><p>Dein Zugang bleibt bis einschließlich <strong>${endDate}</strong> aktiv. Danach erfolgen keine weiteren Abbuchungen.</p><p>Viele Grüße<br>Champvision Support</p>`
+    })
+  });
+  if (!response.ok) throw new Error('Cancellation email request failed');
 }
 
 module.exports = async (req, res) => {
@@ -124,11 +153,13 @@ module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const email = String(req.body && req.body.email || '').trim().toLowerCase();
-  const intent = req.body && req.body.intent === 'manage' ? 'manage' : 'upgrade';
+  const intent = req.body && req.body.intent === 'resend-cancellation-confirmation'
+    ? 'resend-cancellation-confirmation'
+    : req.body && req.body.intent === 'manage' ? 'manage' : 'upgrade';
   if (!/^\S+@\S+\.\S+$/.test(email)) return res.status(400).json({ error: 'Bitte gib eine gültige E-Mail-Adresse ein.' });
 
   try {
-    const membership = intent === 'manage'
+    const membership = intent === 'manage' || intent === 'resend-cancellation-confirmation'
       ? await findManageableSubscription(email)
       : await findEligibleSubscription(email);
     if (!membership) {
@@ -137,6 +168,12 @@ module.exports = async (req, res) => {
           ? 'Zu dieser E-Mail-Adresse wurde kein verwaltbares ChampVision-Abo gefunden.'
           : 'Zu dieser E-Mail-Adresse wurde kein aktives MNQ-Abo gefunden.'
       });
+    }
+
+    if (intent === 'resend-cancellation-confirmation') {
+      if (!membership.cancelAtPeriodEnd || !membership.endsAt) return res.status(400).json({ error: 'Für dieses Abo ist keine Kündigung zum Periodenende gespeichert.' });
+      await sendCancellationConfirmation(membership.email, membership.plan, membership.endsAt);
+      return res.status(200).json({ ok: true });
     }
 
     const code = String(crypto.randomInt(100000, 1000000));
