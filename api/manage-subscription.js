@@ -43,6 +43,20 @@ function periodEnd(subscription) {
   return Number(subscription.current_period_end || (subscription.items.data[0] && subscription.items.data[0].current_period_end) || 0);
 }
 
+async function cancelAtPeriodEnd(subscription) {
+  const scheduleId = typeof subscription.schedule === 'string'
+    ? subscription.schedule
+    : subscription.schedule && subscription.schedule.id;
+  if (scheduleId) {
+    await stripe(`subscription_schedules/${scheduleId}/release`, { method: 'POST' });
+  }
+  await stripe(`subscriptions/${subscription.id}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: form({ cancel_at_period_end: 'true' })
+  });
+}
+
 async function scheduleMnqCredit(customerId, startsAt, creditSeconds) {
   if (creditSeconds <= 0) return 0;
   const schedules = await stripe(`subscription_schedules?customer=${customerId}&limit=100`);
@@ -89,11 +103,7 @@ module.exports = async (req, res) => {
 
     if (choice === 'cancel') {
       if (!['active', 'trialing'].includes(subscription.status)) return res.status(400).json({ error: 'Dieses Abo ist nicht mehr aktiv.' });
-      await stripe(`subscriptions/${subscription.id}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: form({ cancel_at_period_end: 'true' })
-      });
+      await cancelAtPeriodEnd(subscription);
       // A standalone MNQ subscription has no bundle credit to restore. Avoid
       // a separate customer lookup so a normal cancellation only needs Stripe's
       // subscription update.
@@ -135,14 +145,10 @@ module.exports = async (req, res) => {
         })
       });
     }
-    await stripe(`subscriptions/${subscription.id}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: form({ cancel_at_period_end: 'true' })
-    });
+    await cancelAtPeriodEnd(subscription);
     return res.status(200).json({ message: `Gespeichert: Zum Ende des bezahlten Bundle-Monats läuft nur ${choice === 'mnq' ? 'MNQ' : 'MGC'} für 250 € monatlich weiter.` });
   } catch (error) {
     console.error('manage-subscription', error.message);
-    return res.status(500).json({ error: `Die Änderung wurde von Stripe nicht gespeichert: ${error.message}` });
+    return res.status(500).json({ error: 'Die Änderung konnte gerade nicht gespeichert werden. Bitte versuche es erneut.' });
   }
 };

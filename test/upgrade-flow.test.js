@@ -72,6 +72,29 @@ test('an active MNQ subscription can be cancelled through management', async () 
   assert.equal(calls.some((call) => call.url.endsWith('/customers/cus_1')), false);
 });
 
+test('a schedule-managed MNQ subscription is released before cancellation', async () => {
+  process.env.UPGRADE_TOKEN_SECRET = 'test-secret';
+  process.env.STRIPE_SECRET_KEY = 'rk_test';
+  process.env.STRIPE_BUNDLE_PRICE_ID = 'price_bundle';
+  const calls = [];
+  global.fetch = async (url, options = {}) => {
+    calls.push({ url, options });
+    if (url.endsWith('/subscriptions/sub_scheduled') && !options.method) return stripeReply({ id: 'sub_scheduled', status: 'active', schedule: 'sub_sched_1', items: { data: [{ price: { id: 'price_mnq' } }] } });
+    if (url.endsWith('/subscription_schedules/sub_sched_1/release')) return stripeReply({ id: 'sub_sched_1', status: 'released', released_subscription: 'sub_scheduled' });
+    if (url.endsWith('/subscriptions/sub_scheduled')) return stripeReply({ id: 'sub_scheduled' });
+    throw new Error(`Unexpected request: ${url}`);
+  };
+  const handler = require('../api/manage-subscription');
+  const res = response();
+  await handler({ method: 'POST', headers: {}, body: { challenge: challenge('manage', 'sub_scheduled', 'cus_1', { plan: 'mnq' }), code: '123456', choice: 'cancel' } }, res);
+  assert.equal(res.statusCode, 200);
+  assert.deepEqual(calls.map((call) => call.url.replace('https://api.stripe.com/v1/', '')), [
+    'subscriptions/sub_scheduled',
+    'subscription_schedules/sub_sched_1/release',
+    'subscriptions/sub_scheduled'
+  ]);
+});
+
 function stripeReply(data) {
   return { ok: true, json: async () => data };
 }
