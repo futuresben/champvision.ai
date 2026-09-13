@@ -43,19 +43,14 @@ body{background:var(--bg);color:var(--ink);font-family:'Sora',sans-serif;overflo
 #intro{position:fixed;inset:0;z-index:99;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);perspective:none;transform-style:flat;
   transition:opacity .8s ease, visibility .8s ease}
 #intro.done{opacity:0;visibility:hidden}
-#intro-logo-stage{width:540px;height:540px;flex:0 0 540px;margin:-135px 0;display:grid;place-items:center;transform-origin:50% 50%;rotate:-220deg;animation:introSpin 1.25s linear forwards;will-change:rotate}
-#intro img{display:block;width:540px;height:540px;aspect-ratio:1/1;object-fit:contain;
-  animation:introScale 1.25s cubic-bezier(.4,0,.2,1) forwards;
-  transform-origin:50% 50%;will-change:transform,opacity;
+#intro img{width:270px;height:270px;
+  animation:introSpin 2s cubic-bezier(.4,0,.2,1) forwards;
+  transform-origin:50% 46.6%;backface-visibility:hidden;will-change:transform,opacity;
   filter:drop-shadow(0 0 6px rgba(120,170,255,.85)) drop-shadow(0 0 16px rgba(79,141,255,.55))}
 @keyframes introSpin{
-  0%{rotate:-220deg}
-  100%{rotate:360deg}
-}
-@keyframes introScale{
-  0%{transform:scale(.06);opacity:0}
+  0%{transform:rotate(-220deg) scale(.3);opacity:0}
   60%{opacity:1}
-  100%{transform:scale(.5);opacity:1}
+  100%{transform:rotate(360deg) scale(1);opacity:1}
 }
 .intro-text{margin-top:28px;font-family:'Orbitron';letter-spacing:3px;
   font-size:.85rem;color:var(--muted);opacity:0;animation:fadeIn .8s ease 1.3s forwards;text-align:center}
@@ -594,7 +589,7 @@ section.about p,.cta-box p{color:#8a9abc}.stats-foot,.disclaimer,.legal-note{col
 <canvas id="particles"></canvas>
 
 <div id="intro">
-  <div id="intro-logo-stage"><img src="assets/champvision-logo-mark-smooth-hd.png" alt="ChampVision Logo lädt"></div>
+  <img src="assets/champvision-logo-mark-smooth-hd.png" alt="ChampVision Logo lädt">
   <div class="intro-text">CHAMPVISION.ai</div>
 </div>
 
