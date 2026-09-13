@@ -43,14 +43,14 @@ body{background:var(--bg);color:var(--ink);font-family:'Sora',sans-serif;overflo
 #intro{position:fixed;inset:0;z-index:99;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);
   transition:opacity .8s ease, visibility .8s ease}
 #intro.done{opacity:0;visibility:hidden}
-#intro img{width:270px;height:270px;
+#intro img{width:540px;height:540px;margin:-135px 0;
   animation:introSpin 2s cubic-bezier(.4,0,.2,1) forwards;
-  transform-origin:50% 46.6%;backface-visibility:hidden;will-change:transform,opacity;
+  transform-origin:50% 50%;backface-visibility:hidden;will-change:transform,opacity;
   filter:drop-shadow(0 0 6px rgba(120,170,255,.85)) drop-shadow(0 0 16px rgba(79,141,255,.55))}
 @keyframes introSpin{
-  0%{transform:rotate(-220deg) scale(.3);opacity:0}
+  0%{transform:rotate(-220deg) scale(.15);opacity:0}
   60%{opacity:1}
-  100%{transform:rotate(360deg) scale(1);opacity:1}
+  100%{transform:rotate(360deg) scale(.5);opacity:1}
 }
 .intro-text{margin-top:28px;font-family:'Orbitron';letter-spacing:3px;
   font-size:.85rem;color:var(--muted);opacity:0;animation:fadeIn .8s ease 1.3s forwards;text-align:center}
@@ -168,7 +168,7 @@ footer{position:relative;z-index:2;text-align:center;padding:50px 24px;color:var
 footer .brand{justify-content:center;margin-bottom:14px;font-size:.95rem}
 .disclaimer{max-width:620px;margin:16px auto 0;font-size:.75rem;opacity:.6;line-height:1.5}
 @media (prefers-reduced-motion: reduce){
-  #intro img{animation:none;filter:drop-shadow(0 0 6px rgba(120,170,255,.85)) drop-shadow(0 0 16px rgba(79,141,255,.55))}
+  #intro img{animation:none;transform:scale(.5);filter:drop-shadow(0 0 6px rgba(120,170,255,.85)) drop-shadow(0 0 16px rgba(79,141,255,.55))}
   .reveal{animation:none!important}
   .card,.btn,.cta-box,.stat,.product-card{transition:none!important;transform:none!important}
 }
