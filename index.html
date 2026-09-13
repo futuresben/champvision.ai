@@ -514,6 +514,11 @@ footer{background:rgba(255,255,255,.5)}
 /* ===== Dark Theme: Schwarz · Anthrazit · ChampVision-Blau ===== */
 :root{--bg:#181818;--bg2:#202126;--blue:#2563eb;--blue-bright:#4f8dff;--blue-deep:#174ec4;--ink:#edf3ff;--muted:#a7b0c2;--line:rgba(126,145,180,.25)}
 body{background:#181818;color:var(--ink)}
+/* Quiet, full-bleed city texture: deliberately subdued beneath all content. */
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(rgba(24,24,24,.82),rgba(24,24,24,.88)),url('assets/champvision-skyline.webp') center center/cover no-repeat;
+  opacity:.34;filter:saturate(.55) contrast(.9);transform:translateZ(0)}
+.page{position:relative;z-index:1}
 body::before{background:linear-gradient(90deg,transparent 6%,rgba(79,141,255,.75) 50%,transparent 94%)}
 #intro{background:#181818}.brand-text,.hero h1{color:#f7f9ff}.hero-logo img,.brand img,.product-banner img{filter:none}
 /* The master logo has a black matte. Screen blending makes that matte fully
