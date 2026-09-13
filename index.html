@@ -45,7 +45,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Sora',sans-serif;overflo
 #intro.done{opacity:0;visibility:hidden}
 #intro img{width:270px;height:270px;
   animation:introSpin 2s cubic-bezier(.4,0,.2,1) forwards;
-  transform-origin:50% 46.6%;backface-visibility:hidden;will-change:transform,opacity;
+  transform-origin:50% 46.6%;image-rendering:auto;
   filter:drop-shadow(0 0 6px rgba(120,170,255,.85)) drop-shadow(0 0 16px rgba(79,141,255,.55))}
 @keyframes introSpin{
   0%{transform:rotate(-220deg) scale(.3);opacity:0}
