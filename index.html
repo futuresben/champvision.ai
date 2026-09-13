@@ -521,7 +521,10 @@ footer{background:rgba(255,255,255,.5)}
 body{background:#181818;color:var(--ink)}
 body::before{background:linear-gradient(90deg,transparent 6%,rgba(79,141,255,.75) 50%,transparent 94%)}
 #intro{background:#181818}.brand-text,.hero h1{color:#f7f9ff}.hero-logo img,.brand img,.product-banner img{filter:none}
-img[src$="champvision-logo-refined-flat-hd.png"]{background:#000}
+/* The master logo has a black matte. Screen blending makes that matte fully
+   disappear over every dark site surface while preserving its white and blue
+   details — no rectangular logo background remains. */
+img[src$="champvision-logo-refined-flat-hd.png"]{background:transparent;mix-blend-mode:screen}
 #intro img{border-radius:0;clip-path:none;-webkit-clip-path:none;filter:none;image-rendering:auto}
 .hero h1{background:none;color:#fff;-webkit-text-fill-color:#fff;text-shadow:0 2px 22px rgba(255,255,255,.08)}
 .hero h1 .ai{background:none;-webkit-text-fill-color:#fff;text-shadow:none}
@@ -570,7 +573,7 @@ section.about p,.cta-box p{color:#8a9abc}.stats-foot,.disclaimer,.legal-note{col
 .product-card,.card,.cta-box{background:var(--slate-panel);border-color:var(--slate-line)}
 .product-card:hover,.card:hover,.cta-box:hover{background:#272c34;border-color:#687385}
 .product-card .product-banner{background:var(--slate-deep);border-bottom-color:var(--slate-line)}
-.product-card .product-header-logo{clip-path:circle(49% at 50% 50%);-webkit-clip-path:circle(49% at 50% 50%);background:transparent;mix-blend-mode:screen}
+.product-card .product-header-logo{clip-path:none;-webkit-clip-path:none;background:transparent}
 .product-mini,.product-card .product-tag,.product-card .product-platform{background:var(--slate-raised);border-color:var(--slate-line)}
 .stats-group{background:var(--slate-panel);border-color:var(--slate-line)}
 .stats-group-head{background:var(--slate-head);border-bottom-color:var(--slate-line)}
