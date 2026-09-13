@@ -520,7 +520,7 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   opacity:.78;filter:saturate(.82) contrast(.98);transform:translateZ(0)}
 .page{position:relative;z-index:1}
 body::before{background:linear-gradient(90deg,transparent 6%,rgba(79,141,255,.75) 50%,transparent 94%)}
-#intro{background:#181818}.brand-text,.hero h1{color:#f7f9ff}.hero-logo img,.brand img,.product-banner img{filter:none}
+#intro{background:transparent}.brand-text,.hero h1{color:#f7f9ff}.hero-logo img,.brand img,.product-banner img{filter:none}
 /* The master logo has a black matte. Screen blending makes that matte fully
    disappear over every dark site surface while preserving its white and blue
    details — no rectangular logo background remains. */
@@ -587,6 +587,8 @@ section.about p,.cta-box p{color:#8a9abc}.stats-foot,.disclaimer,.legal-note{col
 .dash-chrome{background:var(--slate-head);border-bottom-color:var(--slate-line)}
 .dash-chrome .url,.dash-card,.dash-feed,.dash-equity,.dash-propfirms{background:var(--slate-panel);border-color:#3a414d}
 .mnq-line,.mgc-line{stroke:#00a88e}.equity-panel>header b,.mgc-panel>header b{color:#9ff6e4;background:#0a3a34}.equity-panel>footer span:nth-child(2) strong{color:#00a88e}
+/* Selected typography: every visible text element uses DM Serif Display. */
+body,body *{font-family:'DM Serif Display',Georgia,serif!important}
 .dash-feed-row,.dash-firm-chip{background:var(--slate-raised);border-color:#444c59}
 .btn-primary,.btn-secondary,.btn-ghost,.bundle-actions .btn-secondary,.nav-cta,.dash-add-firm{background:var(--slate-head);border-color:#626c7b}
 .btn-primary:hover,.btn-secondary:hover,.btn-ghost:hover,.bundle-actions .btn-secondary:hover,.nav-cta:hover,.dash-add-firm:hover{background:#505866;border-color:#6f7b8e}
