@@ -43,14 +43,14 @@ body{background:var(--bg);color:var(--ink);font-family:'Sora',sans-serif;overflo
 #intro{position:fixed;inset:0;z-index:99;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);perspective:none;transform-style:flat;
   transition:opacity .8s ease, visibility .8s ease}
 #intro.done{opacity:0;visibility:hidden}
-#intro-logo-stage{width:540px;height:540px;flex:0 0 540px;margin:-135px 0;display:grid;place-items:center;transform-origin:50% 50%;animation:introSpin 2s linear forwards;will-change:transform}
+#intro-logo-stage{width:540px;height:540px;flex:0 0 540px;margin:-135px 0;display:grid;place-items:center;transform-origin:50% 50%;rotate:-220deg;animation:introSpin 2s linear forwards;will-change:rotate}
 #intro img{display:block;width:540px;height:540px;aspect-ratio:1/1;object-fit:contain;
   animation:introScale 2s cubic-bezier(.4,0,.2,1) forwards;
   transform-origin:50% 50%;backface-visibility:hidden;will-change:transform,opacity;
   filter:drop-shadow(0 0 6px rgba(120,170,255,.85)) drop-shadow(0 0 16px rgba(79,141,255,.55))}
 @keyframes introSpin{
-  0%{transform:translateZ(0) rotate(-220deg)}
-  100%{transform:translateZ(0) rotate(360deg)}
+  0%{rotate:-220deg}
+  100%{rotate:360deg}
 }
 @keyframes introScale{
   0%{transform:scale(.15);opacity:0}
