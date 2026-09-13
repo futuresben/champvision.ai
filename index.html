@@ -43,14 +43,19 @@ body{background:var(--bg);color:var(--ink);font-family:'Sora',sans-serif;overflo
 #intro{position:fixed;inset:0;z-index:99;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);perspective:none;transform-style:flat;
   transition:opacity .8s ease, visibility .8s ease}
 #intro.done{opacity:0;visibility:hidden}
-#intro img{display:block;flex:0 0 540px;width:540px;height:540px;aspect-ratio:1/1;object-fit:contain;margin:-135px 0;
-  animation:introSpin 2s linear forwards;
-  transform-origin:50% 50%;transform-box:fill-box;backface-visibility:hidden;will-change:transform,opacity;
+#intro-logo-stage{width:540px;height:540px;flex:0 0 540px;margin:-135px 0;display:grid;place-items:center;transform-origin:50% 50%;animation:introSpin 2s linear forwards;will-change:transform}
+#intro img{display:block;width:540px;height:540px;aspect-ratio:1/1;object-fit:contain;
+  animation:introScale 2s cubic-bezier(.4,0,.2,1) forwards;
+  transform-origin:50% 50%;backface-visibility:hidden;will-change:transform,opacity;
   filter:drop-shadow(0 0 6px rgba(120,170,255,.85)) drop-shadow(0 0 16px rgba(79,141,255,.55))}
 @keyframes introSpin{
-  0%{transform:translateZ(0) rotate(-220deg) scale(.5);opacity:0}
+  0%{transform:translateZ(0) rotate(-220deg)}
+  100%{transform:translateZ(0) rotate(360deg)}
+}
+@keyframes introScale{
+  0%{transform:scale(.15);opacity:0}
   60%{opacity:1}
-  100%{transform:translateZ(0) rotate(360deg) scale(.5);opacity:1}
+  100%{transform:scale(.5);opacity:1}
 }
 .intro-text{margin-top:28px;font-family:'Orbitron';letter-spacing:3px;
   font-size:.85rem;color:var(--muted);opacity:0;animation:fadeIn .8s ease 1.3s forwards;text-align:center}
@@ -168,6 +173,7 @@ footer{position:relative;z-index:2;text-align:center;padding:50px 24px;color:var
 footer .brand{justify-content:center;margin-bottom:14px;font-size:.95rem}
 .disclaimer{max-width:620px;margin:16px auto 0;font-size:.75rem;opacity:.6;line-height:1.5}
 @media (prefers-reduced-motion: reduce){
+  #intro-logo-stage{animation:none;transform:none}
   #intro img{animation:none;transform:scale(.5);filter:drop-shadow(0 0 6px rgba(120,170,255,.85)) drop-shadow(0 0 16px rgba(79,141,255,.55))}
   .reveal{animation:none!important}
   .card,.btn,.cta-box,.stat,.product-card{transition:none!important;transform:none!important}
@@ -588,7 +594,7 @@ section.about p,.cta-box p{color:#8a9abc}.stats-foot,.disclaimer,.legal-note{col
 <canvas id="particles"></canvas>
 
 <div id="intro">
-  <img src="assets/champvision-logo-mark-smooth-hd.png" alt="ChampVision Logo lädt">
+  <div id="intro-logo-stage"><img src="assets/champvision-logo-mark-smooth-hd.png" alt="ChampVision Logo lädt"></div>
   <div class="intro-text">CHAMPVISION.ai</div>
 </div>
 
