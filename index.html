@@ -548,6 +548,20 @@ section.about{max-width:1100px;padding:130px 6vw;text-align:left}.eyebrow{font-f
 .equity-panel{background:#0b1120;border:1px solid rgba(74,126,224,.22);color:#eef4ff}.equity-panel header{background:#0e1728;border-color:#1e3154}.equity-panel header strong{color:#f1f5ff}.equity-panel header span{color:#7180a2}.equity-chart{background:#09101d}.eq-grid{stroke:#263756}.eq-axis text{fill:#7180a2}.mnq-panel header b,.mgc-panel header b{color:#4f8dff}.mgc-line{stroke:#4f8dff!important}.mgc-panel stop:first-child{stop-color:#4f8dff}
 .stats-group{background:#0b1120;border:1px solid rgba(74,126,224,.22);color:#eef4ff}.stats-group-head{border-color:#1e3154}.stats-group-head h3{font-family:'Orbitron',sans-serif;color:#eef4ff}.stat{background:#0d1627;border-color:#1e3154}.stat .num,.stat .num.pos{color:#6ea8ff;font-family:'Orbitron',sans-serif}.stat .lbl,.stat .num .currency{color:#7180a2}
 .card h3{font-family:'Orbitron',sans-serif;font-size:1.1rem}.card .ico{color:#4f8dff}.cta-box{background:#0b1120;color:#eef4ff;border:1px solid rgba(74,126,224,.24)}.cta-box p{color:#91a2c5}
+/* Smooth, original hero motion and explicit logo positioning */
+.hero-motion{position:absolute;inset:0;width:100%;height:100vh;overflow:hidden;opacity:.82;pointer-events:none;background:radial-gradient(circle at 72% 42%,rgba(30,91,205,.23),transparent 27%),linear-gradient(145deg,#03050a,#07101f 68%,#020308)}
+.hero-motion::before{content:'';position:absolute;inset:-12%;background-image:linear-gradient(rgba(79,141,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(79,141,255,.055) 1px,transparent 1px);background-size:74px 74px;transform:perspective(700px) rotateX(57deg) translate3d(0,20%,0);animation:heroGrid 14s linear infinite}
+.hero-motion::after{content:'';position:absolute;width:55vw;height:55vw;right:-8vw;top:4vh;border:1px solid rgba(79,141,255,.17);border-radius:50%;box-shadow:0 0 0 7vw rgba(79,141,255,.025),0 0 90px rgba(41,121,255,.18);animation:heroOrbit 18s linear infinite}
+.hero-scene-logo{position:absolute;right:8vw;top:17vh;width:min(38vw,470px);height:min(38vw,470px);object-fit:contain;opacity:.42;filter:drop-shadow(0 0 32px rgba(41,121,255,.46));animation:heroLogo 8s ease-in-out infinite}
+.hero-scene-chart{position:absolute;inset:auto -2% 12% 42%;width:62%;height:42%;overflow:visible;filter:drop-shadow(0 0 11px rgba(41,121,255,.4))}.hero-scene-chart path{fill:none;stroke:#4f8dff;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1300;animation:heroTrace 7s ease-in-out infinite}
+.hero-logo-wrap{display:none}.hero h1{padding-top:clamp(150px,24vh,230px)}
+.product-card .product-header-logo{display:block!important;position:absolute!important;left:auto!important;right:20px!important;top:auto!important;bottom:18px!important;width:54px!important;height:54px!important;object-fit:contain!important;transform:none!important;opacity:.64!important;filter:drop-shadow(0 0 14px rgba(41,121,255,.38))!important;z-index:2}
+@keyframes heroGrid{to{background-position:0 148px,148px 0}}
+@keyframes heroOrbit{50%{transform:rotate(180deg) scale(1.045)}to{transform:rotate(360deg) scale(1)}}
+@keyframes heroLogo{0%,100%{transform:translate3d(0,0,0) scale(.98);opacity:.36}50%{transform:translate3d(0,-12px,0) scale(1.025);opacity:.5}}
+@keyframes heroTrace{0%{stroke-dashoffset:1300;opacity:.2}45%,75%{stroke-dashoffset:0;opacity:.92}100%{stroke-dashoffset:-1300;opacity:.2}}
+@media(max-width:720px){.hero-scene-logo{right:-12vw;top:20vh;width:78vw;height:78vw;opacity:.25}.hero-scene-chart{left:10%;width:100%;opacity:.55}.hero h1{padding-top:150px}.hero-motion::after{width:90vw;height:90vw;right:-40vw;top:16vh}}
+@media(prefers-reduced-motion:reduce){.hero-motion::before,.hero-motion::after,.hero-scene-logo,.hero-scene-chart path{animation:none}}
 </style>
 </head>
 <body>
@@ -571,7 +585,10 @@ section.about{max-width:1100px;padding:130px 6vw;text-align:left}.eyebrow{font-f
 </nav>
 
 <header class="hero">
-  <img class="hero-motion" src="assets/champvision-hero.webp" alt="" aria-hidden="true">
+  <div class="hero-motion" aria-hidden="true">
+    <img class="hero-scene-logo" src="assets/champvision-logo-transparent.png" alt="">
+    <svg class="hero-scene-chart" viewBox="0 0 900 360" preserveAspectRatio="none"><path d="M0 300 C70 288 102 318 165 268 S250 276 306 222 S400 245 455 178 S545 205 612 138 S715 164 780 94 S850 108 900 42"/></svg>
+  </div>
   <div class="hero-logo-wrap reveal d1">
     <div class="hero-logo">
       <div class="logo-glow-2"></div>
