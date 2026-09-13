@@ -22,7 +22,7 @@
 <meta name="twitter:image" content="assets/champvision-wordmark-2026.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;700;900&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --wide-content:1500px;
@@ -513,6 +513,31 @@ footer{background:rgba(255,255,255,.5)}
 .product-card .product-rate{background:#dbeafe;color:#174ec4;box-shadow:0 7px 18px rgba(37,99,235,.12)}
 .product-card.bundle .product-rate{background:#dcfce7;color:#166534}
 .hero-visual-inner{background:transparent;border:0;box-shadow:none}.hero-visual-inner:hover{box-shadow:none}
+/* ===== Editorial storefront redesign ===== */
+:root{--editorial-bg:#0d0d0c;--editorial-surface:#171715;--editorial-paper:#f4f1ea;--editorial-gold:#c5a66a;--editorial-border:rgba(255,255,255,.14)}
+body{background:var(--editorial-bg);color:#f7f4ed;font-family:'Inter',sans-serif}
+#intro,#particles,.bg-grid,.bg-glow,.orb{display:none!important}.page{opacity:1!important;background:var(--editorial-bg)}
+nav{max-width:1380px;padding:24px 38px;border-bottom:1px solid rgba(255,255,255,.08)}
+.brand{font-family:'Inter',sans-serif;font-size:.86rem;letter-spacing:.16em;text-transform:uppercase;color:#fff}.brand img{filter:none;width:30px;height:30px}.brand .brand-text,.brand .ai{color:#fff}
+.hero{max-width:none;padding:0 0 96px;text-align:left;background:linear-gradient(90deg,rgba(6,6,5,.96) 0%,rgba(6,6,5,.82) 48%,rgba(6,6,5,.38) 100%),radial-gradient(circle at 76% 32%,rgba(197,166,106,.22),transparent 28%),linear-gradient(145deg,#171b20 0%,#080908 58%,#19140d 100%)}
+.hero::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:.28;background:linear-gradient(115deg,transparent 49.8%,rgba(255,255,255,.08) 50%,transparent 50.2%),repeating-linear-gradient(90deg,transparent 0 119px,rgba(255,255,255,.025) 120px)}
+.hero-logo-wrap{width:104px;height:104px;margin:120px 7vw 34px;position:relative;z-index:1}.hero-logo img{filter:drop-shadow(0 12px 32px rgba(0,0,0,.5))}.hero-logo .logo-glow-1,.hero-logo .logo-glow-2{display:none}
+.hero h1{position:relative;z-index:1;margin:0 7vw;max-width:920px;white-space:normal;color:#fff;font-family:'Cormorant Garamond',serif;font-size:clamp(4.1rem,9vw,8.6rem);font-weight:600;line-height:.84;letter-spacing:-.055em;text-shadow:none}.hero h1 .ai{color:var(--editorial-gold);background:none;-webkit-text-fill-color:currentColor;text-shadow:none}
+.tagline{position:relative;z-index:1;margin:42px 7vw 0;max-width:760px;color:#f4f0e8;font-family:'Cormorant Garamond',serif;font-size:clamp(1.55rem,3vw,2.4rem);line-height:1.12;font-weight:500}.sub-slogan{position:relative;z-index:1;margin:24px 7vw 0;max-width:620px;color:rgba(255,255,255,.66);font-family:'Inter',sans-serif;font-size:1rem;line-height:1.65;font-weight:400;letter-spacing:0}.sub-slogan .accent{color:inherit;background:none;-webkit-text-fill-color:currentColor}
+.hero > section.product{position:relative;z-index:2;margin:105px auto 0;padding:0 5vw;max-width:1580px}.product-intro{text-align:center;margin:0 auto 48px;max-width:760px}.product-kicker{display:block;color:var(--editorial-gold);font-size:.72rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin-bottom:18px}.product-intro h2{font-family:'Cormorant Garamond',serif;font-size:clamp(3rem,6vw,5.6rem);font-weight:600;line-height:.9;letter-spacing:-.04em}.product-intro p{margin:18px auto 0;color:rgba(255,255,255,.58);font-size:.96rem;line-height:1.7}
+.products-grid{gap:18px;align-items:stretch}.product-card{border-radius:0;background:#f1eee7;color:#171715;border:0;box-shadow:none;transform:none!important}.product-card:hover{border-color:transparent;box-shadow:0 22px 65px rgba(0,0,0,.32)}
+.product-banner,.product-card:nth-child(1) .product-banner{height:230px;background:radial-gradient(circle at 72% 30%,rgba(197,166,106,.22),transparent 24%),linear-gradient(145deg,#202327,#090a0a 62%,#1e1810);border:0;transform:none}.product-card:nth-child(2) .product-banner{background:radial-gradient(circle at 30% 35%,rgba(197,166,106,.34),transparent 26%),linear-gradient(145deg,#1b1710,#080808 62%,#211b12)}.product-card:nth-child(3) .product-banner{background:radial-gradient(circle at 50% 25%,rgba(87,128,199,.35),transparent 28%),linear-gradient(145deg,#131923,#08090b 62%,#17120d)}
+.product-banner::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 55px,rgba(255,255,255,.035) 56px),linear-gradient(118deg,transparent 0 64%,rgba(255,255,255,.08) 64.2%,transparent 64.5%);opacity:.7}.product-banner img{width:126px;height:126px;left:50%;top:48%;opacity:.88;filter:drop-shadow(0 10px 26px rgba(0,0,0,.45))}.product-chart-art{display:none!important}.product-rate{top:18px;right:18px;background:#f2eee6;color:#111;border:0;font-size:.68rem;letter-spacing:.02em}.product-platform{left:18px;bottom:18px;background:rgba(5,5,5,.62);color:#fff;border:1px solid rgba(255,255,255,.22);font-size:.68rem}.product-tag{display:none}
+.product-body{padding:30px 28px 26px;display:flex;flex-direction:column;flex:1}.product-eyebrow{font-family:'Inter',sans-serif;color:#7d786f;font-size:.64rem;letter-spacing:.18em;font-weight:700;margin-bottom:12px}.product-name{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;letter-spacing:-.035em;color:#111;line-height:1}.product-mini-stats{gap:10px;margin:24px 0 20px}.product-mini{background:#e4e0d8;border-radius:0;padding:15px 14px}.product-mini .lbl{color:#817b72;font-size:.68rem}.product-mini .val{color:#171715;font-size:.88rem}.product-features{margin:0 0 25px;gap:10px;color:#4f4b45;font-size:.78rem}.product-features li svg{color:#7d6538}
+.product-footer{margin-top:auto;padding-top:22px;border-color:rgba(17,17,17,.14);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px}.price-row{margin:0}.price-row .amount{color:#111;font-family:'Cormorant Garamond',serif;font-size:2.2rem}.price-row .period{color:#68635b}.old-amount{color:#8b857c}.new-price-badge,.discount-badge{background:#171715;color:#fff;border-radius:0;box-shadow:none}
+.btn{border-radius:0;font-family:'Inter',sans-serif;font-size:.76rem;font-weight:700;padding:13px 18px;justify-content:center;transform:none!important}.btn-primary{background:#151513;color:#fff;box-shadow:none}.btn-primary:hover{background:#2b2925;box-shadow:none}.btn-secondary{background:#151513!important;color:#fff!important;border:1px solid #151513!important}.bundle-actions{width:100%;gap:8px}.purchase-path{min-width:0}.purchase-path-hint{color:#716b62!important;font-size:.62rem!important}
+.hero-visual{max-width:1480px;padding:110px 5vw 0}.performance-heading h2,.about h2,.dashboard-preview h2,.cta-box h2{font-family:'Cormorant Garamond',serif!important;letter-spacing:-.035em!important;font-weight:600!important}.performance-heading h2{font-size:clamp(3rem,6vw,5.2rem);line-height:.92}.performance-heading h2 span{color:var(--editorial-gold)}.performance-heading p{color:rgba(255,255,255,.55)}
+.hero-visual-inner>svg:first-child,.market-visual,.hv-tag{display:none!important}.hero-visual-inner{padding:0;background:none;border:0;box-shadow:none;transform:none!important}.equity-comparison{position:relative;inset:auto;display:grid;grid-template-columns:1fr 1fr;gap:18px}.equity-panel{background:#f1eee7;border:0;border-radius:0;color:#171715;box-shadow:none}.equity-panel header{background:#e9e5dd;border-color:#d4cec4}.equity-panel header strong{color:#171715}.equity-panel header span,.eq-axis{color:#756f66}.equity-chart{background:#f5f2eb}.eq-grid{stroke:#d9d2c8}.eq-axis text{fill:#777168}.mnq-panel header b{color:#2563eb}.mgc-panel header b{color:#9a6b16}
+.stats{max-width:1480px;padding:18px 5vw 110px}.stats-comparison{gap:18px}.stats-group{background:#f1eee7;border:0;border-radius:0;color:#171715;padding:0}.stats-group-head{padding:18px 22px;margin:0;border-bottom:1px solid #d8d1c7}.stats-group-head h3{font-family:'Inter',sans-serif;color:#171715;font-size:.88rem}.stats-grid{gap:0!important}.stat{border:0;border-right:1px solid #ddd6cc;border-bottom:1px solid #ddd6cc;border-radius:0;background:#f7f4ee;padding:24px 16px;box-shadow:none!important;transform:none!important}.stat .num,.stat .num.pos{color:#1a1a18;text-shadow:none;font-family:'Inter',sans-serif}.stat .lbl,.stat .num .currency{color:#746e65}.stats-foot{color:rgba(255,255,255,.46)}.scan{display:none}
+section.about{max-width:1100px;padding:130px 6vw;text-align:left}.eyebrow{font-family:'Inter',sans-serif;color:var(--editorial-gold);font-size:.7rem}.about h2{font-size:clamp(3.8rem,8vw,7.5rem);line-height:.8;max-width:880px}.about p{margin:28px 0 0;color:rgba(255,255,255,.64);max-width:760px;font-size:1.08rem}.about p strong{color:#fff}.cards{grid-template-columns:repeat(3,1fr);margin-top:70px}.card{background:transparent;border:0;border-top:1px solid var(--editorial-border);border-radius:0;padding:28px 0;backdrop-filter:none;transform:none!important}.card .ico{background:none;padding:0;width:auto;height:auto;color:var(--editorial-gold)}.card h3{font-family:'Cormorant Garamond',serif;font-size:1.7rem}.card p{color:rgba(255,255,255,.55)}
+.dashboard-preview{border-top:1px solid var(--editorial-border);padding-top:120px}.dash-window{transform:none!important}.cta{max-width:1100px;padding:140px 24px 90px}.cta-box{background:var(--editorial-paper);color:#171715;border:0;border-radius:0;padding:80px 7vw;box-shadow:none;transform:none!important}.cta-box::before{display:none}.cta-box h2{font-size:clamp(3rem,6vw,5.5rem);line-height:.9}.cta-box p{color:#625d55}footer{border-color:var(--editorial-border);color:rgba(255,255,255,.48)}#manage-subscription{color:#f0ece3!important}
+@media(max-width:900px){nav{padding:20px 22px}.hero-logo-wrap{margin:90px 24px 28px}.hero h1,.tagline,.sub-slogan{margin-left:24px;margin-right:24px}.hero h1{font-size:clamp(3.8rem,16vw,6.6rem)}.hero > section.product{padding:0 22px;margin-top:80px}.products-grid,.equity-comparison,.stats-comparison,.cards{grid-template-columns:1fr}.product-banner{height:250px}.hero-visual,.stats{padding-left:22px;padding-right:22px}}
+@media(max-width:520px){.product-intro{text-align:left}.hero{padding-bottom:60px}.hero-logo-wrap{width:78px;height:78px}.product-body{padding:26px 22px}.product-footer{align-items:flex-start}.equity-chart{height:235px}.cards{gap:0}}
 </style>
 </head>
 <body>
@@ -543,9 +568,9 @@ footer{background:rgba(255,255,255,.5)}
       <img src="assets/champvision-logo-transparent.png" alt="ChampVision Netzwerk">
     </div>
   </div>
-  <h1 class="reveal d2">CHAMPVISION<span class="ai">.ai</span></h1>
-  <p class="tagline reveal d3">KI-gestützte Trading-Intelligenz und eine Community, die zusammen gewinnt.</p>
-  <p class="sub-slogan reveal d3">Automatisiere dein Trading &ndash; <span class="accent">ohne Emotionen, ohne verpasste Einstiege.</span></p>
+  <h1 class="reveal d2">Trading,<br>aber mit <span class="ai">System.</span></h1>
+  <p class="tagline reveal d3">Zwei datenbasierte Futures-Bots. Ein klares Ziel: konsequenter handeln, ohne Emotionen und ohne verpasste Einstiege.</p>
+  <p class="sub-slogan reveal d3">CV.AI verbindet automatisierte Trading-Systeme mit transparenter Performance und einem Dashboard, das dir jederzeit zeigt, was zählt.</p>
   <div class="hero-product-slot" id="hero-product-slot"></div>
 </header>
 
@@ -779,6 +804,11 @@ footer{background:rgba(255,255,255,.5)}
 </section>
 
 <section class="product reveal" id="product">
+  <div class="product-intro">
+    <span class="product-kicker">Die CV.AI Systeme</span>
+    <h2>Wähle, was zu deinem Trading passt.</h2>
+    <p>MNQ Breakout, MGC Momentum oder beide Systeme als Bundle. Monatlich kündbar und klar voneinander getrennt.</p>
+  </div>
   <div class="products-grid">
 
     <div class="product-card tilt" id="futures-bot">
