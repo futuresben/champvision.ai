@@ -62,7 +62,7 @@ async function sendPurchaseConfirmation(checkout, event) {
       sender: { name: process.env.BREVO_SENDER_NAME || 'Champvision Support', email: process.env.BREVO_SENDER_EMAIL },
       to: [{ email }],
       subject: 'Dein Kauf bei ChampVision.ai ist bestätigt',
-      htmlContent: `<p>Hallo,</p><p>dein Kauf von <strong>${productName}</strong> wurde erfolgreich bestätigt.</p>${isUpgrade ? '<p>Deine verbleibende MNQ-Restlaufzeit wird als persönliches Zeitguthaben gesichert.</p>' : ''}<p><strong>Bitte füge mich auf Discord hinzu: futuresben</strong></p><p>Dort erhältst du die weiteren Informationen zu deinem Bot und deinem persönlichen Access Key.</p><p>Viele Grüße<br>Ben von ChampVision.ai</p>`
+      htmlContent: `<p>Hallo,</p><p>dein Kauf von <strong>${productName}</strong> wurde erfolgreich bestätigt.</p>${isUpgrade ? '<p>Deine verbleibende MNQ-Restlaufzeit wird als persönliches Zeitguthaben gesichert.</p>' : ''}<p><strong>Bitte füge mich auf Discord hinzu: futuresben</strong></p><p>Dort erhältst du die weiteren Informationen zu deinem Bot.</p><p>Viele Grüße<br>Ben von ChampVision.ai</p>`
     })
   });
   if (!response.ok) throw new Error('Purchase confirmation email request failed');
