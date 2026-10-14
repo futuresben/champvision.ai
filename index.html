@@ -601,6 +601,9 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
 .product-card:not(.bundle) .discount-badge{display:flex;justify-content:center;width:100%;box-sizing:border-box;
   margin-bottom:13px;padding:10px 14px;background:linear-gradient(135deg,#245fc6,#3478f6);color:#fff;
   border-color:#75a7ff;box-shadow:0 8px 22px rgba(52,120,246,.28);font-size:.84rem;font-weight:800;letter-spacing:1.1px}
+/* Purchase paths share a subtle green cue without overpowering the slate palette. */
+.product-card .btn-primary,.product-card .btn-secondary,.product-card .bundle-actions .btn-secondary{background:#285e4d;border-color:#4f9a7b;color:#f5fff9!important;box-shadow:0 8px 20px rgba(24,77,59,.25)}
+.product-card .btn-primary:hover,.product-card .btn-secondary:hover,.product-card .bundle-actions .btn-secondary:hover{background:#34745f;border-color:#80c8a9;box-shadow:0 10px 26px rgba(24,77,59,.36)}
 </style>
 </head>
 <body>
@@ -892,7 +895,7 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
         <div class="product-footer">
           <div class="discount-badge">100€ RABATT</div>
           <div class="price-row"><span class="old-amount">250€</span><span class="amount">150€</span><span class="period">/ Monat</span></div>
-          <a href="#" id="stripe" class="btn btn-primary tilt" target="_blank" rel="noopener">Jetzt abonnieren</a>
+          <a href="#" id="stripe" class="btn btn-primary tilt" target="_blank" rel="noopener">Zugang sichern</a>
         </div>
       </div>
     </div>
@@ -920,7 +923,7 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
         <div class="product-footer">
           <div class="discount-badge">100€ RABATT</div>
           <div class="price-row"><span class="old-amount">250€</span><span class="amount">150€</span><span class="period">/ Monat</span></div>
-          <a id="stripe-mgc" href="https://buy.stripe.com/eVq00k4Pccap88d9475c406" class="btn btn-primary tilt" target="_blank" rel="noopener">Jetzt abonnieren</a>
+          <a id="stripe-mgc" href="https://buy.stripe.com/eVq00k4Pccap88d9475c406" class="btn btn-primary tilt" target="_blank" rel="noopener">Zugang sichern</a>
         </div>
       </div>
     </div>
@@ -950,7 +953,7 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
           <div class="price-row"><span class="old-amount">300€</span><span class="amount">250€</span><span class="period">/ Monat</span></div>
           <div class="bundle-actions">
             <div class="purchase-path">
-              <a id="stripe-bundle" class="btn btn-primary is-locked" aria-disabled="true">Als Neukunde Bundle kaufen</a>
+              <a id="stripe-bundle" class="btn btn-primary is-locked" aria-disabled="true">Als Neukunde Bundle sichern</a>
               <p class="purchase-path-hint">Nur wenn du noch kein MNQ-Abo hast.</p>
             </div>
             <div class="purchase-path existing-member">
@@ -1124,7 +1127,7 @@ var mgcCheckout = document.getElementById('stripe-mgc');
 mgcCheckout.href = 'https://buy.stripe.com/eVq00k4Pccap88d9475c406';
 mgcCheckout.classList.remove('is-locked');
 mgcCheckout.removeAttribute('aria-disabled');
-mgcCheckout.textContent = 'Jetzt abonnieren';
+mgcCheckout.textContent = 'Zugang sichern';
 
 // ==== BUNDLE-UPGRADE FÜR BESTANDSMITGLIEDER ====
 (function initBundleUpgrade(){
