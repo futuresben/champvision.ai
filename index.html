@@ -597,6 +597,10 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
 .btn-primary,.btn-secondary,.btn-ghost,.bundle-actions .btn-secondary,.nav-cta,.dash-add-firm{background:var(--slate-head);border-color:#626c7b}
 .btn-primary:hover,.btn-secondary:hover,.btn-ghost:hover,.bundle-actions .btn-secondary:hover,.nav-cta:hover,.dash-add-firm:hover{background:#505866;border-color:#6f7b8e}
 .upgrade-dialog{background:var(--slate-panel);border-color:var(--slate-line)}
+/* The two individual-bot discounts should read as an immediate offer, not a detail. */
+.product-card:not(.bundle) .discount-badge{display:flex;justify-content:center;width:100%;box-sizing:border-box;
+  margin-bottom:13px;padding:10px 14px;background:linear-gradient(135deg,#245fc6,#3478f6);color:#fff;
+  border-color:#75a7ff;box-shadow:0 8px 22px rgba(52,120,246,.28);font-size:.84rem;font-weight:800;letter-spacing:1.1px}
 </style>
 </head>
 <body>
