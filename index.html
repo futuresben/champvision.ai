@@ -598,9 +598,10 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
 .btn-primary:hover,.btn-secondary:hover,.btn-ghost:hover,.bundle-actions .btn-secondary:hover,.nav-cta:hover,.dash-add-firm:hover{background:#505866;border-color:#6f7b8e}
 .upgrade-dialog{background:var(--slate-panel);border-color:var(--slate-line)}
 /* The two individual-bot discounts should read as an immediate offer, not a detail. */
-.product-card:not(.bundle) .discount-badge{display:flex;justify-content:center;width:100%;box-sizing:border-box;
-  margin-bottom:13px;padding:10px 14px;background:linear-gradient(135deg,#245fc6,#3478f6);color:#fff;
-  border-color:#75a7ff;box-shadow:0 8px 22px rgba(52,120,246,.28);font-size:.84rem;font-weight:800;letter-spacing:1.1px}
+.product-card:not(.bundle) .discount-badge{display:inline-flex;width:auto;margin-bottom:10px;padding:0;background:transparent;color:#fff;
+  border-color:transparent;box-shadow:none;font-size:.78rem;font-weight:700;letter-spacing:.8px}
+.product-card.bundle .price-row .old-amount{font-weight:500;font-size:1.15rem;color:var(--muted);text-decoration:line-through;
+  text-decoration-color:rgba(138,155,196,.7);text-decoration-thickness:auto;opacity:.75;background:transparent;border:0;border-radius:0;padding:0}
 /* Purchase paths share a subtle green cue without overpowering the slate palette. */
 .product-card .btn-primary,.product-card .btn-secondary,.product-card .bundle-actions .btn-secondary{background:#285e4d;border-color:#4f9a7b;color:#f5fff9!important;box-shadow:0 8px 20px rgba(24,77,59,.25)}
 .product-card .btn-primary:hover,.product-card .btn-secondary:hover,.product-card .bundle-actions .btn-secondary:hover{background:#34745f;border-color:#80c8a9;box-shadow:0 10px 26px rgba(24,77,59,.36)}
