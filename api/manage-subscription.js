@@ -1,6 +1,11 @@
 const crypto = require('crypto');
 
 const SITE_ORIGIN = 'https://futuresben.github.io';
+const CURRENT_BUNDLE_PRICE_ID = 'price_1UQWo6Lh2L59TOeGDYSlbE7N';
+
+function isBundlePrice(priceId) {
+  return [CURRENT_BUNDLE_PRICE_ID, process.env.STRIPE_BUNDLE_PRICE_ID].includes(priceId);
+}
 
 function setCors(req, res) {
   if (req.headers.origin === SITE_ORIGIN) res.setHeader('Access-Control-Allow-Origin', SITE_ORIGIN);
@@ -122,7 +127,7 @@ module.exports = async (req, res) => {
 
   try {
     const subscription = await stripe(`subscriptions/${verified.subscriptionId}`);
-    const isBundle = ['active', 'trialing'].includes(subscription.status) && subscription.items.data.some((item) => item.price.id === process.env.STRIPE_BUNDLE_PRICE_ID);
+    const isBundle = ['active', 'trialing'].includes(subscription.status) && subscription.items.data.some((item) => isBundlePrice(item.price.id));
 
     if (choice === 'cancel') {
       if (!['active', 'trialing'].includes(subscription.status)) return res.status(400).json({ error: 'Dieses Abo ist nicht mehr aktiv.' });
@@ -174,7 +179,7 @@ module.exports = async (req, res) => {
       });
     }
     await cancelAtPeriodEnd(subscription);
-    return res.status(200).json({ message: `Gespeichert: Zum Ende des bezahlten Bundle-Monats läuft nur ${choice === 'mnq' ? 'MNQ' : 'MGC'} für 250 € monatlich weiter.` });
+    return res.status(200).json({ message: `Gespeichert: Zum Ende des bezahlten Bundle-Monats läuft nur ${choice === 'mnq' ? 'MNQ' : 'MGC'} für 150 € monatlich weiter.` });
   } catch (error) {
     console.error('manage-subscription', error.message);
     return res.status(500).json({ error: 'Die Änderung konnte gerade nicht gespeichert werden. Bitte versuche es erneut.' });

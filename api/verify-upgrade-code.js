@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const SITE_ORIGIN = 'https://futuresben.github.io';
 const SITE_URL = 'https://futuresben.github.io/champvision.ai/';
 const MIGRATED_MNQ_PRICE_IDS = ['price_1U5kacLh2L59TOeGwOkBeUVn'];
+const CURRENT_BUNDLE_PRICE_ID = 'price_1UQWo6Lh2L59TOeGDYSlbE7N';
 
 function eligibleMnqPriceIds() {
   return new Set([
@@ -46,7 +47,7 @@ async function stripe(path, options = {}) {
 async function isEligibleMnqItem(item, eligiblePrices) {
   const price = item.price || {};
   if (eligiblePrices.has(price.id)) return true;
-  if (price.id === process.env.STRIPE_BUNDLE_PRICE_ID || price.id === process.env.STRIPE_MGC_PRICE_ID) return false;
+  if (price.id === CURRENT_BUNDLE_PRICE_ID || price.id === process.env.STRIPE_BUNDLE_PRICE_ID || price.id === process.env.STRIPE_MGC_PRICE_ID) return false;
 
   const productId = typeof price.product === 'string' ? price.product : price.product && price.product.id;
   if (!productId) return false;
@@ -64,8 +65,6 @@ module.exports = async (req, res) => {
   const verified = validChallenge(req.body && req.body.challenge, req.body && req.body.code);
   if (!verified) return res.status(400).json({ error: 'Der Code ist ungültig oder abgelaufen.' });
   if (verified.intent === 'manage') return res.status(200).json({ ok: true, mode: 'manage', plan: verified.plan || 'bundle' });
-  if (!process.env.STRIPE_BUNDLE_PRICE_ID) return res.status(500).json({ error: 'Das Bundle-Upgrade ist noch nicht eingerichtet.' });
-
   try {
     const subscription = await stripe(`subscriptions/${verified.subscriptionId}`);
     const eligiblePrices = eligibleMnqPriceIds();
@@ -77,7 +76,7 @@ module.exports = async (req, res) => {
     const form = new URLSearchParams({
       mode: 'subscription',
       customer: verified.customerId,
-      'line_items[0][price]': process.env.STRIPE_BUNDLE_PRICE_ID,
+      'line_items[0][price]': CURRENT_BUNDLE_PRICE_ID,
       'line_items[0][quantity]': '1',
       'metadata[source_subscription_id]': verified.subscriptionId,
       'metadata[flow]': 'champvision_bundle_upgrade',

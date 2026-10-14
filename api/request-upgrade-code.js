@@ -2,6 +2,11 @@ const crypto = require('crypto');
 
 const SITE_ORIGIN = 'https://futuresben.github.io';
 const MIGRATED_MNQ_PRICE_IDS = ['price_1U5kacLh2L59TOeGwOkBeUVn'];
+const CURRENT_BUNDLE_PRICE_ID = 'price_1UQWo6Lh2L59TOeGDYSlbE7N';
+
+function isBundlePrice(priceId) {
+  return [CURRENT_BUNDLE_PRICE_ID, process.env.STRIPE_BUNDLE_PRICE_ID].includes(priceId);
+}
 
 function eligibleMnqPriceIds() {
   return new Set([
@@ -48,7 +53,7 @@ async function findCustomersByEmail(email) {
 async function isEligibleMnqItem(item, eligiblePrices) {
   const price = item.price || {};
   if (eligiblePrices.has(price.id)) return true;
-  if (price.id === process.env.STRIPE_BUNDLE_PRICE_ID || price.id === process.env.STRIPE_MGC_PRICE_ID) return false;
+  if (isBundlePrice(price.id) || price.id === process.env.STRIPE_MGC_PRICE_ID) return false;
 
   const productId = typeof price.product === 'string' ? price.product : price.product && price.product.id;
   if (!productId) return false;
@@ -60,7 +65,7 @@ async function isEligibleMnqItem(item, eligiblePrices) {
 
 async function isBundleItem(item) {
   const price = item.price || {};
-  if (price.id === process.env.STRIPE_BUNDLE_PRICE_ID) return true;
+  if (isBundlePrice(price.id)) return true;
   const productId = typeof price.product === 'string' ? price.product : price.product && price.product.id;
   if (!productId) return false;
   const product = typeof price.product === 'object' ? price.product : await stripe(`products/${encodeURIComponent(productId)}`);

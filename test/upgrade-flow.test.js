@@ -173,7 +173,7 @@ test('upgrade lookup matches Stripe customer email case-insensitively and accept
   assert.equal(res.body.ok, true);
 });
 
-test('upgrade checkout charges the 400 euro bundle immediately', async () => {
+test('upgrade checkout charges the 250 euro bundle immediately', async () => {
   process.env.UPGRADE_TOKEN_SECRET = 'test-secret';
   process.env.STRIPE_SECRET_KEY = 'rk_test';
   process.env.STRIPE_CURRENT_MNQ_PRICE_ID = 'price_mnq';
@@ -190,7 +190,7 @@ test('upgrade checkout charges the 400 euro bundle immediately', async () => {
   await handler({ method: 'POST', headers: { host: 'preview.test' }, body: { challenge: challenge('upgrade'), code: '123456' } }, res);
   const checkoutBody = new URLSearchParams(calls[1].options.body);
   assert.equal(checkoutBody.get('mode'), 'subscription');
-  assert.equal(checkoutBody.get('line_items[0][price]'), 'price_bundle');
+  assert.equal(checkoutBody.get('line_items[0][price]'), 'price_1UQWo6Lh2L59TOeGDYSlbE7N');
   assert.equal(checkoutBody.get('metadata[source_subscription_id]'), 'sub_mnq');
   assert.equal(checkoutBody.get('success_url'), 'https://preview.test/api/finalize-upgrade?session_id={CHECKOUT_SESSION_ID}');
   assert.equal(res.body.url, 'https://checkout.stripe.test/session');
