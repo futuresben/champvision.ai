@@ -886,7 +886,8 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
           <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Monatlich kündbar</li>
         </ul>
         <div class="product-footer">
-          <div class="price-row"><span class="amount">250€</span><span class="period">/ Monat</span></div>
+          <div class="discount-badge">100€ RABATT</div>
+          <div class="price-row"><span class="old-amount">250€</span><span class="amount">150€</span><span class="period">/ Monat</span></div>
           <a href="#" id="stripe" class="btn btn-primary tilt" target="_blank" rel="noopener">Jetzt abonnieren</a>
         </div>
       </div>
@@ -913,8 +914,9 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
           <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Monatlich kündbar</li>
         </ul>
         <div class="product-footer">
-          <div class="price-row"><span class="amount">250€</span><span class="period">/ Monat</span><span class="new-price-badge">NEU</span></div>
-          <a id="stripe-mgc" href="https://buy.stripe.com/8x2eVegxUdet6051BF5c403" class="btn btn-primary tilt" target="_blank" rel="noopener">Jetzt abonnieren</a>
+          <div class="discount-badge">100€ RABATT</div>
+          <div class="price-row"><span class="old-amount">250€</span><span class="amount">150€</span><span class="period">/ Monat</span></div>
+          <a id="stripe-mgc" href="https://buy.stripe.com/eVq00k4Pccap88d9475c406" class="btn btn-primary tilt" target="_blank" rel="noopener">Jetzt abonnieren</a>
         </div>
       </div>
     </div>
@@ -937,11 +939,11 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
         <ul class="product-features">
           <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> MNQ Breakout Bot inklusive</li>
           <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> MGC Momentum System inklusive</li>
-          <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> 100€ monatlich sparen</li>
+          <li><svg viewBox="0 0 20 20" fill="none"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> 50€ monatlich sparen</li>
         </ul>
         <div class="product-footer">
-          <div class="discount-badge">DU SPARST 100€ PRO MONAT</div>
-          <div class="price-row"><span class="old-amount">500€</span><span class="amount">400€</span><span class="period">/ Monat</span></div>
+          <div class="discount-badge">DU SPARST 50€ PRO MONAT</div>
+          <div class="price-row"><span class="old-amount">300€</span><span class="amount">250€</span><span class="period">/ Monat</span></div>
           <div class="bundle-actions">
             <div class="purchase-path">
               <a id="stripe-bundle" class="btn btn-primary is-locked" aria-disabled="true">Als Neukunde Bundle kaufen</a>
@@ -1070,7 +1072,7 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
 <div class="upgrade-modal" id="upgrade-modal" aria-hidden="true">
   <div class="upgrade-dialog" role="dialog" aria-modal="true" aria-labelledby="upgrade-title">
     <h3 id="upgrade-title">Upgrade aufs Bundle</h3>
-    <p id="upgrade-description">Das Bundle startet heute für 400€ monatlich. Deine verbleibenden MNQ-Tage werden als Zeitguthaben gespeichert. Gib zur Bestätigung deine Stripe-E-Mail-Adresse ein.</p>
+    <p id="upgrade-description">Das Bundle startet heute für 250€ monatlich. Deine verbleibenden MNQ-Tage werden als Zeitguthaben gespeichert. Gib zur Bestätigung deine Stripe-E-Mail-Adresse ein.</p>
     <form id="upgrade-email-form">
       <label for="upgrade-email">E-Mail-Adresse</label>
       <input id="upgrade-email" type="email" autocomplete="email" required>
@@ -1106,16 +1108,16 @@ document.querySelectorAll('.hero-visual-inner svg rect[width="11"]').forEach(fun
 });
 
 // ==== DEINE LINKS ====
-document.getElementById('stripe').href     = 'https://buy.stripe.com/9B6dRaftQeix88d6VZ5c402';
+document.getElementById('stripe').href     = 'https://buy.stripe.com/5kQ5kE1D0gqFfAF6VZ5c408';
 var bundleCheckout = document.getElementById('stripe-bundle');
-var bundleCheckoutUrl = 'https://buy.stripe.com/28EdRa95s5M1gEJ3JN5c404';
+var bundleCheckoutUrl = 'https://buy.stripe.com/6oUdRaa9w3DT3RX9475c407';
 if (bundleCheckoutUrl) {
   bundleCheckout.href = bundleCheckoutUrl;
   bundleCheckout.classList.remove('is-locked');
   bundleCheckout.removeAttribute('aria-disabled');
 }
 var mgcCheckout = document.getElementById('stripe-mgc');
-mgcCheckout.href = 'https://buy.stripe.com/8x2eVegxUdet6051BF5c403';
+mgcCheckout.href = 'https://buy.stripe.com/eVq00k4Pccap88d9475c406';
 mgcCheckout.classList.remove('is-locked');
 mgcCheckout.removeAttribute('aria-disabled');
 mgcCheckout.textContent = 'Jetzt abonnieren';
@@ -1156,7 +1158,7 @@ mgcCheckout.textContent = 'Jetzt abonnieren';
   document.getElementById('bundle-upgrade').addEventListener('click', function(){
     intent = 'upgrade';
     document.getElementById('upgrade-title').textContent = 'Upgrade aufs Bundle';
-    document.getElementById('upgrade-description').textContent = 'Das Bundle startet heute für 400€ monatlich. Deine verbleibenden MNQ-Tage werden als Zeitguthaben gespeichert. Gib zur Bestätigung deine Stripe-E-Mail-Adresse ein.';
+    document.getElementById('upgrade-description').textContent = 'Das Bundle startet heute für 250€ monatlich. Deine verbleibenden MNQ-Tage werden als Zeitguthaben gespeichert. Gib zur Bestätigung deine Stripe-E-Mail-Adresse ein.';
     codeSubmit.textContent = 'Weiter zu Stripe';
     modal.classList.add('open');
     modal.setAttribute('aria-hidden', 'false');
