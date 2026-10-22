@@ -589,6 +589,7 @@ section.about p,.cta-box p{color:#8a9abc}.stats-foot,.disclaimer,.legal-note{col
 .dash-chrome{background:var(--slate-head);border-bottom-color:var(--slate-line)}
 .dash-chrome .url,.dash-card,.dash-feed,.dash-equity,.dash-propfirms{background:var(--slate-panel);border-color:#3a414d}
 .mnq-line,.mgc-line{stroke:#00a88e}.equity-panel>header b,.mgc-panel>header b{color:#9ff6e4;background:#0a3a34}.equity-panel>footer span:nth-child(2) strong{color:#00a88e}
+.version-badge{display:inline-block;margin-left:10px;padding:4px 8px;border:1px solid #a84040;border-radius:6px;color:#ff9999;background:#391e22;font-size:.68rem;font-weight:700;vertical-align:middle;white-space:nowrap}
 /* Selected typography: every visible text element uses Manrope. */
 body,body *{font-family:'Manrope',Arial,sans-serif!important}
 /* Numeric interface data stays crisp and aligned without changing surrounding copy. */
@@ -766,9 +767,9 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
 </svg>
     <div class="equity-comparison" aria-label="Performancevergleich für MNQ und MGC">
       <article class="equity-panel mnq-panel">
-        <header><div><strong>CV.AI MNQ BOT</strong><span>MNQ Breakout</span></div><b>+169,78 %</b></header>
+        <header><div><strong>CV.AI MNQ BOT</strong><span>MNQ Breakout · Backtest letzte 365 Tage</span></div><b>+302,36 %</b></header>
         <div class="equity-chart">
-          <svg viewBox="0 0 520 260" preserveAspectRatio="none" aria-label="MNQ Performancekurve"><defs><linearGradient id="mnqEqFill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#00a88e" stop-opacity=".27"/><stop offset="1" stop-color="#00a88e" stop-opacity="0"/></linearGradient></defs><path class="eq-grid" d="M48 24H504M48 76H504M48 128H504M48 180H504M48 232H504M48 24V232M162 24V232M276 24V232M390 24V232M504 24V232"/><path class="eq-area" fill="url(#mnqEqFill)"/><path class="eq-line mnq-line"/><g class="eq-axis"><text x="12" y="235">0</text><text x="4" y="183">20.000</text><text x="4" y="131">40.000</text><text x="4" y="79">60.000</text><text x="4" y="28">80.000</text><text x="48" y="254">Okt</text><text x="455" y="254">Sep</text></g></svg>
+          <svg viewBox="0 0 520 260" preserveAspectRatio="none" aria-label="MNQ Performancekurve, anhand des Backtest-Screenshots nachgezeichnet"><defs><linearGradient id="mnqEqFill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#00a88e" stop-opacity=".27"/><stop offset="1" stop-color="#00a88e" stop-opacity="0"/></linearGradient></defs><path class="eq-grid" d="M48 24H504M48 76H504M48 128H504M48 180H504M48 232H504M48 24V232M162 24V232M276 24V232M390 24V232M504 24V232"/><path class="eq-area" fill="url(#mnqEqFill)"/><path class="eq-line mnq-line"/><g class="eq-axis"><text x="12" y="235">0</text><text x="4" y="183">40.000</text><text x="4" y="131">80.000</text><text x="0" y="79">120.000</text><text x="0" y="28">160.000</text><text x="48" y="254">Okt</text><text x="455" y="254">Okt</text></g></svg>
         </div>
       </article>
       <article class="equity-panel mgc-panel">
@@ -837,10 +838,10 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
     <div class="stats-group">
       <div class="stats-group-head"><h3>CV.AI MNQ BOT</h3></div>
       <div class="stats-grid">
-        <div class="stat tilt"><div class="num pos">84.889,50<span class="currency">USD</span></div><div class="lbl">G&amp;V insgesamt &middot; +169,78%</div></div>
-        <div class="stat tilt"><div class="num">3.834,50<span class="currency">USD</span></div><div class="lbl">Max. Drawdown &middot; 6,05%</div></div>
-        <div class="stat tilt"><div class="num">67,58%</div><div class="lbl">Gewinnbringende Trades &middot; 173/256</div></div>
-        <div class="stat tilt"><div class="num">2,096</div><div class="lbl">Profitfaktor</div></div>
+        <div class="stat tilt"><div class="num pos">+151.180,50<span class="currency">USD</span></div><div class="lbl">G&amp;V insgesamt &middot; +302,36%</div></div>
+        <div class="stat tilt"><div class="num">4.768,00<span class="currency">USD</span></div><div class="lbl">Max. Drawdown &middot; 6,38%</div></div>
+        <div class="stat tilt"><div class="num">65,62%</div><div class="lbl">Gewinnbringende Trades &middot; 313/477</div></div>
+        <div class="stat tilt"><div class="num">2,001</div><div class="lbl">Profitfaktor</div></div>
       </div>
     </div>
     <div class="stats-group">
@@ -877,13 +878,13 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
       <div class="product-banner">
         <svg class="product-chart-art" viewBox="0 0 460 190" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="mnqCardFill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#22d3ee" stop-opacity=".32"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></linearGradient></defs><path class="card-grid" d="M0 38H460M0 76H460M0 114H460M0 152H460M92 0V190M184 0V190M276 0V190M368 0V190"/><path d="M0 163L32 157L62 161L92 143L122 147L152 126L182 132L214 108L244 114L274 90L304 96L336 68L366 76L398 49L430 55L460 32V190H0Z" fill="url(#mnqCardFill)"/><path class="card-equity mnq" d="M0 163L32 157L62 161L92 143L122 147L152 126L182 132L214 108L244 114L274 90L304 96L336 68L366 76L398 49L430 55L460 32"/></svg>
         <img class="product-header-logo" src="assets/champvision-logo-refined-flat-real-alpha.png" alt="" aria-hidden="true">
-        <span class="product-rate">67,58 % Gewinnrate</span>
+        <span class="product-rate">65,62 % Gewinnrate</span>
         <span class="product-platform">Tradovate · Futures Trader</span>
         <div class="product-tag"><span class="dot"></span> MNQ <span class="sep">&middot;</span> <span class="accent">BREAKOUT</span></div>
       </div>
       <div class="product-body">
         <div class="product-eyebrow">Für konstante Performance entwickelt</div>
-        <div class="product-name">CV.AI MNQ BOT</div>
+        <div class="product-name">CV.AI MNQ BOT <span class="version-badge">V2 · Neue Version</span></div>
         <div class="product-mini-stats">
           <div class="product-mini"><div class="lbl">Markt</div><div class="val">MNQ</div></div>
           <div class="product-mini"><div class="lbl">Strategie</div><div class="val">Breakout</div></div>
@@ -977,10 +978,10 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
       </div>
 
       <div class="dash-grid">
-        <div class="dash-card"><div class="lbl">Winrate</div><div class="val pos">67,58%</div></div>
-        <div class="dash-card"><div class="lbl">G&amp;V insgesamt</div><div class="val pos">+84.889,50 USD</div></div>
-        <div class="dash-card"><div class="lbl">Profit Factor</div><div class="val neutral">2,096</div></div>
-        <div class="dash-card"><div class="lbl">Max Drawdown</div><div class="val" style="color:#ff8a8a">3.834,50 USD</div></div>
+        <div class="dash-card"><div class="lbl">Winrate</div><div class="val pos">65,62%</div></div>
+        <div class="dash-card"><div class="lbl">G&amp;V insgesamt</div><div class="val pos">+151.180,50 USD</div></div>
+        <div class="dash-card"><div class="lbl">Profit Factor</div><div class="val neutral">2,001</div></div>
+        <div class="dash-card"><div class="lbl">Max Drawdown</div><div class="val" style="color:#ff8a8a">4.768,00 USD</div></div>
       </div>
 
       <div class="dash-lower">
@@ -1024,7 +1025,7 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
             <path d="M48 224 L60 218 L72 221 L84 213 L96 205 L108 198 L120 190 L132 181 L144 172 L156 177 L168 183 L180 177 L192 168 L204 158 L216 153 L228 145 L240 149 L252 139 L264 131 L276 123 L288 117 L300 111 L312 118 L324 126 L336 117 L348 111 L360 104 L372 96 L384 91 L396 97 L408 92 L420 101 L432 94 L444 88 L456 80 L468 72 L480 65 L492 56 L504 47 L504 232 L48 232 Z" fill="url(#eqFill)"/>
             <path d="M48 224 L60 218 L72 221 L84 213 L96 205 L108 198 L120 190 L132 181 L144 172 L156 177 L168 183 L180 177 L192 168 L204 158 L216 153 L228 145 L240 149 L252 139 L264 131 L276 123 L288 117 L300 111 L312 118 L324 126 L336 117 L348 111 L360 104 L372 96 L384 91 L396 97 L408 92 L420 101 L432 94 L444 88 L456 80 L468 72 L480 65 L492 56 L504 47" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
           </svg>
-          <div class="dash-equity-foot"><span>30 Tage</span><span style="color:#5dffae">&#9679; Live</span></div>
+          <div class="dash-equity-foot"><span>Letzte 365 Tage</span><span>Backtest</span></div>
         </div>
       </div>
 
@@ -1380,7 +1381,7 @@ function initParticles(){
 
 // Use the two supplied TradingView backtest screenshots as the visible curve shapes.
 (function applyReferenceEquityCurves(){
-  var mnqLine = 'M48 224 L56 218 L64 220 L72 211 L80 214 L88 206 L96 198 L104 201 L112 194 L120 190 L128 196 L136 188 L144 193 L152 187 L160 192 L168 186 L176 190 L184 181 L192 176 L200 181 L208 173 L216 169 L224 165 L232 169 L240 164 L248 168 L256 162 L264 157 L272 153 L280 145 L288 150 L296 139 L304 131 L312 123 L320 115 L328 105 L336 110 L344 102 L352 108 L360 101 L368 95 L376 92 L384 96 L392 90 L400 82 L408 74 L416 67 L424 72 L432 64 L440 58 L448 55 L456 48 L464 41 L472 46 L480 37 L488 30 L496 34 L504 26';
+  var mnqLine = 'M48 232 L56 229 L64 227 L72 225 L80 222 L88 218 L96 215 L104 210 L112 208 L120 211 L128 210 L136 206 L144 199 L152 203 L160 198 L168 199 L176 196 L184 194 L192 189 L200 189 L208 186 L216 182 L224 174 L232 167 L240 160 L248 155 L256 149 L264 151 L272 143 L280 139 L288 141 L296 136 L304 134 L312 132 L320 127 L328 122 L336 117 L344 110 L352 105 L360 106 L368 98 L376 93 L384 88 L392 89 L400 82 L408 75 L416 69 L424 62 L432 67 L440 60 L448 55 L456 50 L464 53 L472 46 L480 43 L488 38 L496 39 L504 36';
   var mgcLine = 'M48 226 L60 224 L72 220 L84 221 L96 216 L108 212 L120 209 L132 205 L144 201 L156 204 L168 200 L180 196 L192 191 L204 188 L216 184 L224 160 L236 158 L248 161 L260 165 L272 160 L284 156 L296 151 L308 145 L320 139 L332 133 L340 110 L352 108 L364 111 L376 115 L388 110 L400 105 L412 99 L424 93 L436 88 L444 70 L456 68 L468 72 L480 69 L488 66 L496 42 L504 45';
   var mnq = document.querySelector('.mnq-panel');
   var mgc = document.querySelector('.mgc-panel');
