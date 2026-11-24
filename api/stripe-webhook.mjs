@@ -62,7 +62,7 @@ async function sendPurchaseConfirmation(checkout, event) {
     body: JSON.stringify({
       sender: { name: process.env.BREVO_SENDER_NAME || 'Champvision Support', email: process.env.BREVO_SENDER_EMAIL },
       to: [{ email }],
-      subject: 'Dein Kauf bei ChampVision.ai ist bestätigt',
+      subject: 'Willkommen bei CHAMPVISION.ai',
       htmlContent: `<p>Hallo,</p><p>Willkommen bei CHAMPVISION.ai!</p><p>dein Kauf von <strong>${productName}</strong> wurde erfolgreich bestätigt.</p>${isUpgrade ? '<p>Deine verbleibende MNQ-Restlaufzeit wird als persönliches Zeitguthaben gesichert.</p>' : ''}<p>Tritt bitte unserer Discord Community bei: <a href="https://discord.gg/X6KUX5zRG3">https://discord.gg/X6KUX5zRG3</a></p><p>Und schick mir eine DM, damit ich dir die Freigabe für ${isBundle ? 'deine Trading Bots' : 'deinen Trading Bot'} geben kann.</p><p>Viele Grüße<br>Ben von ChampVision.ai</p>`
     })
   });
