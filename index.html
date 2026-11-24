@@ -52,7 +52,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Sora',sans-serif;overflo
   45%{opacity:1;transform:scale(1)}
   100%{transform:scale(1.25);opacity:0}
 }
-#intro img{position:relative;width:300px;height:300px;
+#intro img{position:relative;width:360px;height:257px;
   animation:introSpin 2.7s cubic-bezier(.33,.0,.2,1) forwards;
   transform-origin:50% 50%;image-rendering:auto;
   filter:drop-shadow(0 0 6px rgba(120,170,255,.85)) drop-shadow(0 0 16px rgba(79,141,255,.55))}
@@ -111,9 +111,10 @@ nav .brand img{width:58px;height:58px}
   background:radial-gradient(circle,rgba(45,94,219,.07),transparent 75%);filter:blur(16px);
   transform:translateZ(-90px);pointer-events:none}
 .hero-logo .logo-glow-1,.hero-logo .logo-glow-2{display:none}
-/* Animated light smoke, drawn on canvas around the still icon */
-.hero-logo .smoke-canvas{position:absolute;left:-35%;top:-35%;width:170%;height:170%;pointer-events:none;z-index:0}
-.hero-logo img{position:relative;z-index:1}
+/* The artwork sits centred in the hero; the icon stays still, the smoke is warped on the GPU */
+.logo-stage{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);aspect-ratio:701/500}
+.logo-stage img,.logo-stage canvas{position:absolute;left:0;top:0;width:100%;height:100%;display:block}
+.logo-stage canvas{pointer-events:none}
 @media (prefers-reduced-motion: reduce){.hero-logo{transition:none}}
 .hero h1{font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(1.5rem,7.5vw,5rem);line-height:1.05;letter-spacing:1px;white-space:nowrap;
   text-shadow:0 2px 24px rgba(79,141,255,.25),0 1px 0 rgba(0,0,0,.3)}
@@ -632,7 +633,7 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
 
 <div id="intro">
   <div class="intro-flare"></div>
-  <img src="assets/champvision-logo-icon-hd.png" alt="ChampVision Logo lädt">
+  <img src="assets/champvision-logo-hero-full.png" alt="ChampVision Logo lädt">
   <div class="intro-text">CHAMPVISION.ai</div>
 </div>
 
@@ -652,8 +653,10 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
     <div class="hero-logo">
       <div class="logo-glow-2"></div>
       <div class="logo-glow-1"></div>
-      <img src="assets/champvision-logo-icon-hd.png" alt="ChampVision Netzwerk">
-      <canvas class="smoke-canvas" aria-hidden="true"></canvas>
+      <div class="logo-stage">
+        <img src="assets/champvision-logo-hero-icon.png" alt="ChampVision Netzwerk">
+        <canvas class="smoke-canvas" aria-hidden="true"></canvas>
+      </div>
     </div>
   </div>
   <div class="hero-brand reveal d2">CHAMPVISION<span class="ai">.ai</span></div>
@@ -1238,78 +1241,73 @@ mgcCheckout.textContent = 'Zugang sichern';
   });
 })();
 
-// ==== Hero smoke: flowing light strands drawn on canvas beside the still logo ====
+// ==== Hero: the artwork's own smoke, gently warped on the GPU; the icon stays still ====
 (function(){
-  var c = document.querySelector('.smoke-canvas');
-  if(!c || !c.getContext) return;
-  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var ctx = c.getContext('2d');
+  var stage = document.querySelector('.logo-stage');
+  if(!stage) return;
+  var canvas = stage.querySelector('.smoke-canvas');
+  var still = stage.querySelector('img');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var gl = canvas.getContext('webgl', {premultipliedAlpha: true, alpha: true, antialias: false});
+  if(!gl){ still.src = 'assets/champvision-logo-hero-full.png'; return; }  // no WebGL: show the still artwork
+  function sh(type, src){
+    var o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return o;
+  }
+  var prog = gl.createProgram();
+  gl.attachShader(prog, sh(gl.VERTEX_SHADER,
+    'attribute vec2 a;varying vec2 v;void main(){v=a*0.5+0.5;v.y=1.0-v.y;gl_Position=vec4(a,0.0,1.0);}'));
+  gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, [
+    'precision mediump float;',
+    'varying vec2 v;uniform sampler2D T;uniform float t;',
+    'void main(){',
+    '  vec2 px=v*vec2(701.0,500.0);',
+    '  float d=length(px-vec2(350.0,250.0));',
+    '  float m=smoothstep(200.0,222.0,d);',                 // 0 on the icon, 1 outside it
+    '  vec2 w=vec2(sin(v.y*6.5+t*0.42)+0.55*sin(v.y*12.0-t*0.27+v.x*3.0),',
+    '              cos(v.x*5.5-t*0.36)+0.55*cos(v.x*10.0+t*0.23+v.y*2.5));',
+    '  vec2 uv=v+w*vec2(0.0042,0.0075)*(0.35+0.65*m);',
+    '  vec4 c=texture2D(T,uv);',
+    '  float a=c.a*m;',
+    '  gl_FragColor=vec4(c.rgb*c.a*m,a);',
+    '}'].join('\n')));
+  gl.linkProgram(prog); gl.useProgram(prog);
+  var buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  var aLoc = gl.getAttribLocation(prog, 'a'), tLoc = gl.getUniformLocation(prog, 't');
+  gl.enableVertexAttribArray(aLoc); gl.vertexAttribPointer(aLoc, 2, gl.FLOAT, false, 0, 0);
+  gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
   var dpr = Math.min(window.devicePixelRatio || 1, 2);
-  var W = 0, H = 0, R = 0, visible = true, running = false;
-  var t0 = performance.now();
-  var STRANDS = [];
-  for (var i = 0; i < 9; i++) {
-    STRANDS.push({
-      side: i % 2 ? 1 : -1,
-      dir: Math.random() < 0.5 ? -1 : 1,
-      seed: Math.random() * 10,
-      spread: 0.45 + Math.random() * 0.5,
-      reach: 0.3 + Math.random() * 0.4,
-      w: 0.8 + Math.random() * 0.8,
-      speed: 0.3 + Math.random() * 0.3
-    });
+  canvas.width = Math.round(701 * dpr); canvas.height = Math.round(500 * dpr);
+  gl.viewport(0, 0, canvas.width, canvas.height);
+  var visible = true, running = false, t0 = performance.now();
+  function draw(now){
+    var t = reduce ? 0 : (now - t0) / 1000;
+    gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform1f(tLoc, t);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    if(visible && !reduce){ requestAnimationFrame(draw); } else { running = false; }
   }
-  function size(){
-    var r = c.getBoundingClientRect();
-    W = r.width; H = r.height;
-    c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    R = W / 1.7 * 0.29; // ring radius of the icon, in canvas pixels
-  }
-  function point(s, u, t, cx, cy){
-    var base = s.side > 0 ? 0 : Math.PI;
-    var a = base + s.side * s.dir * (0.12 + 0.9 * u * s.spread) + 0.22 * Math.sin(t * 0.9 * s.speed + s.seed + u * 5) * u;
-    var r = R * (1.03 + u * s.reach * 1.15) + Math.sin(t * 1.4 * s.speed + s.seed * 2 + u * 7) * R * 0.07 * u;
-    return [cx + Math.cos(a) * r, cy + Math.sin(a) * r * 0.9 - u * u * R * 0.3];
-  }
-  function frame(now){
-    if(!visible){ running = false; return; }
-    var t = (now - t0) / 1000;
-    ctx.clearRect(0, 0, W, H);
-    ctx.globalCompositeOperation = 'lighter';
-    var cx = W / 2, cy = H / 2, N = 22;
-    // smoke = many soft, overlapping puffs that grow and fade along each wisp
-    for (var k = 0; k < STRANDS.length; k++) {
-      var s = STRANDS[k];
-      for (var j = 0; j <= N; j++) {
-        var u = j / N;
-        var p = point(s, u, t, cx, cy);
-        var fade = Math.min(1, u * 4) * Math.pow(1 - u, 1.6);
-        var pulse = 0.7 + 0.3 * Math.sin(t * 1.1 * s.speed + s.seed + u * 3);
-        var a = fade * pulse;
-        if (a < 0.01) continue;
-        var rad = R * (0.08 + 0.2 * u) * s.w;
-        var g = ctx.createRadialGradient(p[0], p[1], 0, p[0], p[1], rad);
-        g.addColorStop(0, 'rgba(90,150,255,' + (0.2 * a).toFixed(3) + ')');
-        g.addColorStop(0.5, 'rgba(60,120,255,' + (0.09 * a).toFixed(3) + ')');
-        g.addColorStop(1, 'rgba(40,90,240,0)');
-        ctx.fillStyle = g;
-        ctx.beginPath(); ctx.arc(p[0], p[1], rad, 0, Math.PI * 2); ctx.fill();
-      }
+  var img = new Image();
+  img.onload = function(){
+    var tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.uniform1i(gl.getUniformLocation(prog, 'T'), 0);
+    running = true; requestAnimationFrame(draw);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function(entries){
+        visible = entries[0].isIntersecting;
+        if (visible && !running && !reduce) { running = true; requestAnimationFrame(draw); }
+      }).observe(canvas);
     }
-    ctx.globalCompositeOperation = 'source-over';
-    requestAnimationFrame(frame);
-  }
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(function(entries){
-      visible = entries[0].isIntersecting;
-      if (visible && !running) { running = true; requestAnimationFrame(frame); }
-    }).observe(c);
-  }
-  size();
-  window.addEventListener('resize', size);
-  running = true;
-  requestAnimationFrame(frame);
+  };
+  img.src = 'assets/champvision-logo-hero-full.png';
 })();
 
 // ==== Intro-Animation: Logo dreht sich rein, dann Seite einblenden ====
