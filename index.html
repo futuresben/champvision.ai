@@ -1263,19 +1263,22 @@ function ChampSmoke(canvas, revealFn, amp){
     '  vec2 dv=px-vec2(1000.0,1000.0); float d=length(dv); vec2 dir=dv/max(d,0.001);',
     '  float m=smoothstep(458.0,474.0,d);',                 // smoke only outside the logo ring
     '  if(d<458.0){gl_FragColor=vec4(0.0);return;}',       // inside the logo: nothing
-    '  float ang=atan(dv.y,dv.x);',
+    '  float ang=atan(dv.y,dv.x)+(d-458.0)/380.0-t*0.22*amp;',   // wisps wind outward in a spiral
     '  vec2 cq=vec2(cos(ang),sin(ang));',                  // angle as a loop, no seam
     '  vec2 q=cq*1.7 + vec2(0.0, d/520.0 - t*0.42);',        // long radial filaments that flow outward
     '  vec2 w=vec2(fbm(q+vec2(0.0,t*0.05)),fbm(q+vec2(5.2,1.3)));',
     '  float ridge=clamp(1.0-abs(2.0*fbm(q+1.4*w)-1.0),0.0,1.0);',         // ridges = thin silky wisps
     '  float dens=pow(ridge,6.0);',
-    '  float pulse=0.5+0.5*sin((d-458.0)*0.012-t*2.4*amp);', // impulses travelling outward
+    '  float wave=fract((d-458.0)/520.0-t*0.45*amp);',       // a ring of light leaves the logo
+    '  float bump=smoothstep(0.0,0.14,wave)*(1.0-smoothstep(0.14,0.6,wave));',
+    '  float pulse=bump;',
     '  float fade=exp(-(d-458.0)/170.0)*(1.0-smoothstep(640.0,960.0,d));',  // wisps stay close to the ring, round fade-out
     '  vec2 e=smoothstep(vec2(0.0),vec2(0.12),v)*smoothstep(vec2(1.0),vec2(0.88),v);',
     '  float reveal=1.0-smoothstep(rv-220.0,rv,d);',       // reveal front moves from the ring outward
-    '  float a=dens*fade*m*e.x*e.y*reveal*(0.55+0.45*pulse*amp);',
+    '  float a=dens*fade*m*e.x*e.y*reveal*(0.5+0.9*pulse*amp);',
     '  a=clamp(a*2.4,0.0,1.0)*0.9;',
     '  vec3 col=mix(vec3(0.08,0.32,1.0),vec3(0.62,0.84,1.0),smoothstep(0.5,0.95,ridge));',
+    '  col=mix(col,vec3(0.7,1.0,1.0),smoothstep(0.85,1.0,ridge)*0.8);',   // bright cyan tips
     '  gl_FragColor=vec4(col*a,a);',
     '}'].join('\n')));
   gl.linkProgram(prog); gl.useProgram(prog);
