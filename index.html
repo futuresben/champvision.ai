@@ -1241,7 +1241,9 @@ mgcCheckout.textContent = 'Zugang sichern';
 })();
 
 // ==== Smoke: the artwork's own smoke, warped smoothly on the GPU; the icon itself stays still ====
-function ChampSmoke(canvas, revealFn){
+// Procedural blue smoke, drawn in the shader: slow noise wisps that drift outward from the ring,
+// with soft impulses travelling outward. Same function for intro and hero; `amp` sets the strength.
+function ChampSmoke(canvas, revealFn, amp){
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var gl = canvas.getContext('webgl', {premultipliedAlpha: true, alpha: true, antialias: false});
   if(!gl) return;
@@ -1251,23 +1253,30 @@ function ChampSmoke(canvas, revealFn){
     'attribute vec2 a;varying vec2 v;void main(){v=a*0.5+0.5;v.y=1.0-v.y;gl_Position=vec4(a,0.0,1.0);}'));
   gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, [
     'precision mediump float;',
-    'varying vec2 v;uniform sampler2D T;uniform float t;uniform float rv;',
+    'varying vec2 v;uniform float t;uniform float rv;uniform float amp;',
+    'float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}',
+    'float n(vec2 p){vec2 i=floor(p);vec2 f=fract(p);f=f*f*(3.0-2.0*f);',
+    '  return mix(mix(h(i),h(i+vec2(1.0,0.0)),f.x),mix(h(i+vec2(0.0,1.0)),h(i+vec2(1.0,1.0)),f.x),f.y);}',
+    'float fbm(vec2 p){float s=0.0;float A=0.5;for(int i=0;i<4;i++){s+=A*n(p);p=p*2.03+vec2(1.7,9.2);A*=0.5;}return s;}',
     'void main(){',
     '  vec2 px=v*2000.0;',
-    '  vec2 ctr=vec2(1000.0,1000.0);',
-    '  vec2 dv=px-ctr; float d=length(dv); vec2 dir=dv/max(d,0.001);',
-    '  float m=smoothstep(458.0,470.0,d);',                 // 0 on the logo, 1 outside the ring
-    '  float rt=d<458.0? d : 458.0+(d-458.0)/1.15;',        // smoke grows outward a bit more, stays attached to the ring
-    '  vec2 base=(ctr+dir*rt)/2000.0;',
-    '  vec2 w=vec2(sin(v.y*6.5+t*0.42)+0.55*sin(v.y*12.0-t*0.27+v.x*3.0),',
-    '              cos(v.x*5.5-t*0.36)+0.55*cos(v.x*10.0+t*0.23+v.y*2.5));',
-    '  vec2 uv=base+w*0.0035*(0.35+0.65*m);',
-    '  vec4 c=texture2D(T,uv);',
+    '  vec2 dv=px-vec2(1000.0,1000.0); float d=length(dv); vec2 dir=dv/max(d,0.001);',
+    '  float m=smoothstep(458.0,474.0,d);',                 // smoke only outside the logo ring
+    '  if(d<458.0){gl_FragColor=vec4(0.0);return;}',       // inside the logo: nothing
+    '  float ang=atan(dv.y,dv.x);',
+    '  vec2 cq=vec2(cos(ang),sin(ang));',                  // angle as a loop, no seam
+    '  vec2 q=cq*1.7 + vec2(0.0, d/520.0 - t*0.42);',        // long radial filaments that flow outward
+    '  vec2 w=vec2(fbm(q+vec2(0.0,t*0.05)),fbm(q+vec2(5.2,1.3)));',
+    '  float ridge=clamp(1.0-abs(2.0*fbm(q+1.4*w)-1.0),0.0,1.0);',         // ridges = thin silky wisps
+    '  float dens=pow(ridge,6.0);',
+    '  float pulse=0.5+0.5*sin((d-458.0)*0.012-t*2.4*amp);', // impulses travelling outward
+    '  float fade=exp(-(d-458.0)/170.0)*(1.0-smoothstep(640.0,960.0,d));',  // wisps stay close to the ring, round fade-out
     '  vec2 e=smoothstep(vec2(0.0),vec2(0.12),v)*smoothstep(vec2(1.0),vec2(0.88),v);',
     '  float reveal=1.0-smoothstep(rv-220.0,rv,d);',       // reveal front moves from the ring outward
-    '  float pulse=0.9+0.1*sin(t*0.8-(rt-458.0)/120.0);',    // soft impulses travelling outward
-    '  float a=min(1.0,c.a*1.1)*m*e.x*e.y*reveal*pulse;',
-    '  gl_FragColor=vec4(c.rgb*a,a);',
+    '  float a=dens*fade*m*e.x*e.y*reveal*(0.55+0.45*pulse*amp);',
+    '  a=clamp(a*2.4,0.0,1.0)*0.9;',
+    '  vec3 col=mix(vec3(0.08,0.32,1.0),vec3(0.62,0.84,1.0),smoothstep(0.5,0.95,ridge));',
+    '  gl_FragColor=vec4(col*a,a);',
     '}'].join('\n')));
   gl.linkProgram(prog); gl.useProgram(prog);
   var buf = gl.createBuffer();
@@ -1276,10 +1285,9 @@ function ChampSmoke(canvas, revealFn){
   var aLoc = gl.getAttribLocation(prog, 'a');
   gl.enableVertexAttribArray(aLoc); gl.vertexAttribPointer(aLoc, 2, gl.FLOAT, false, 0, 0);
   var tLoc = gl.getUniformLocation(prog, 't'), rLoc = gl.getUniformLocation(prog, 'rv');
-  gl.uniform1i(gl.getUniformLocation(prog, 'T'), 0);
+  gl.uniform1f(gl.getUniformLocation(prog, 'amp'), amp || 1.0);
   gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-  var dpr = Math.min(window.devicePixelRatio || 1, 2);
-  var size = 1200;                                            // canvas is larger than the logo so the smoke can spread
+  var size = 1200;
   canvas.width = size; canvas.height = size;
   gl.viewport(0, 0, size, size);
   var visible = true, running = false, t0 = performance.now();
@@ -1291,29 +1299,17 @@ function ChampSmoke(canvas, revealFn){
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     if(visible && !reduce){ requestAnimationFrame(draw); } else { running = false; }
   }
-  var img = new Image();
-  img.onload = function(){
-    var tex = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    running = true; requestAnimationFrame(draw);
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(function(entries){
-        visible = entries[0].isIntersecting;
-        if (visible && !running && !reduce) { running = true; requestAnimationFrame(draw); }
-      }).observe(canvas);
-    }
-  };
-  img.src = 'assets/champvision-smoke-v5-2000.png';
+  running = true; requestAnimationFrame(draw);
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function(entries){
+      visible = entries[0].isIntersecting;
+      if (visible && !running && !reduce) { running = true; requestAnimationFrame(draw); }
+    }).observe(canvas);
+  }
 }
 (function(){
   var hero = document.querySelector('.hero-logo .smoke-canvas');
-  if(hero) ChampSmoke(hero, function(){ return 5000; });   // fully revealed
+  if(hero) ChampSmoke(hero, function(){ return 5000; }, 1.5);   // fully revealed, same animation as the intro
 })();
 
 // ==== Intro-Animation: Logo dreht sich rein, dann Rauch fährt von links und rechts ein, dann Seite ====
@@ -1327,7 +1323,7 @@ var INTRO_SMOKE_START = 0.0, INTRO_SMOKE_TIME = 3.0;
     var p = Math.max(0, Math.min(1, (sec - INTRO_SMOKE_START) / INTRO_SMOKE_TIME));
     var e = 0.5 - 0.5 * Math.cos(Math.PI * p);                // slow, even ease in-out
     return 458 + (1150 - 458) * e;                            // radius of the reveal front, ring -> edge
-  });
+  }, 1.5);
 })();
 
 function startIntroSequence(){
