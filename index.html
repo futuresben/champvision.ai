@@ -59,9 +59,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Sora',sans-serif;overflo
   18%{opacity:1}
   100%{transform:rotate(0deg) scale(1);opacity:1}
 }
-.intro-text{margin-top:28px;font-family:'Poppins',sans-serif;font-weight:500;letter-spacing:.14em;text-indent:.14em;
+.intro-text{margin-top:28px;font-family:'Orbitron',sans-serif;font-weight:700;letter-spacing:.06em;
   font-size:clamp(1.1rem,2.9vw,2.6rem);line-height:1.05;white-space:nowrap;color:#f7f9ff;opacity:0;animation:fadeIn .8s ease 1.3s forwards;text-align:center}
-.intro-text .ai{color:var(--blue)}
+.intro-text .ai{color:var(--blue-bright)}
 @keyframes fadeIn{to{opacity:.7}}
 
 /* page content hidden until intro logic reveals it */
@@ -94,6 +94,8 @@ nav .brand img{width:58px;height:58px}
 .nav-cta:hover{color:var(--ink);border-color:var(--blue);box-shadow:0 0 20px rgba(79,141,255,.25)}
 .hero{position:relative;z-index:3;text-align:center;padding:60px 24px 40px;max-width:1400px;margin:0 auto;perspective:var(--persp)}
 .hero-logo-wrap{width:400px;height:400px;margin:0 auto 30px;perspective:1000px;position:relative}
+.hero-logo-wrap.pending,.hero-brand.pending{visibility:hidden}
+.hero-logo-wrap.noanim,.hero-brand.noanim{animation:none!important;opacity:1!important;transform:none!important}
 @media (max-width:640px){
   .hero-logo-wrap{width:320px;height:320px;margin-bottom:44px}
 }
@@ -117,8 +119,8 @@ nav .brand img{width:58px;height:58px}
   text-shadow:0 2px 24px rgba(79,141,255,.25),0 1px 0 rgba(0,0,0,.3)}
 .hero h1 .ai{background:linear-gradient(90deg,var(--blue-bright),var(--blue));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
   text-shadow:0 0 30px rgba(79,141,255,.5)}
-.hero-brand{margin:-30px auto 82px;font-family:'Poppins',sans-serif;font-size:clamp(1.1rem,2.9vw,2.6rem);font-weight:500;line-height:1.05;letter-spacing:.14em;text-indent:.14em;white-space:nowrap;color:#f7f9ff}
-.hero-brand .ai{color:var(--blue)}
+.hero-brand{margin:-30px auto 82px;font-family:'Orbitron',sans-serif;font-size:clamp(1.1rem,2.9vw,2.6rem);font-weight:700;line-height:1.05;letter-spacing:.06em;white-space:nowrap;color:#f7f9ff}
+.hero-brand .ai{color:var(--blue-bright)}
 .tagline{font-size:clamp(1rem,2.4vw,1.35rem);color:var(--muted);margin:22px auto 0;max-width:620px;font-weight:300}
 .sub-slogan{font-family:'Orbitron';font-weight:700;font-size:clamp(.95rem,2.2vw,1.2rem);letter-spacing:.3px;
   margin:16px auto 0;max-width:680px;color:var(--ink)}
@@ -1278,9 +1280,9 @@ function ChampSmoke(canvas, revealFn, amp){
     '  float reveal=1.0-smoothstep(rv-220.0,rv,d);',       // reveal front moves from the ring outward
     '  float emitR=smoothstep(0.90,0.97,cos(ang+0.02));',                  // right glowing edge, marked spot (about 3 o clock)
     '  float emitL=smoothstep(0.86,0.97,cos(ang-2.548));',                 // lower-left glowing edge, marked spot (about 7-8 o clock), a little wider
-    '  float side=max(0.6*emitR,1.25*emitL);',                             // both spots, the right one a bit softer
+    '  float side=max(1.0*emitR,1.3*emitL);',                              // both spots, similarly strong
     '  float a=dens*fade*m*e.x*e.y*reveal*(0.8+0.2*pulse*amp)*side;',
-    '  a=clamp(a*2.3,0.0,1.0)*0.75;',
+    '  a=clamp(a*2.8,0.0,1.0)*0.75;',
     '  vec3 col=mix(vec3(0.20,0.45,1.0),vec3(0.80,0.92,1.0),smoothstep(0.45,0.9,cloud));',
     '  gl_FragColor=vec4(col*a,a);',
     '}'].join('\n')));
@@ -1315,35 +1317,63 @@ function ChampSmoke(canvas, revealFn, amp){
 }
 (function(){
   var hero = document.querySelector('.hero-logo .smoke-canvas');
-  if(hero) ChampSmoke(hero, function(){ return 5000; }, 1.5);   // fully revealed, same animation as the intro
+  if(hero) ChampSmoke(hero, smokeReveal, 1.5);                // same smoke timeline as the intro
 })();
 
 // ==== Intro-Animation: Logo dreht sich rein, dann Rauch fährt von links und rechts ein, dann Seite ====
 var INTRO_SMOKE_START = 0.0, INTRO_SMOKE_TIME = 3.0;
+var SMOKE_REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function smokeReveal(sec){                                    // same timeline for intro and hero
+  if(SMOKE_REDUCED) return 5000;
+  var p = Math.max(0, Math.min(1, (sec - INTRO_SMOKE_START) / INTRO_SMOKE_TIME));
+  var e = 0.5 - 0.5 * Math.cos(Math.PI * p);                  // slow, even ease in-out
+  return 458 + (1150 - 458) * e;                              // radius of the reveal front, ring -> edge
+}
 (function(){
   var c = document.querySelector('#intro .smoke-canvas');
-  if(!c) return;
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  ChampSmoke(c, function(sec){
-    if(reduce) return 5000;
-    var p = Math.max(0, Math.min(1, (sec - INTRO_SMOKE_START) / INTRO_SMOKE_TIME));
-    var e = 0.5 - 0.5 * Math.cos(Math.PI * p);                // slow, even ease in-out
-    return 458 + (1150 - 458) * e;                            // radius of the reveal front, ring -> edge
-  }, 1.5);
+  if(c) ChampSmoke(c, smokeReveal, 1.5);
 })();
 
-function startIntroSequence(){
+// Hand-over: after the spin, the logo and wordmark glide from the centre into their
+// place at the top of the page, while the rest of the page rises in beneath them.
+function introToHero(){
   var intro = document.getElementById('intro');
   var page  = document.getElementById('page');
-  // logo spin (2s) and smoke fade-in (to ~3.3s) finish here —
-  // start the crossfade to the main page right as it finishes
+  var stage = intro.querySelector('.intro-stage');
+  var text  = intro.querySelector('.intro-text');
+  var hl = document.querySelector('.hero-logo-wrap');
+  var hb = document.querySelector('.hero-brand');
+  if(!stage || !text || !hl || !hb){ page.classList.add('show'); intro.classList.add('done'); return; }
+  hl.classList.add('pending'); hb.classList.add('pending');
+  page.classList.add('show');                                 // rest of the page starts rising now
+
+  stage.style.animation = 'none'; stage.style.opacity = '1'; stage.style.transform = 'none';
+  text.style.animation  = 'none'; text.style.opacity  = '1';
+  var s0 = stage.getBoundingClientRect(), t0 = text.getBoundingClientRect();
+  var s1 = hl.getBoundingClientRect(),    t1 = hb.getBoundingClientRect();
+  var k  = s1.width / s0.width;
+  var dxS = (s1.left + s1.width/2) - (s0.left + s0.width/2),  dyS = (s1.top + s1.height/2) - (s0.top + s0.height/2);
+  var dxT = (t1.left + t1.width/2) - (t0.left + t0.width/2),  dyT = (t1.top + t1.height/2) - (t0.top + t0.height/2);
+  var ease = 'transform .9s cubic-bezier(.45,0,.2,1)';
+  stage.style.transformOrigin = 'center center';
+  stage.style.transition = ease; text.style.transition = ease;
+  requestAnimationFrame(function(){
+    stage.style.transform = 'translate(' + dxS + 'px,' + dyS + 'px) scale(' + k + ')';
+    text.style.transform  = 'translate(' + dxT + 'px,' + dyT + 'px)';
+  });
   setTimeout(function(){
-    page.classList.add('show');
-    intro.classList.add('done');
-  }, 3300);
-  // start the heavier Three.js particle field only after the intro
-  // crossfade is underway, so its setup doesn't compete with it on the main thread
-  setTimeout(function(){ initParticles(); }, 3400);
+    hl.classList.remove('pending'); hb.classList.remove('pending');
+    hl.classList.add('noanim');     hb.classList.add('noanim');
+    intro.style.display = 'none';
+  }, 950);
+}
+
+function startIntroSequence(){
+  // logo spin is 2 s; the smoke keeps building until ~3 s. The hand-over starts once the
+  // spin has settled, so the smoke is still visible while it moves to its place.
+  setTimeout(introToHero, 2100);
+  // start the heavier Three.js particle field only after the hand-over
+  setTimeout(function(){ initParticles(); }, 3300);
 }
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', startIntroSequence);
