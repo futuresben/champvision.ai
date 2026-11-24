@@ -55,6 +55,7 @@ async function sendPurchaseConfirmation(checkout, event) {
   if (!email) return;
 
   const isUpgrade = checkout.metadata?.flow === 'champvision_bundle_upgrade';
+  const isBundle = productName === 'ChampVision Bot Bundle';
   const response = await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'api-key': process.env.BREVO_API_KEY },
@@ -62,7 +63,7 @@ async function sendPurchaseConfirmation(checkout, event) {
       sender: { name: process.env.BREVO_SENDER_NAME || 'Champvision Support', email: process.env.BREVO_SENDER_EMAIL },
       to: [{ email }],
       subject: 'Dein Kauf bei ChampVision.ai ist bestätigt',
-      htmlContent: `<p>Hallo,</p><p>dein Kauf von <strong>${productName}</strong> wurde erfolgreich bestätigt.</p>${isUpgrade ? '<p>Deine verbleibende MNQ-Restlaufzeit wird als persönliches Zeitguthaben gesichert.</p>' : ''}<p><strong>Bitte füge mich auf Discord hinzu: futuresben</strong></p><p>Dort erhältst du die weiteren Informationen zu deinem Bot.</p><p>Viele Grüße<br>Ben von ChampVision.ai</p>`
+      htmlContent: `<p>Hallo,</p><p>Willkommen bei CHAMPVISION.ai!</p><p>dein Kauf von <strong>${productName}</strong> wurde erfolgreich bestätigt.</p>${isUpgrade ? '<p>Deine verbleibende MNQ-Restlaufzeit wird als persönliches Zeitguthaben gesichert.</p>' : ''}<p>Tritt bitte unserer Discord Community bei: <a href="https://discord.gg/X6KUX5zRG3">https://discord.gg/X6KUX5zRG3</a></p><p>Und schick mir eine DM, damit ich dir die Freigabe für ${isBundle ? 'deine Trading Bots' : 'deinen Trading Bot'} geben kann.</p><p>Viele Grüße<br>Ben von ChampVision.ai</p>`
     })
   });
   if (!response.ok) throw new Error('Purchase confirmation email request failed');
