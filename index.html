@@ -43,14 +43,26 @@ body{background:var(--bg);color:var(--ink);font-family:'Sora',sans-serif;overflo
 #intro{position:fixed;inset:0;z-index:99;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);perspective:none;transform-style:flat;
   transition:opacity .8s ease, visibility .8s ease}
 #intro.done{opacity:0;visibility:hidden}
-#intro img{width:300px;height:300px;
-  animation:introSpin 2s cubic-bezier(.4,0,.2,1) forwards;
+#intro{overflow:hidden}
+.intro-flare{position:absolute;left:50%;top:50%;width:820px;height:820px;margin:-410px 0 0 -410px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(120,170,255,.55) 0%,rgba(45,94,219,.22) 35%,transparent 68%);
+  animation:introFlare 2.7s cubic-bezier(.22,.7,.2,1) forwards;opacity:0}
+@keyframes introFlare{
+  0%{transform:scale(.25);opacity:0}
+  38%{opacity:1;transform:scale(1)}
+  100%{transform:scale(1.5);opacity:0}
+}
+#intro img{position:relative;width:300px;height:300px;
+  animation:introSpin 2.7s cubic-bezier(.22,.7,.2,1) forwards;
   transform-origin:50% 50%;image-rendering:auto;
   filter:drop-shadow(0 0 6px rgba(120,170,255,.85)) drop-shadow(0 0 16px rgba(79,141,255,.55))}
 @keyframes introSpin{
-  0%{transform:rotate(-220deg) scale(.3);opacity:0}
-  60%{opacity:1}
-  100%{transform:rotate(360deg) scale(1);opacity:1}
+  0%{transform:rotate(-600deg) scale(.12);opacity:0;filter:blur(14px) brightness(2.2)}
+  30%{opacity:1}
+  55%{transform:rotate(28deg) scale(1.16);filter:blur(0) brightness(1.5)}
+  72%{transform:rotate(-9deg) scale(.95);filter:brightness(1.1)}
+  86%{transform:rotate(4deg) scale(1.03)}
+  100%{transform:rotate(0) scale(1);opacity:1;filter:brightness(1)}
 }
 .intro-text{margin-top:28px;font-family:'Orbitron';letter-spacing:3px;
   font-size:.85rem;color:var(--muted);opacity:0;animation:fadeIn .8s ease 1.3s forwards;text-align:center}
@@ -99,15 +111,10 @@ nav .brand img{width:58px;height:58px}
   background:radial-gradient(circle,rgba(45,94,219,.07),transparent 75%);filter:blur(16px);
   transform:translateZ(-90px);pointer-events:none}
 .hero-logo .logo-glow-1,.hero-logo .logo-glow-2{display:none}
-/* Blue smoke beside the logo drifts very slowly; the icon itself stays still */
-.hero-logo .logo-smoke{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;
-  filter:drop-shadow(0 0 12px rgba(79,141,255,.55));
-  animation:smokeDrift 7s ease-in-out infinite alternate;will-change:transform,opacity}
-@keyframes smokeDrift{
-  0%{transform:translate3d(-3%,1%,0) scale(1);opacity:.85}
-  100%{transform:translate3d(3%,-2%,0) scale(1.03);opacity:1}
-}
-@media (prefers-reduced-motion: reduce){.hero-logo{transition:none}.hero-logo .logo-smoke{animation:none}}
+/* Animated light smoke, drawn on canvas around the still icon */
+.hero-logo .smoke-canvas{position:absolute;left:-35%;top:-35%;width:170%;height:170%;pointer-events:none;z-index:0}
+.hero-logo img{position:relative;z-index:1}
+@media (prefers-reduced-motion: reduce){.hero-logo{transition:none}}
 .hero h1{font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(1.5rem,7.5vw,5rem);line-height:1.05;letter-spacing:1px;white-space:nowrap;
   text-shadow:0 2px 24px rgba(79,141,255,.25),0 1px 0 rgba(0,0,0,.3)}
 .hero h1 .ai{background:linear-gradient(90deg,var(--blue-bright),var(--blue));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
@@ -624,6 +631,7 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
 <canvas id="particles"></canvas>
 
 <div id="intro">
+  <div class="intro-flare"></div>
   <img src="assets/champvision-logo-icon-hd.png" alt="ChampVision Logo lädt">
   <div class="intro-text">CHAMPVISION.ai</div>
 </div>
@@ -645,7 +653,7 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
       <div class="logo-glow-2"></div>
       <div class="logo-glow-1"></div>
       <img src="assets/champvision-logo-icon-hd.png" alt="ChampVision Netzwerk">
-      <img class="logo-smoke" src="assets/champvision-smoke-layer-hd.png" alt="" aria-hidden="true">
+      <canvas class="smoke-canvas" aria-hidden="true"></canvas>
     </div>
   </div>
   <div class="hero-brand reveal d2">CHAMPVISION<span class="ai">.ai</span></div>
@@ -1230,20 +1238,94 @@ mgcCheckout.textContent = 'Zugang sichern';
   });
 })();
 
+// ==== Hero smoke: flowing light strands drawn on canvas beside the still logo ====
+(function(){
+  var c = document.querySelector('.smoke-canvas');
+  if(!c || !c.getContext) return;
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var ctx = c.getContext('2d');
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var W = 0, H = 0, R = 0, visible = true, running = false;
+  var t0 = performance.now();
+  var STRANDS = [];
+  for (var i = 0; i < 16; i++) {
+    STRANDS.push({
+      side: i % 2 ? 1 : -1,
+      dir: Math.random() < 0.5 ? -1 : 1,
+      seed: Math.random() * 10,
+      spread: 0.5 + Math.random() * 0.6,
+      reach: 0.7 + Math.random() * 0.7,
+      w: 0.7 + Math.random() * 1.2,
+      speed: 0.6 + Math.random() * 0.6
+    });
+  }
+  function size(){
+    var r = c.getBoundingClientRect();
+    W = r.width; H = r.height;
+    c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    R = W / 1.7 * 0.29; // ring radius of the icon, in canvas pixels
+  }
+  function point(s, u, t, cx, cy){
+    var base = s.side > 0 ? 0 : Math.PI;
+    var a = base + s.side * s.dir * (0.12 + 0.9 * u * s.spread) + 0.22 * Math.sin(t * 0.9 * s.speed + s.seed + u * 5) * u;
+    var r = R * (1.03 + u * s.reach * 1.15) + Math.sin(t * 1.4 * s.speed + s.seed * 2 + u * 7) * R * 0.07 * u;
+    return [cx + Math.cos(a) * r, cy + Math.sin(a) * r * 0.9 - u * u * R * 0.3];
+  }
+  function frame(now){
+    if(!visible){ running = false; return; }
+    var t = (now - t0) / 1000;
+    ctx.clearRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'lighter';
+    var cx = W / 2, cy = H / 2, N = 56;
+    for (var k = 0; k < STRANDS.length; k++) {
+      var s = STRANDS[k];
+      var pts = [];
+      for (var j = 0; j <= N; j++) pts.push(point(s, j / N, t, cx, cy));
+      for (var j2 = 0; j2 < N; j2++) {
+        var u = j2 / N;
+        var fade = Math.min(1, u * 7) * Math.pow(1 - u, 1.3);
+        var pulse = 0.65 + 0.35 * Math.sin(t * 1.8 * s.speed + s.seed + u * 4);
+        var a = fade * pulse;
+        var p0 = pts[j2], p1 = pts[j2 + 1];
+        // soft halo
+        ctx.strokeStyle = 'rgba(60,130,255,' + (0.22 * a).toFixed(3) + ')';
+        ctx.lineWidth = 7 * (1 - u * 0.5) * s.w;
+        ctx.beginPath(); ctx.moveTo(p0[0], p0[1]); ctx.lineTo(p1[0], p1[1]); ctx.stroke();
+        // bright core
+        ctx.strokeStyle = 'rgba(175,210,255,' + (0.9 * a).toFixed(3) + ')';
+        ctx.lineWidth = 1.5 * (1 - u * 0.6) * s.w;
+        ctx.beginPath(); ctx.moveTo(p0[0], p0[1]); ctx.lineTo(p1[0], p1[1]); ctx.stroke();
+      }
+    }
+    ctx.globalCompositeOperation = 'source-over';
+    requestAnimationFrame(frame);
+  }
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function(entries){
+      visible = entries[0].isIntersecting;
+      if (visible && !running) { running = true; requestAnimationFrame(frame); }
+    }).observe(c);
+  }
+  size();
+  window.addEventListener('resize', size);
+  running = true;
+  requestAnimationFrame(frame);
+})();
+
 // ==== Intro-Animation: Logo dreht sich rein, dann Seite einblenden ====
 function startIntroSequence(){
   var intro = document.getElementById('intro');
   var page  = document.getElementById('page');
-  // logo spin animation takes 2s (see #intro img animation duration) —
-  // start the crossfade to the main page right as it finishes, so there's
-  // no awkward pause where the finished logo just sits still
+  // logo animation takes 2.7s (see #intro img animation duration) —
+  // start the crossfade to the main page right as it finishes
   setTimeout(function(){
     page.classList.add('show');
     intro.classList.add('done');
-  }, 2000);
+  }, 2700);
   // start the heavier Three.js particle field only after the intro
   // crossfade is underway, so its setup doesn't compete with it on the main thread
-  setTimeout(function(){ initParticles(); }, 2100);
+  setTimeout(function(){ initParticles(); }, 2800);
 }
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', startIntroSequence);
