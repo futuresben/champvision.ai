@@ -1272,9 +1272,9 @@ function ChampSmoke(canvas, revealFn, amp){
     '  float side=max(emitR,1.1*emitL);',
     '  if(side<0.001){gl_FragColor=vec4(0.0);return;}',
     // two veil layers scrolling outward at different speeds, with a slow silky undulation
-    '  float wob=0.045*sin(t*0.34+ang*1.2);',
-    '  float rad=16.0*sin(t*0.48+ang*1.7);',
-    '  float wob2=0.036*sin(t*0.28-ang*0.9+1.3);',
+    '  float wob=0.055*sin(t*0.34+ang*1.2);',
+    '  float rad=19.0*sin(t*0.48+ang*1.7);',
+    '  float wob2=0.044*sin(t*0.28-ang*0.9+1.3);',
     '  vec2 p1=vec2(cos(ang+wob),sin(ang+wob))*(d+rad)+vec2(1000.0);',
     '  vec2 p2=vec2(cos(ang-wob2),sin(ang-wob2))*(d-rad*0.7)+vec2(1000.0);',
     '  vec4 c1=texture2D(T,p1/2000.0);',
@@ -1282,7 +1282,7 @@ function ChampSmoke(canvas, revealFn, amp){
     '  float a=1.0-(1.0-c1.a)*(1.0-c2.a*0.8);',
     '  vec3 col=(c1.rgb*c1.a+c2.rgb*c2.a*0.8)/max(c1.a+c2.a*0.8,0.001);',
     '  float m=smoothstep(456.0,462.0,d);',                 // veils start right at the outer edge of the ring
-    '  float fade=1.0-smoothstep(650.0,800.0,d);',          // nothing travels far: short, soft fade-out
+    '  float fade=1.0-smoothstep(700.0,860.0,d);',          // nothing travels far: short, soft fade-out
     '  float reveal=1.0-smoothstep(rv-260.0,rv,d);',        // reveal front moves from the ring outward
     '  float A=a*m*fade*reveal*side;',
     '  float near=1.0-smoothstep(462.0,540.0,d);',           // no gap: lift the veil right at the glowing edge
