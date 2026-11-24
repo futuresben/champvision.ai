@@ -628,7 +628,7 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
 
 <div id="intro">
   <div class="logo-stage intro-stage">
-    <img src="assets/champvision-logo-main-1400.png" alt="ChampVision Logo lädt">
+    <img src="assets/champvision-logo-main-v4-1400.png" alt="ChampVision Logo lädt">
     <canvas class="smoke-canvas" aria-hidden="true"></canvas>
   </div>
   <div class="intro-text">CHAMPVISION.ai</div>
@@ -651,7 +651,7 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
       <div class="logo-glow-2"></div>
       <div class="logo-glow-1"></div>
       <div class="logo-stage">
-        <img src="assets/champvision-logo-main-1400.png" alt="ChampVision Netzwerk">
+        <img src="assets/champvision-logo-main-v4-1400.png" alt="ChampVision Netzwerk">
         <canvas class="smoke-canvas" aria-hidden="true"></canvas>
       </div>
     </div>
@@ -1254,8 +1254,8 @@ function ChampSmoke(canvas, revealFn){
     '  vec2 px=v*1400.0;',
     '  vec2 ctr=vec2(700.0,700.0);',
     '  vec2 dv=px-ctr; float d=length(dv); vec2 dir=dv/max(d,0.001);',
-    '  float m=smoothstep(530.0,550.0,d);',                 // 0 on the icon and glow band, 1 outside
-    '  float rt=d<530.0? d : 530.0+(d-530.0)/1.3;',         // smoke grows outward, stays attached to the ring
+    '  float m=smoothstep(458.0,470.0,d);',                 // 0 on the logo, 1 outside the ring
+    '  float rt=d<458.0? d : 458.0+(d-458.0)/1.15;',        // smoke grows outward a bit more, stays attached to the ring
     '  vec2 base=(ctr+dir*rt)/1400.0;',
     '  vec2 w=vec2(sin(v.y*6.5+t*0.42)+0.55*sin(v.y*12.0-t*0.27+v.x*3.0),',
     '              cos(v.x*5.5-t*0.36)+0.55*cos(v.x*10.0+t*0.23+v.y*2.5));',
@@ -1263,7 +1263,7 @@ function ChampSmoke(canvas, revealFn){
     '  vec4 c=texture2D(T,uv);',
     '  vec2 e=smoothstep(vec2(0.0),vec2(0.12),v)*smoothstep(vec2(1.0),vec2(0.88),v);',
     '  float reveal=1.0-smoothstep(rv-160.0,rv,d);',       // reveal front moves from the ring outward
-    '  float pulse=0.8+0.2*sin(t*1.3-(rt-530.0)/90.0);',    // soft impulses travelling outward
+    '  float pulse=0.8+0.2*sin(t*1.3-(rt-458.0)/90.0);',    // soft impulses travelling outward
     '  float a=min(1.0,c.a*1.8)*m*e.x*e.y*reveal*pulse;',
     '  gl_FragColor=vec4(c.rgb*a,a);',
     '}'].join('\n')));
@@ -1307,7 +1307,7 @@ function ChampSmoke(canvas, revealFn){
       }).observe(canvas);
     }
   };
-  img.src = 'assets/champvision-smoke-v2-1400.png';
+  img.src = 'assets/champvision-smoke-v3-1400.png';
 }
 (function(){
   var hero = document.querySelector('.hero-logo .smoke-canvas');
@@ -1315,7 +1315,7 @@ function ChampSmoke(canvas, revealFn){
 })();
 
 // ==== Intro-Animation: Logo dreht sich rein, dann Rauch fährt von links und rechts ein, dann Seite ====
-var INTRO_SMOKE_START = 1.4, INTRO_SMOKE_TIME = 1.8;
+var INTRO_SMOKE_START = 0.7, INTRO_SMOKE_TIME = 2.2;
 (function(){
   var c = document.querySelector('#intro .smoke-canvas');
   if(!c) return;
@@ -1324,7 +1324,7 @@ var INTRO_SMOKE_START = 1.4, INTRO_SMOKE_TIME = 1.8;
     if(reduce) return 5000;
     var p = Math.max(0, Math.min(1, (sec - INTRO_SMOKE_START) / INTRO_SMOKE_TIME));
     var e = p < 0.5 ? 4*p*p*p : 1 - Math.pow(-2*p + 2, 3) / 2;   // smooth ease in-out cubic
-    return 530 + (1150 - 530) * e;                            // radius of the reveal front, ring -> edge
+    return 458 + (1150 - 458) * e;                            // radius of the reveal front, ring -> edge
   });
 })();
 
