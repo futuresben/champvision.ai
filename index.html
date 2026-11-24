@@ -52,17 +52,12 @@ body{background:var(--bg);color:var(--ink);font-family:'Sora',sans-serif;overflo
   45%{opacity:1;transform:scale(1)}
   100%{transform:scale(1.25);opacity:0}
 }
-#intro img{position:relative;width:360px;height:257px;
-  animation:introSpin 2.7s cubic-bezier(.33,.0,.2,1) forwards;
-  transform-origin:50% 50%;image-rendering:auto;
-  filter:drop-shadow(0 0 6px rgba(120,170,255,.85)) drop-shadow(0 0 16px rgba(79,141,255,.55))}
+#intro .intro-stage{position:relative;top:auto;transform:none;width:min(420px,78vw);height:auto;aspect-ratio:701/500;
+  animation:introSpin 2s cubic-bezier(.3,0,.2,1) forwards;opacity:0}
 @keyframes introSpin{
-  0%{transform:rotate(-360deg) scale(.6);opacity:0}
-  35%{opacity:1}
-  80%{transform:rotate(0deg) scale(1.02)}
+  0%{transform:rotate(-360deg) scale(.55);opacity:0}
+  50%{opacity:1}
   100%{transform:rotate(0deg) scale(1);opacity:1}
-}
-  100%{transform:rotate(0) scale(1);opacity:1;filter:brightness(1)}
 }
 .intro-text{margin-top:28px;font-family:'Orbitron';letter-spacing:3px;
   font-size:.85rem;color:var(--muted);opacity:0;animation:fadeIn .8s ease 1.3s forwards;text-align:center}
@@ -633,7 +628,10 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
 
 <div id="intro">
   <div class="intro-flare"></div>
-  <img src="assets/champvision-logo-hero-full.png" alt="ChampVision Logo lädt">
+  <div class="logo-stage intro-stage">
+    <img src="assets/champvision-logo-hero-icon.png" alt="ChampVision Logo lädt">
+    <canvas class="smoke-canvas" aria-hidden="true"></canvas>
+  </div>
   <div class="intro-text">CHAMPVISION.ai</div>
 </div>
 
@@ -1241,50 +1239,49 @@ mgcCheckout.textContent = 'Zugang sichern';
   });
 })();
 
-// ==== Hero: the artwork's own smoke, gently warped on the GPU; the icon stays still ====
-(function(){
-  var stage = document.querySelector('.logo-stage');
-  if(!stage) return;
-  var canvas = stage.querySelector('.smoke-canvas');
-  var still = stage.querySelector('img');
+// ==== Smoke: the artwork's own smoke, warped smoothly on the GPU; the icon itself stays still ====
+function ChampSmoke(canvas, inFn){
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var gl = canvas.getContext('webgl', {premultipliedAlpha: true, alpha: true, antialias: false});
-  if(!gl){ still.src = 'assets/champvision-logo-hero-full.png'; return; }  // no WebGL: show the still artwork
-  function sh(type, src){
-    var o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return o;
-  }
+  if(!gl) return;
+  function sh(type, src){ var o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return o; }
   var prog = gl.createProgram();
   gl.attachShader(prog, sh(gl.VERTEX_SHADER,
     'attribute vec2 a;varying vec2 v;void main(){v=a*0.5+0.5;v.y=1.0-v.y;gl_Position=vec4(a,0.0,1.0);}'));
   gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, [
     'precision mediump float;',
-    'varying vec2 v;uniform sampler2D T;uniform float t;',
+    'varying vec2 v;uniform sampler2D T;uniform float t;uniform float k;',
     'void main(){',
     '  vec2 px=v*vec2(701.0,500.0);',
     '  float d=length(px-vec2(350.0,250.0));',
     '  float m=smoothstep(200.0,222.0,d);',                 // 0 on the icon, 1 outside it
     '  vec2 w=vec2(sin(v.y*6.5+t*0.42)+0.55*sin(v.y*12.0-t*0.27+v.x*3.0),',
     '              cos(v.x*5.5-t*0.36)+0.55*cos(v.x*10.0+t*0.23+v.y*2.5));',
-    '  vec2 uv=v+w*vec2(0.0042,0.0075)*(0.35+0.65*m);',
+    '  vec2 uv=v+w*vec2(0.0085,0.014)*(0.35+0.65*m);',
+    '  uv.x-=(1.0-k)*0.07*sign(v.x-0.5)*m;',                // smoke slides in from both sides
     '  vec4 c=texture2D(T,uv);',
-    '  float a=c.a*m;',
-    '  gl_FragColor=vec4(c.rgb*c.a*m,a);',
+    '  vec2 e=smoothstep(vec2(0.0),vec2(0.16),v)*smoothstep(vec2(1.0),vec2(0.84),v);',
+    '  float a=c.a*m*e.x*e.y*k;',                           // soft edges: no hard cut-off
+    '  gl_FragColor=vec4(c.rgb*a,a);',
     '}'].join('\n')));
   gl.linkProgram(prog); gl.useProgram(prog);
   var buf = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, buf);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
-  var aLoc = gl.getAttribLocation(prog, 'a'), tLoc = gl.getUniformLocation(prog, 't');
+  var aLoc = gl.getAttribLocation(prog, 'a');
   gl.enableVertexAttribArray(aLoc); gl.vertexAttribPointer(aLoc, 2, gl.FLOAT, false, 0, 0);
+  var tLoc = gl.getUniformLocation(prog, 't'), kLoc = gl.getUniformLocation(prog, 'k');
+  gl.uniform1i(gl.getUniformLocation(prog, 'T'), 0);
   gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
   var dpr = Math.min(window.devicePixelRatio || 1, 2);
   canvas.width = Math.round(701 * dpr); canvas.height = Math.round(500 * dpr);
   gl.viewport(0, 0, canvas.width, canvas.height);
   var visible = true, running = false, t0 = performance.now();
   function draw(now){
-    var t = reduce ? 0 : (now - t0) / 1000;
+    var sec = (now - t0) / 1000;
     gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.uniform1f(tLoc, t);
+    gl.uniform1f(tLoc, reduce ? 0 : sec);
+    gl.uniform1f(kLoc, inFn(sec));
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     if(visible && !reduce){ requestAnimationFrame(draw); } else { running = false; }
   }
@@ -1298,7 +1295,6 @@ mgcCheckout.textContent = 'Zugang sichern';
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.uniform1i(gl.getUniformLocation(prog, 'T'), 0);
     running = true; requestAnimationFrame(draw);
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function(entries){
@@ -1307,22 +1303,39 @@ mgcCheckout.textContent = 'Zugang sichern';
       }).observe(canvas);
     }
   };
-  img.src = 'assets/champvision-logo-hero-full.png';
+  img.src = 'assets/champvision-logo-hero-smoke.png';
+}
+(function(){
+  var hero = document.querySelector('.hero-logo .smoke-canvas');
+  if(hero) ChampSmoke(hero, function(){ return 1; });
 })();
 
-// ==== Intro-Animation: Logo dreht sich rein, dann Seite einblenden ====
+// ==== Intro-Animation: Logo dreht sich rein, dann Rauch fährt von links und rechts ein, dann Seite ====
+var INTRO_SMOKE_START = 2.0, INTRO_SMOKE_TIME = 1.3;
+(function(){
+  var c = document.querySelector('#intro .smoke-canvas');
+  if(!c) return;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  ChampSmoke(c, function(sec){
+    if(reduce) return 1;
+    var p = (sec - INTRO_SMOKE_START) / INTRO_SMOKE_TIME;
+    p = Math.max(0, Math.min(1, p));
+    return p * p * (3 - 2 * p);                 // smooth ease in and out
+  });
+})();
+
 function startIntroSequence(){
   var intro = document.getElementById('intro');
   var page  = document.getElementById('page');
-  // logo animation takes 2.7s (see #intro img animation duration) —
+  // logo spin (2s) and smoke fade-in (to ~3.3s) finish here —
   // start the crossfade to the main page right as it finishes
   setTimeout(function(){
     page.classList.add('show');
     intro.classList.add('done');
-  }, 2700);
+  }, 3300);
   // start the heavier Three.js particle field only after the intro
   // crossfade is underway, so its setup doesn't compete with it on the main thread
-  setTimeout(function(){ initParticles(); }, 2800);
+  setTimeout(function(){ initParticles(); }, 3400);
 }
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', startIntroSequence);
