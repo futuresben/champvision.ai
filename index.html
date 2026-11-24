@@ -1277,8 +1277,8 @@ function ChampSmoke(canvas, revealFn, amp){
     '  vec2 e=smoothstep(vec2(0.0),vec2(0.12),v)*smoothstep(vec2(1.0),vec2(0.88),v);',
     '  float reveal=1.0-smoothstep(rv-220.0,rv,d);',       // reveal front moves from the ring outward
     '  float emitR=smoothstep(0.90,0.97,cos(ang+0.02));',                  // right glowing edge, marked spot (about 3 o clock)
-    '  float emitL=smoothstep(0.92,0.98,cos(ang-2.548));',                 // lower-left glowing edge, marked spot (about 7-8 o clock)
-    '  float side=max(emitR,emitL);',                                      // smoke only leaves these two marked spots
+    '  float emitL=smoothstep(0.86,0.97,cos(ang-2.548));',                 // lower-left glowing edge, marked spot (about 7-8 o clock), a little wider
+    '  float side=max(0.6*emitR,1.25*emitL);',                             // both spots, the right one a bit softer
     '  float a=dens*fade*m*e.x*e.y*reveal*(0.8+0.2*pulse*amp)*side;',
     '  a=clamp(a*1.9,0.0,1.0)*0.75;',
     '  vec3 col=mix(vec3(0.20,0.45,1.0),vec3(0.80,0.92,1.0),smoothstep(0.45,0.9,cloud));',
