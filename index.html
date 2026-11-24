@@ -45,23 +45,23 @@ body{background:var(--bg);color:var(--ink);font-family:'Sora',sans-serif;overflo
 #intro.done{opacity:0;visibility:hidden}
 #intro{overflow:hidden}
 .intro-flare{position:absolute;left:50%;top:50%;width:820px;height:820px;margin:-410px 0 0 -410px;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle,rgba(120,170,255,.55) 0%,rgba(45,94,219,.22) 35%,transparent 68%);
-  animation:introFlare 2.7s cubic-bezier(.22,.7,.2,1) forwards;opacity:0}
+  background:radial-gradient(circle,rgba(120,170,255,.28) 0%,rgba(45,94,219,.1) 35%,transparent 68%);
+  animation:introFlare 2.7s ease-out forwards;opacity:0}
 @keyframes introFlare{
-  0%{transform:scale(.25);opacity:0}
-  38%{opacity:1;transform:scale(1)}
-  100%{transform:scale(1.5);opacity:0}
+  0%{transform:scale(.6);opacity:0}
+  45%{opacity:1;transform:scale(1)}
+  100%{transform:scale(1.25);opacity:0}
 }
 #intro img{position:relative;width:300px;height:300px;
-  animation:introSpin 2.7s cubic-bezier(.22,.7,.2,1) forwards;
+  animation:introSpin 2.7s cubic-bezier(.33,.0,.2,1) forwards;
   transform-origin:50% 50%;image-rendering:auto;
   filter:drop-shadow(0 0 6px rgba(120,170,255,.85)) drop-shadow(0 0 16px rgba(79,141,255,.55))}
 @keyframes introSpin{
-  0%{transform:rotate(-600deg) scale(.12);opacity:0;filter:blur(14px) brightness(2.2)}
-  30%{opacity:1}
-  55%{transform:rotate(28deg) scale(1.16);filter:blur(0) brightness(1.5)}
-  72%{transform:rotate(-9deg) scale(.95);filter:brightness(1.1)}
-  86%{transform:rotate(4deg) scale(1.03)}
+  0%{transform:rotate(-360deg) scale(.6);opacity:0}
+  35%{opacity:1}
+  80%{transform:rotate(0deg) scale(1.02)}
+  100%{transform:rotate(0deg) scale(1);opacity:1}
+}
   100%{transform:rotate(0) scale(1);opacity:1;filter:brightness(1)}
 }
 .intro-text{margin-top:28px;font-family:'Orbitron';letter-spacing:3px;
@@ -1248,15 +1248,15 @@ mgcCheckout.textContent = 'Zugang sichern';
   var W = 0, H = 0, R = 0, visible = true, running = false;
   var t0 = performance.now();
   var STRANDS = [];
-  for (var i = 0; i < 16; i++) {
+  for (var i = 0; i < 9; i++) {
     STRANDS.push({
       side: i % 2 ? 1 : -1,
       dir: Math.random() < 0.5 ? -1 : 1,
       seed: Math.random() * 10,
-      spread: 0.5 + Math.random() * 0.6,
-      reach: 0.7 + Math.random() * 0.7,
-      w: 0.7 + Math.random() * 1.2,
-      speed: 0.6 + Math.random() * 0.6
+      spread: 0.45 + Math.random() * 0.5,
+      reach: 0.3 + Math.random() * 0.4,
+      w: 0.8 + Math.random() * 0.8,
+      speed: 0.3 + Math.random() * 0.3
     });
   }
   function size(){
@@ -1277,25 +1277,24 @@ mgcCheckout.textContent = 'Zugang sichern';
     var t = (now - t0) / 1000;
     ctx.clearRect(0, 0, W, H);
     ctx.globalCompositeOperation = 'lighter';
-    var cx = W / 2, cy = H / 2, N = 56;
+    var cx = W / 2, cy = H / 2, N = 22;
+    // smoke = many soft, overlapping puffs that grow and fade along each wisp
     for (var k = 0; k < STRANDS.length; k++) {
       var s = STRANDS[k];
-      var pts = [];
-      for (var j = 0; j <= N; j++) pts.push(point(s, j / N, t, cx, cy));
-      for (var j2 = 0; j2 < N; j2++) {
-        var u = j2 / N;
-        var fade = Math.min(1, u * 7) * Math.pow(1 - u, 1.3);
-        var pulse = 0.65 + 0.35 * Math.sin(t * 1.8 * s.speed + s.seed + u * 4);
+      for (var j = 0; j <= N; j++) {
+        var u = j / N;
+        var p = point(s, u, t, cx, cy);
+        var fade = Math.min(1, u * 4) * Math.pow(1 - u, 1.6);
+        var pulse = 0.7 + 0.3 * Math.sin(t * 1.1 * s.speed + s.seed + u * 3);
         var a = fade * pulse;
-        var p0 = pts[j2], p1 = pts[j2 + 1];
-        // soft halo
-        ctx.strokeStyle = 'rgba(60,130,255,' + (0.22 * a).toFixed(3) + ')';
-        ctx.lineWidth = 7 * (1 - u * 0.5) * s.w;
-        ctx.beginPath(); ctx.moveTo(p0[0], p0[1]); ctx.lineTo(p1[0], p1[1]); ctx.stroke();
-        // bright core
-        ctx.strokeStyle = 'rgba(175,210,255,' + (0.9 * a).toFixed(3) + ')';
-        ctx.lineWidth = 1.5 * (1 - u * 0.6) * s.w;
-        ctx.beginPath(); ctx.moveTo(p0[0], p0[1]); ctx.lineTo(p1[0], p1[1]); ctx.stroke();
+        if (a < 0.01) continue;
+        var rad = R * (0.08 + 0.2 * u) * s.w;
+        var g = ctx.createRadialGradient(p[0], p[1], 0, p[0], p[1], rad);
+        g.addColorStop(0, 'rgba(90,150,255,' + (0.2 * a).toFixed(3) + ')');
+        g.addColorStop(0.5, 'rgba(60,120,255,' + (0.09 * a).toFixed(3) + ')');
+        g.addColorStop(1, 'rgba(40,90,240,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(p[0], p[1], rad, 0, Math.PI * 2); ctx.fill();
       }
     }
     ctx.globalCompositeOperation = 'source-over';
