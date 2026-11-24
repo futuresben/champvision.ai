@@ -1280,10 +1280,10 @@ function ChampSmoke(canvas, revealFn, amp){
     '  float a=1.0-(1.0-c1.a)*(1.0-c2.a*0.8);',
     '  vec3 col=(c1.rgb*c1.a+c2.rgb*c2.a*0.8)/max(c1.a+c2.a*0.8,0.001);',
     '  float m=smoothstep(520.0,560.0,d);',                 // veils start just beyond the glowing edge
-    '  float fade=1.0-smoothstep(640.0,800.0,d);',          // veils stay close to the edge, no far streaks
+    '  float fade=1.0-smoothstep(700.0,860.0,d);',          // veils stay close to the edge, soft fade-out
     '  float reveal=1.0-smoothstep(rv-260.0,rv,d);',        // reveal front moves from the ring outward
     '  float A=a*m*fade*reveal*side;',
-    '  A=clamp(A*1.1,0.0,1.0)*0.55;',                         // faint, soft veil
+    '  A=clamp(A*1.7,0.0,1.0)*0.8;',                          // soft silk, a bit fuller than the faint version
     '  gl_FragColor=vec4(col*A,A);',
     '}'].join('\n')));
   gl.linkProgram(prog); gl.useProgram(prog);
