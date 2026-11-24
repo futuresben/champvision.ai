@@ -98,7 +98,14 @@ nav{position:relative;z-index:5;display:flex;align-items:center;justify-content:
   background:radial-gradient(circle,rgba(45,94,219,.07),transparent 75%);filter:blur(16px);
   transform:translateZ(-90px);pointer-events:none}
 .hero-logo .logo-glow-1,.hero-logo .logo-glow-2{display:none}
-@media (prefers-reduced-motion: reduce){.hero-logo{transition:none}}
+/* Blue smoke beside the logo drifts very slowly; the icon itself stays still */
+.hero-logo .logo-smoke{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;
+  animation:smokeDrift 9s ease-in-out infinite alternate;will-change:transform,opacity}
+@keyframes smokeDrift{
+  0%{transform:translate3d(-1.5%,0,0);opacity:.8}
+  100%{transform:translate3d(1.5%,-1%,0);opacity:1}
+}
+@media (prefers-reduced-motion: reduce){.hero-logo{transition:none}.hero-logo .logo-smoke{animation:none}}
 .hero h1{font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(1.5rem,7.5vw,5rem);line-height:1.05;letter-spacing:1px;white-space:nowrap;
   text-shadow:0 2px 24px rgba(79,141,255,.25),0 1px 0 rgba(0,0,0,.3)}
 .hero h1 .ai{background:linear-gradient(90deg,var(--blue-bright),var(--blue));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
@@ -615,7 +622,7 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
 <canvas id="particles"></canvas>
 
 <div id="intro">
-  <img src="assets/champvision-logo-refined-flat-real-alpha.png" alt="ChampVision Logo lädt">
+  <img src="assets/champvision-logo-full-transparent-hd.png" alt="ChampVision Logo lädt">
   <div class="intro-text">CHAMPVISION.ai</div>
 </div>
 
@@ -635,7 +642,8 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
     <div class="hero-logo">
       <div class="logo-glow-2"></div>
       <div class="logo-glow-1"></div>
-      <img src="assets/champvision-logo-refined-flat-real-alpha.png" alt="ChampVision Netzwerk">
+      <img src="assets/champvision-logo-icon-hd.png" alt="ChampVision Netzwerk">
+      <img class="logo-smoke" src="assets/champvision-smoke-layer-hd.png" alt="" aria-hidden="true">
     </div>
   </div>
   <div class="hero-brand reveal d2">CHAMPVISION<span class="ai">.ai</span></div>
