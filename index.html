@@ -1245,6 +1245,8 @@ mgcCheckout.textContent = 'Zugang sichern';
 // ==== Smoke: the artwork's own smoke, warped smoothly on the GPU; the icon itself stays still ====
 // Procedural blue smoke, drawn in the shader: slow noise wisps that drift outward from the ring,
 // with soft impulses travelling outward. Same function for intro and hero; `amp` sets the strength.
+// Silky veils: the veil layer is taken from the supplied artwork and drawn in the shader,
+// flowing slowly outward along the ring. Only at the two marked glowing spots.
 function ChampSmoke(canvas, revealFn, amp){
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var gl = canvas.getContext('webgl', {premultipliedAlpha: true, alpha: true, antialias: false});
@@ -1259,35 +1261,31 @@ function ChampSmoke(canvas, revealFn, amp){
     '#else',
     'precision mediump float;',
     '#endif',
-    'varying vec2 v;uniform float t;uniform float rv;uniform float amp;',
-    'float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453123);}',
-    'float n(vec2 p){vec2 i=floor(p);vec2 f=fract(p);vec2 u=f*f*(3.0-2.0*f);',
-    '  return mix(mix(h(i),h(i+vec2(1.0,0.0)),u.x),mix(h(i+vec2(0.0,1.0)),h(i+vec2(1.0,1.0)),u.x),u.y);}',
-    'float fbm(vec2 p){float s=0.0;float A=0.5;for(int i=0;i<4;i++){s+=A*n(p);p=p*2.0+vec2(1.7,9.2);A*=0.5;}return s;}',
+    'varying vec2 v;uniform sampler2D T;uniform float t;uniform float rv;uniform float amp;',
     'void main(){',
     '  vec2 px=v*2000.0;',
-    '  vec2 dv=px-vec2(1000.0,1000.0); float d=length(dv); vec2 dir=dv/max(d,0.001);',
-    '  if(d<458.0){gl_FragColor=vec4(0.0);return;}',       // inside the logo: nothing
-    '  float m=smoothstep(458.0,500.0,d);',                 // smoke starts at the ring
+    '  vec2 dv=px-vec2(1000.0,1000.0); float d=length(dv);',
+    '  if(d<458.0){gl_FragColor=vec4(0.0);return;}',       // nothing inside the logo
     '  float ang=atan(dv.y,dv.x);',
-    '  vec2 cq=vec2(cos(ang),sin(ang));',
-    // long, soft, silky streaks: stretched along the ring, gentle outward flow and slight rise
-    '  vec2 q=vec2(cq.x*1.1,cq.y*1.1) + vec2(0.0, d/640.0 - t*0.10 + t*0.05);',
-    '  vec2 w=vec2(fbm(q+vec2(0.0,t*0.02)),fbm(q+vec2(5.2,1.3)));',
-    '  float cloud=fbm(q+0.9*w);',                          // smooth, mist-like body
-    '  float dens=smoothstep(0.28,0.82,cloud);',            // wide, soft veils of mist
-    '  float wave=fract((d-458.0)/1000.0-t*0.10*amp);',     // soft swell moving outward
-    '  float bump=smoothstep(0.0,0.5,wave)*(1.0-smoothstep(0.5,1.0,wave));',
-    '  float fade=exp(-(d-458.0)/400.0)*(1.0-smoothstep(720.0,1000.0,d));',
     '  float emitR=smoothstep(0.90,0.97,cos(ang+0.02));',   // marked spot, right
     '  float emitL=smoothstep(0.86,0.97,cos(ang-2.548));',  // marked spot, lower-left
     '  float side=max(emitR,1.1*emitL);',
-    '  vec2 e=smoothstep(vec2(0.0),vec2(0.12),v)*smoothstep(vec2(1.0),vec2(0.88),v);',
-    '  float reveal=1.0-smoothstep(rv-260.0,rv,d);',       // reveal front moves from the ring outward
-    '  float a=dens*fade*m*e.x*e.y*reveal*side*(0.7+0.3*bump*amp);',
-    '  a=clamp(a*2.4,0.0,1.0)*0.7;',
-    '  vec3 col=mix(vec3(0.16,0.40,1.0),vec3(0.70,0.86,1.0),smoothstep(0.5,0.9,cloud));',
-    '  gl_FragColor=vec4(col*a,a);',
+    '  if(side<0.001){gl_FragColor=vec4(0.0);return;}',
+    // two veil layers scrolling outward at different speeds, with a slow silky undulation
+    '  float wob=0.010*sin(d/110.0-t*0.5);',
+    '  vec2 p1=vec2(cos(ang+wob),sin(ang+wob))*(d-t*16.0*amp)+vec2(1000.0);',
+    '  vec2 p2=vec2(cos(ang-wob*1.3),sin(ang-wob*1.3))*(d-t*28.0*amp)+vec2(1000.0);',
+    '  vec4 c1=texture2D(T,p1/2000.0);',
+    '  vec4 c2=texture2D(T,p2/2000.0);',
+    '  float a=1.0-(1.0-c1.a)*(1.0-c2.a*0.8);',
+    '  vec3 col=(c1.rgb*c1.a+c2.rgb*c2.a*0.8)/max(c1.a+c2.a*0.8,0.001);',
+    '  float m=smoothstep(458.0,490.0,d);',
+    '  float fade=1.0-smoothstep(760.0,1000.0,d);',
+    '  float reveal=1.0-smoothstep(rv-260.0,rv,d);',        // reveal front moves from the ring outward
+    '  float bump=0.5+0.5*sin(d/260.0-t*0.8*amp);',         // soft light impulses travelling outward
+    '  float A=a*m*fade*reveal*side*(0.75+0.25*bump);',
+    '  A=clamp(A*1.7,0.0,1.0)*0.9;',
+    '  gl_FragColor=vec4(col*A,A);',
     '}'].join('\n')));
   gl.linkProgram(prog); gl.useProgram(prog);
   var buf = gl.createBuffer();
@@ -1310,13 +1308,26 @@ function ChampSmoke(canvas, revealFn, amp){
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     if(visible && !reduce){ requestAnimationFrame(draw); } else { running = false; }
   }
-  running = true; requestAnimationFrame(draw);
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(function(entries){
-      visible = entries[0].isIntersecting;
-      if (visible && !running && !reduce) { running = true; requestAnimationFrame(draw); }
-    }).observe(canvas);
-  }
+  var img = new Image();
+  img.onload = function(){
+    var tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.uniform1i(gl.getUniformLocation(prog, 'T'), 0);
+    running = true; requestAnimationFrame(draw);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function(entries){
+        visible = entries[0].isIntersecting;
+        if (visible && !running && !reduce) { running = true; requestAnimationFrame(draw); }
+      }).observe(canvas);
+    }
+  };
+  img.src = 'assets/champvision-veil-2000.png';
 }
 (function(){
   var hero = document.querySelector('.hero-logo .smoke-canvas');
