@@ -52,7 +52,7 @@ body{background:var(--bg);color:var(--ink);font-family:'Sora',sans-serif;overflo
   45%{opacity:1;transform:scale(1)}
   100%{transform:scale(1.25);opacity:0}
 }
-#intro .intro-stage{position:relative;top:auto;transform:none;width:min(420px,78vw);height:auto;aspect-ratio:701/500;
+#intro .intro-stage{position:relative;top:auto;transform:none;width:min(420px,78vw);height:auto;aspect-ratio:1/1;
   animation:introSpin 2s cubic-bezier(.3,0,.2,1) forwards;opacity:0}
 @keyframes introSpin{
   0%{transform:rotate(-360deg) scale(.55);opacity:0}
@@ -107,7 +107,7 @@ nav .brand img{width:58px;height:58px}
   transform:translateZ(-90px);pointer-events:none}
 .hero-logo .logo-glow-1,.hero-logo .logo-glow-2{display:none}
 /* The artwork sits centred in the hero; the icon stays still, the smoke is warped on the GPU */
-.logo-stage{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);aspect-ratio:701/500}
+.logo-stage{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);aspect-ratio:1/1}
 .logo-stage img,.logo-stage canvas{position:absolute;left:0;top:0;width:100%;height:100%;display:block}
 .logo-stage canvas{pointer-events:none}
 @media (prefers-reduced-motion: reduce){.hero-logo{transition:none}}
@@ -628,7 +628,7 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
 
 <div id="intro">
   <div class="logo-stage intro-stage">
-    <img src="assets/champvision-logo-hero-icon.png" alt="ChampVision Logo lädt">
+    <img src="assets/champvision-logo-clean-1400.png" alt="ChampVision Logo lädt">
     <canvas class="smoke-canvas" aria-hidden="true"></canvas>
   </div>
   <div class="intro-text">CHAMPVISION.ai</div>
@@ -651,7 +651,7 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
       <div class="logo-glow-2"></div>
       <div class="logo-glow-1"></div>
       <div class="logo-stage">
-        <img src="assets/champvision-logo-hero-icon.png" alt="ChampVision Netzwerk">
+        <img src="assets/champvision-logo-clean-1400.png" alt="ChampVision Netzwerk">
         <canvas class="smoke-canvas" aria-hidden="true"></canvas>
       </div>
     </div>
@@ -1239,7 +1239,7 @@ mgcCheckout.textContent = 'Zugang sichern';
 })();
 
 // ==== Smoke: the artwork's own smoke, warped smoothly on the GPU; the icon itself stays still ====
-function ChampSmoke(canvas, inFn){
+function ChampSmoke(canvas, revealFn){
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var gl = canvas.getContext('webgl', {premultipliedAlpha: true, alpha: true, antialias: false});
   if(!gl) return;
@@ -1249,21 +1249,21 @@ function ChampSmoke(canvas, inFn){
     'attribute vec2 a;varying vec2 v;void main(){v=a*0.5+0.5;v.y=1.0-v.y;gl_Position=vec4(a,0.0,1.0);}'));
   gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, [
     'precision mediump float;',
-    'varying vec2 v;uniform sampler2D T;uniform float t;uniform float k;',
+    'varying vec2 v;uniform sampler2D T;uniform float t;uniform float rv;',
     'void main(){',
-    '  vec2 px=v*vec2(701.0,500.0);',
-    '  vec2 ctr=vec2(350.0,250.0);',
+    '  vec2 px=v*1400.0;',
+    '  vec2 ctr=vec2(700.0,700.0);',
     '  vec2 dv=px-ctr; float d=length(dv); vec2 dir=dv/max(d,0.001);',
-    '  float m=smoothstep(218.0,236.0,d);',                 // 0 on the icon, 1 outside it
-    '  float rt=d<236.0? d : 236.0+(d-236.0)/1.3;',         // smoke grows outward, stays attached to the ring
-    '  vec2 base=(ctr+dir*rt)/vec2(701.0,500.0);',
+    '  float m=smoothstep(505.0,525.0,d);',                 // 0 on the icon, 1 outside it
+    '  float rt=d<525.0? d : 525.0+(d-525.0)/1.3;',         // smoke grows outward, stays attached to the ring
+    '  vec2 base=(ctr+dir*rt)/1400.0;',
     '  vec2 w=vec2(sin(v.y*6.5+t*0.42)+0.55*sin(v.y*12.0-t*0.27+v.x*3.0),',
     '              cos(v.x*5.5-t*0.36)+0.55*cos(v.x*10.0+t*0.23+v.y*2.5));',
-    '  vec2 uv=base+w*vec2(0.0085,0.014)*(0.35+0.65*m);',
-    '  uv.x-=(1.0-k)*0.07*sign(v.x-0.5)*m;',                // smoke slides in from both sides
+    '  vec2 uv=base+w*0.0060*(0.35+0.65*m);',
     '  vec4 c=texture2D(T,uv);',
-    '  vec2 e=smoothstep(vec2(0.0),vec2(0.16),v)*smoothstep(vec2(1.0),vec2(0.84),v);',
-    '  float a=min(1.0,c.a*1.25)*m*e.x*e.y*k;',            // soft edges: no hard cut-off
+    '  vec2 e=smoothstep(vec2(0.0),vec2(0.12),v)*smoothstep(vec2(1.0),vec2(0.88),v);',
+    '  float reveal=1.0-smoothstep(rv-160.0,rv,d);',       // reveal front moves from the ring outward
+    '  float a=min(1.0,c.a*1.5)*m*e.x*e.y*reveal;',
     '  gl_FragColor=vec4(c.rgb*a,a);',
     '}'].join('\n')));
   gl.linkProgram(prog); gl.useProgram(prog);
@@ -1272,18 +1272,19 @@ function ChampSmoke(canvas, inFn){
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
   var aLoc = gl.getAttribLocation(prog, 'a');
   gl.enableVertexAttribArray(aLoc); gl.vertexAttribPointer(aLoc, 2, gl.FLOAT, false, 0, 0);
-  var tLoc = gl.getUniformLocation(prog, 't'), kLoc = gl.getUniformLocation(prog, 'k');
+  var tLoc = gl.getUniformLocation(prog, 't'), rLoc = gl.getUniformLocation(prog, 'rv');
   gl.uniform1i(gl.getUniformLocation(prog, 'T'), 0);
   gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
   var dpr = Math.min(window.devicePixelRatio || 1, 2);
-  canvas.width = Math.round(701 * dpr); canvas.height = Math.round(500 * dpr);
-  gl.viewport(0, 0, canvas.width, canvas.height);
+  var size = 840;                                             // fixed, crisp at up to 420px on screen
+  canvas.width = size; canvas.height = size;
+  gl.viewport(0, 0, size, size);
   var visible = true, running = false, t0 = performance.now();
   function draw(now){
     var sec = (now - t0) / 1000;
     gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
     gl.uniform1f(tLoc, reduce ? 0 : sec);
-    gl.uniform1f(kLoc, inFn(sec));
+    gl.uniform1f(rLoc, revealFn(sec));
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     if(visible && !reduce){ requestAnimationFrame(draw); } else { running = false; }
   }
@@ -1305,24 +1306,24 @@ function ChampSmoke(canvas, inFn){
       }).observe(canvas);
     }
   };
-  img.src = 'assets/champvision-logo-hero-smoke.png';
+  img.src = 'assets/champvision-smoke-1400.png';
 }
 (function(){
   var hero = document.querySelector('.hero-logo .smoke-canvas');
-  if(hero) ChampSmoke(hero, function(){ return 1; });
+  if(hero) ChampSmoke(hero, function(){ return 5000; });   // fully revealed
 })();
 
 // ==== Intro-Animation: Logo dreht sich rein, dann Rauch fährt von links und rechts ein, dann Seite ====
-var INTRO_SMOKE_START = 1.5, INTRO_SMOKE_TIME = 1.4;
+var INTRO_SMOKE_START = 1.1, INTRO_SMOKE_TIME = 1.9;
 (function(){
   var c = document.querySelector('#intro .smoke-canvas');
   if(!c) return;
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   ChampSmoke(c, function(sec){
-    if(reduce) return 1;
-    var p = (sec - INTRO_SMOKE_START) / INTRO_SMOKE_TIME;
-    p = Math.max(0, Math.min(1, p));
-    return p * p * (3 - 2 * p);                 // smooth ease in and out
+    if(reduce) return 5000;
+    var p = Math.max(0, Math.min(1, (sec - INTRO_SMOKE_START) / INTRO_SMOKE_TIME));
+    var e = p < 0.5 ? 4*p*p*p : 1 - Math.pow(-2*p + 2, 3) / 2;   // smooth ease in-out cubic
+    return 505 + (1150 - 505) * e;                            // radius of the reveal front, ring -> edge
   });
 })();
 
