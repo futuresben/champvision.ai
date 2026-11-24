@@ -88,7 +88,10 @@ body{background:var(--bg);color:var(--ink);font-family:'Sora',sans-serif;overflo
 nav{position:relative;z-index:5;display:flex;align-items:center;justify-content:space-between;max-width:1100px;margin:0 auto;padding:26px 24px}
 .brand{display:flex;align-items:center;gap:12px;font-family:'Orbitron',sans-serif;font-weight:700;letter-spacing:1px;font-size:1.05rem}
 .brand img{width:34px;height:34px;filter:drop-shadow(0 0 8px rgba(79,141,255,.6))}
-nav .brand img{width:58px;height:58px}
+.brand-mark{position:relative;flex:0 0 auto;width:34px;height:34px}
+.brand-mark .logo-stage{top:0;transform:none;width:100%;height:100%}
+.brand-mark img{filter:none}
+nav .brand-mark{width:58px;height:58px}
 .brand .ai{color:var(--blue-bright)}
 .nav-cta{font-family:'Sora';font-size:.9rem;color:var(--muted);text-decoration:none;border:1px solid var(--line);padding:9px 18px;border-radius:100px;transition:.3s}
 .nav-cta:hover{color:var(--ink);border-color:var(--blue);box-shadow:0 0 20px rgba(79,141,255,.25)}
@@ -645,7 +648,7 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
 <div class="orb b" data-depth="0.45"></div>
 
 <nav>
-  <div class="brand"><img src="assets/champvision-logo-main-v4-1400.png" alt="ChampVision Logo"><span class="brand-text">CHAMPVISION<span class="ai">.ai</span></span></div>
+  <div class="brand"><span class="brand-mark"><span class="logo-stage"><img src="assets/champvision-logo-main-v4-1400.png" alt="ChampVision Logo"><canvas class="smoke-canvas" aria-hidden="true"></canvas></span></span><span class="brand-text">CHAMPVISION<span class="ai">.ai</span></span></div>
   
 </nav>
 
@@ -1299,7 +1302,7 @@ function ChampSmoke(canvas, revealFn, amp){
   var tLoc = gl.getUniformLocation(prog, 't'), rLoc = gl.getUniformLocation(prog, 'rv');
   gl.uniform1f(gl.getUniformLocation(prog, 'amp'), amp || 1.0);
   gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-  var size = 1600;
+  var size = arguments[3] || 1600;
   canvas.width = size; canvas.height = size;
   gl.viewport(0, 0, size, size);
   var visible = true, running = false, t0 = performance.now();
@@ -1335,6 +1338,10 @@ function ChampSmoke(canvas, revealFn, amp){
 (function(){
   var hero = document.querySelector('.hero-logo .smoke-canvas');
   if(hero) ChampSmoke(hero, smokeReveal, 1.8);                // same smoke timeline as the intro
+})();
+(function(){
+  var n = document.querySelector('nav .brand-mark .smoke-canvas');
+  if(n) ChampSmoke(n, function(){ return 5000; }, 1.8, 480);   // top-left mark: the same logo with its veils
 })();
 
 // ==== Intro-Animation: Logo dreht sich rein, dann Rauch fährt von links und rechts ein, dann Seite ====
