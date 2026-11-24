@@ -1267,22 +1267,22 @@ function ChampSmoke(canvas, revealFn, amp){
     '  if(d<458.0){gl_FragColor=vec4(0.0);return;}',       // inside the logo: nothing
     '  float ang=atan(dv.y,dv.x);',                          // wisps run straight outward, no spiral
     '  vec2 cq=vec2(cos(ang),sin(ang));',                  // angle as a loop, no seam
-    '  vec2 q=cq*2.6 + vec2(0.0, d/300.0 - t*0.08 + t*0.10);', // misty structure: outward drift, gentle rise like real smoke
+    '  vec2 q=cq*2.6 + vec2(0.0, d/300.0 - t*0.20 + t*0.12);', // misty structure: clear outward flow, gentle rise
     '  vec2 w=vec2(fbm(q+vec2(0.0,t*0.02)),fbm(q+vec2(5.2,1.3)));',
     '  float cloud=fbm(q+1.4*w);',                          // soft, puffy smoke body
     '  float grain=n(dv/7.0+vec2(t*0.25,t*0.15));',         // fine powdery grain, shimmers in place instead of falling
-    '  float dens=smoothstep(0.30,0.72,cloud)*(0.45+0.55*grain);',
-    '  float wave=fract((d-458.0)/900.0-t*0.16*amp);',       // a soft swell moves outward
+    '  float dens=smoothstep(0.26,0.66,cloud)*(0.45+0.55*grain);',
+    '  float wave=fract((d-458.0)/900.0-t*0.30*amp);',       // soft swells move outward
     '  float bump=smoothstep(0.0,0.4,wave)*(1.0-smoothstep(0.4,1.0,wave));',
     '  float pulse=bump;',
-    '  float fade=exp(-(d-458.0)/300.0)*(1.0-smoothstep(680.0,980.0,d));',  // wisps stay close to the ring, round fade-out
+    '  float fade=exp(-(d-458.0)/360.0)*(1.0-smoothstep(700.0,1000.0,d));',  // wisps stay close to the ring, round fade-out
     '  vec2 e=smoothstep(vec2(0.0),vec2(0.12),v)*smoothstep(vec2(1.0),vec2(0.88),v);',
     '  float reveal=1.0-smoothstep(rv-220.0,rv,d);',       // reveal front moves from the ring outward
     '  float emitR=smoothstep(0.90,0.97,cos(ang+0.02));',                  // right glowing edge, marked spot (about 3 o clock)
     '  float emitL=smoothstep(0.86,0.97,cos(ang-2.548));',                 // lower-left glowing edge, marked spot (about 7-8 o clock), a little wider
     '  float side=max(1.0*emitR,1.3*emitL);',                              // both spots, similarly strong
-    '  float a=dens*fade*m*e.x*e.y*reveal*(0.8+0.2*pulse*amp)*side;',
-    '  a=clamp(a*2.8,0.0,1.0)*0.75;',
+    '  float a=dens*fade*m*e.x*e.y*reveal*(0.55+0.45*pulse*amp)*side;',
+    '  a=clamp(a*3.6,0.0,1.0)*0.85;',
     '  vec3 col=mix(vec3(0.20,0.45,1.0),vec3(0.80,0.92,1.0),smoothstep(0.45,0.9,cloud));',
     '  gl_FragColor=vec4(col*a,a);',
     '}'].join('\n')));
@@ -1317,7 +1317,7 @@ function ChampSmoke(canvas, revealFn, amp){
 }
 (function(){
   var hero = document.querySelector('.hero-logo .smoke-canvas');
-  if(hero) ChampSmoke(hero, smokeReveal, 1.5);                // same smoke timeline as the intro
+  if(hero) ChampSmoke(hero, smokeReveal, 1.8);                // same smoke timeline as the intro
 })();
 
 // ==== Intro-Animation: Logo dreht sich rein, dann Rauch fährt von links und rechts ein, dann Seite ====
@@ -1331,7 +1331,7 @@ function smokeReveal(sec){                                    // same timeline f
 }
 (function(){
   var c = document.querySelector('#intro .smoke-canvas');
-  if(c) ChampSmoke(c, smokeReveal, 1.5);
+  if(c) ChampSmoke(c, smokeReveal, 1.8);
 })();
 
 // Hand-over: after the spin, the logo and wordmark glide from the centre into their
