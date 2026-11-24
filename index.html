@@ -1265,7 +1265,7 @@ function ChampSmoke(canvas, revealFn, amp){
     '  if(d<458.0){gl_FragColor=vec4(0.0);return;}',       // inside the logo: nothing
     '  float ang=atan(dv.y,dv.x);',                          // wisps run straight outward, no spiral
     '  vec2 cq=vec2(cos(ang),sin(ang));',                  // angle as a loop, no seam
-    '  vec2 q=cq*2.6 + vec2(0.0, d/300.0 - t*0.10);',        // finer, misty structure, slow outward drift
+    '  vec2 q=cq*2.6 + vec2(0.0, d/300.0 - t*0.04 + t*0.06);', // misty structure: slow outward drift, gentle rise like real smoke
     '  vec2 w=vec2(fbm(q+vec2(0.0,t*0.02)),fbm(q+vec2(5.2,1.3)));',
     '  float cloud=fbm(q+1.4*w);',                          // soft, puffy smoke body
     '  float grain=n(dv/7.0+vec2(t*0.25,t*0.15));',         // fine powdery grain, shimmers in place instead of falling
@@ -1280,7 +1280,7 @@ function ChampSmoke(canvas, revealFn, amp){
     '  float emitL=smoothstep(0.86,0.97,cos(ang-2.548));',                 // lower-left glowing edge, marked spot (about 7-8 o clock), a little wider
     '  float side=max(0.6*emitR,1.25*emitL);',                             // both spots, the right one a bit softer
     '  float a=dens*fade*m*e.x*e.y*reveal*(0.8+0.2*pulse*amp)*side;',
-    '  a=clamp(a*1.9,0.0,1.0)*0.75;',
+    '  a=clamp(a*2.3,0.0,1.0)*0.75;',
     '  vec3 col=mix(vec3(0.20,0.45,1.0),vec3(0.80,0.92,1.0),smoothstep(0.45,0.9,cloud));',
     '  gl_FragColor=vec4(col*a,a);',
     '}'].join('\n')));
