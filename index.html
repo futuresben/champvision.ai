@@ -22,7 +22,7 @@
 <meta name="twitter:image" content="assets/champvision-wordmark-2026.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Orbitron:wght@500;700;900&family=Poppins:wght@500&family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --wide-content:1500px;
@@ -43,9 +43,9 @@ body{background:var(--bg);color:var(--ink);font-family:'Sora',sans-serif;overflo
 #intro{position:fixed;inset:0;z-index:99;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);perspective:none;transform-style:flat;
   transition:opacity .8s ease, visibility .8s ease}
 #intro.done{opacity:0;visibility:hidden}
-#intro img{width:270px;height:270px;
+#intro img{width:300px;height:300px;
   animation:introSpin 2s cubic-bezier(.4,0,.2,1) forwards;
-  transform-origin:50% 46.6%;image-rendering:auto;
+  transform-origin:50% 50%;image-rendering:auto;
   filter:drop-shadow(0 0 6px rgba(120,170,255,.85)) drop-shadow(0 0 16px rgba(79,141,255,.55))}
 @keyframes introSpin{
   0%{transform:rotate(-220deg) scale(.3);opacity:0}
@@ -80,13 +80,14 @@ body{background:var(--bg);color:var(--ink);font-family:'Sora',sans-serif;overflo
 nav{position:relative;z-index:5;display:flex;align-items:center;justify-content:space-between;max-width:1100px;margin:0 auto;padding:26px 24px}
 .brand{display:flex;align-items:center;gap:12px;font-family:'Orbitron',sans-serif;font-weight:700;letter-spacing:1px;font-size:1.05rem}
 .brand img{width:34px;height:34px;filter:drop-shadow(0 0 8px rgba(79,141,255,.6))}
+nav .brand img{width:58px;height:58px}
 .brand .ai{color:var(--blue-bright)}
 .nav-cta{font-family:'Sora';font-size:.9rem;color:var(--muted);text-decoration:none;border:1px solid var(--line);padding:9px 18px;border-radius:100px;transition:.3s}
 .nav-cta:hover{color:var(--ink);border-color:var(--blue);box-shadow:0 0 20px rgba(79,141,255,.25)}
 .hero{position:relative;z-index:3;text-align:center;padding:60px 24px 40px;max-width:1400px;margin:0 auto;perspective:var(--persp)}
-.hero-logo-wrap{width:320px;height:320px;margin:0 auto 30px;perspective:1000px;position:relative}
+.hero-logo-wrap{width:400px;height:400px;margin:0 auto 30px;perspective:1000px;position:relative}
 @media (max-width:640px){
-  .hero-logo-wrap{width:260px;height:260px;margin-bottom:44px}
+  .hero-logo-wrap{width:320px;height:320px;margin-bottom:44px}
 }
 .hero-logo{width:100%;height:100%;position:relative;cursor:pointer;transform-style:preserve-3d;will-change:transform;
   transition:transform .15s ease-out}
@@ -100,17 +101,18 @@ nav{position:relative;z-index:5;display:flex;align-items:center;justify-content:
 .hero-logo .logo-glow-1,.hero-logo .logo-glow-2{display:none}
 /* Blue smoke beside the logo drifts very slowly; the icon itself stays still */
 .hero-logo .logo-smoke{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;
-  animation:smokeDrift 9s ease-in-out infinite alternate;will-change:transform,opacity}
+  filter:drop-shadow(0 0 12px rgba(79,141,255,.55));
+  animation:smokeDrift 7s ease-in-out infinite alternate;will-change:transform,opacity}
 @keyframes smokeDrift{
-  0%{transform:translate3d(-1.5%,0,0);opacity:.8}
-  100%{transform:translate3d(1.5%,-1%,0);opacity:1}
+  0%{transform:translate3d(-3%,1%,0) scale(1);opacity:.85}
+  100%{transform:translate3d(3%,-2%,0) scale(1.03);opacity:1}
 }
 @media (prefers-reduced-motion: reduce){.hero-logo{transition:none}.hero-logo .logo-smoke{animation:none}}
 .hero h1{font-family:'Orbitron',sans-serif;font-weight:900;font-size:clamp(1.5rem,7.5vw,5rem);line-height:1.05;letter-spacing:1px;white-space:nowrap;
   text-shadow:0 2px 24px rgba(79,141,255,.25),0 1px 0 rgba(0,0,0,.3)}
 .hero h1 .ai{background:linear-gradient(90deg,var(--blue-bright),var(--blue));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
   text-shadow:0 0 30px rgba(79,141,255,.5)}
-.hero-brand{margin:-58px auto 82px;font-family:'Orbitron',sans-serif;font-size:clamp(1.1rem,5.1vw,3.45rem);font-weight:900;line-height:1.05;letter-spacing:1px;white-space:nowrap;color:#f7f9ff}
+.hero-brand{margin:-30px auto 82px;font-family:'Poppins',sans-serif;font-size:clamp(1.1rem,2.9vw,2.6rem);font-weight:500;line-height:1.05;letter-spacing:.14em;white-space:nowrap;color:#f7f9ff}
 .hero-brand .ai{color:var(--blue)}
 .tagline{font-size:clamp(1rem,2.4vw,1.35rem);color:var(--muted);margin:22px auto 0;max-width:620px;font-weight:300}
 .sub-slogan{font-family:'Orbitron';font-weight:700;font-size:clamp(.95rem,2.2vw,1.2rem);letter-spacing:.3px;
@@ -622,7 +624,7 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
 <canvas id="particles"></canvas>
 
 <div id="intro">
-  <img src="assets/champvision-logo-full-transparent-hd.png" alt="ChampVision Logo lädt">
+  <img src="assets/champvision-logo-icon-hd.png" alt="ChampVision Logo lädt">
   <div class="intro-text">CHAMPVISION.ai</div>
 </div>
 
@@ -633,7 +635,7 @@ body,body *{font-family:'Manrope',Arial,sans-serif!important}
 <div class="orb b" data-depth="0.45"></div>
 
 <nav>
-  <div class="brand"><img src="assets/champvision-logo-refined-flat-real-alpha.png" alt="ChampVision Logo"><span class="brand-text">CHAMPVISION<span class="ai">.ai</span></span></div>
+  <div class="brand"><img src="assets/champvision-logo-icon-hd.png" alt="ChampVision Logo"><span class="brand-text">CHAMPVISION<span class="ai">.ai</span></span></div>
   
 </nav>
 
