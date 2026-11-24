@@ -1265,22 +1265,23 @@ function ChampSmoke(canvas, revealFn, amp){
     '  if(d<458.0){gl_FragColor=vec4(0.0);return;}',       // inside the logo: nothing
     '  float ang=atan(dv.y,dv.x);',                          // wisps run straight outward, no spiral
     '  vec2 cq=vec2(cos(ang),sin(ang));',                  // angle as a loop, no seam
-    '  vec2 q=cq*1.7 + vec2(0.0, d/520.0 - t*0.10);',        // soft filaments, slow outward drift
+    '  vec2 q=cq*2.6 + vec2(0.0, d/300.0 - t*0.10);',        // finer, misty structure, slow outward drift
     '  vec2 w=vec2(fbm(q+vec2(0.0,t*0.02)),fbm(q+vec2(5.2,1.3)));',
     '  float cloud=fbm(q+1.4*w);',                          // soft, puffy smoke body
-    '  float dens=smoothstep(0.30,0.72,cloud);',
+    '  float grain=n(dv/7.0+vec2(0.0,-t*1.5));',            // fine powdery grain
+    '  float dens=smoothstep(0.30,0.72,cloud)*(0.45+0.55*grain);',
     '  float wave=fract((d-458.0)/900.0-t*0.10*amp);',       // a soft swell moves slowly outward
     '  float bump=smoothstep(0.0,0.4,wave)*(1.0-smoothstep(0.4,1.0,wave));',
     '  float pulse=bump;',
-    '  float fade=exp(-(d-458.0)/240.0)*(1.0-smoothstep(680.0,980.0,d));',  // wisps stay close to the ring, round fade-out
+    '  float fade=exp(-(d-458.0)/300.0)*(1.0-smoothstep(680.0,980.0,d));',  // wisps stay close to the ring, round fade-out
     '  vec2 e=smoothstep(vec2(0.0),vec2(0.12),v)*smoothstep(vec2(1.0),vec2(0.88),v);',
     '  float reveal=1.0-smoothstep(rv-220.0,rv,d);',       // reveal front moves from the ring outward
-    '  float emitR=smoothstep(0.70,0.92,cos(ang));',                       // right glowing edge (about 3 o clock)
-    '  float emitL=smoothstep(0.60,0.86,cos(ang-2.618));',                 // lower-left glowing edge (about 7-8 o clock)
-    '  float side=0.02+0.98*max(emitR,emitL);',                            // smoke only leaves these two glowing edges
+    '  float emitR=smoothstep(0.90,0.97,cos(ang+0.02));',                  // right glowing edge, marked spot (about 3 o clock)
+    '  float emitL=smoothstep(0.92,0.98,cos(ang-2.548));',                 // lower-left glowing edge, marked spot (about 7-8 o clock)
+    '  float side=max(emitR,emitL);',                                      // smoke only leaves these two marked spots
     '  float a=dens*fade*m*e.x*e.y*reveal*(0.8+0.2*pulse*amp)*side;',
-    '  a=clamp(a*1.6,0.0,1.0)*0.7;',
-    '  vec3 col=mix(vec3(0.10,0.30,0.85),vec3(0.55,0.72,0.95),smoothstep(0.5,0.9,cloud));',
+    '  a=clamp(a*1.9,0.0,1.0)*0.75;',
+    '  vec3 col=mix(vec3(0.20,0.45,1.0),vec3(0.80,0.92,1.0),smoothstep(0.45,0.9,cloud));',
     '  gl_FragColor=vec4(col*a,a);',
     '}'].join('\n')));
   gl.linkProgram(prog); gl.useProgram(prog);
