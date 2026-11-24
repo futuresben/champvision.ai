@@ -1275,7 +1275,7 @@ function ChampSmoke(canvas, revealFn, amp){
     '  float fade=exp(-(d-458.0)/240.0)*(1.0-smoothstep(680.0,980.0,d));',  // wisps stay close to the ring, round fade-out
     '  vec2 e=smoothstep(vec2(0.0),vec2(0.12),v)*smoothstep(vec2(1.0),vec2(0.88),v);',
     '  float reveal=1.0-smoothstep(rv-220.0,rv,d);',       // reveal front moves from the ring outward
-    '  float side=mix(0.5,1.0,pow(abs(cos(ang)),2.0));',     // a bit more smoke left and right, where the ring glows
+    '  float side=0.04+0.96*pow(abs(cos(ang)),3.0);',        // smoke only leaves the blue glowing arcs (left and right)
     '  float a=dens*fade*m*e.x*e.y*reveal*(0.8+0.2*pulse*amp)*side;',
     '  a=clamp(a*1.6,0.0,1.0)*0.7;',
     '  vec3 col=mix(vec3(0.10,0.30,0.85),vec3(0.55,0.72,0.95),smoothstep(0.5,0.9,cloud));',
